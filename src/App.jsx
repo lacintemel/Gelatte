@@ -1,27 +1,17 @@
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Categories from './components/Categories';
-import Products from './components/Products';
-import About from './components/About';
-import Gallery from './components/Gallery';
-import Testimonials from './components/Testimonials';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { CartProvider } from './context/CartContext';
+import LandingPage from './pages/LandingPage';
+import ShopPage from './pages/ShopPage';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-ivory">
-      <Navbar />
-      <main>
-        <Hero />
-        <Categories />
-        <Products />
-        <About />
-        <Gallery />
-        <Testimonials />
-        <Contact />
-      </main>
-      <Footer />
-    </div>
+    <CartProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/shop" element={<ShopPage />} />
+        </Routes>
+      </BrowserRouter>
+    </CartProvider>
   );
 }
