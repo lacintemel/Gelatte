@@ -1,5 +1,6 @@
 import { ShoppingBag } from 'lucide-react';
-import { PRODUCTS, SHOP_URL } from '../constants';
+import { Link } from 'react-router-dom';
+import { PRODUCTS } from '../constants';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import SectionHeading from './SectionHeading';
 
@@ -44,10 +45,8 @@ function ProductCard({ product, index }) {
         )}
 
         {/* Quick order overlay */}
-        <a
-          href={SHOP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          to="/shop"
           className="
             absolute bottom-4 right-4 w-12 h-12 rounded-full bg-ivory flex items-center justify-center
             shadow-lg opacity-0 translate-y-4 transition-all duration-400
@@ -57,7 +56,7 @@ function ProductCard({ product, index }) {
           aria-label={`Order ${product.name}`}
         >
           <ShoppingBag className="w-5 h-5 text-espresso" />
-        </a>
+        </Link>
       </div>
 
       {/* Content */}
@@ -73,10 +72,8 @@ function ProductCard({ product, index }) {
           <span className="font-display text-xl font-semibold text-espresso">
             {product.price}
           </span>
-          <a
-            href={SHOP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/shop"
             className="
               text-sm font-medium text-gold-dark hover:text-espresso
               tracking-wide uppercase transition-colors duration-300
@@ -84,7 +81,7 @@ function ProductCard({ product, index }) {
             "
           >
             Order Now
-          </a>
+          </Link>
         </div>
       </div>
     </div>
@@ -109,10 +106,8 @@ export default function Products() {
 
         {/* CTA */}
         <div className="text-center mt-16">
-          <a
-            href={SHOP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/shop"
             id="products-order-cta"
             className="
               inline-flex items-center gap-3 px-10 py-4 rounded-full
@@ -123,7 +118,7 @@ export default function Products() {
           >
             <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
             View Full Menu & Order
-          </a>
+          </Link>
         </div>
       </div>
     </section>

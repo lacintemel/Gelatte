@@ -1,5 +1,6 @@
 import { ArrowRight, ChevronDown } from 'lucide-react';
-import { SHOP_URL, BRAND } from '../constants';
+import { Link } from 'react-router-dom';
+import { BRAND } from '../constants';
 
 export default function Hero() {
   return (
@@ -63,10 +64,8 @@ export default function Hero() {
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </a>
 
-            <a
-              href={SHOP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/shop"
               id="hero-order-cta"
               className="
                 group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full
@@ -77,7 +76,7 @@ export default function Hero() {
             >
               Order Online
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </a>
+            </Link>
           </div>
 
           {/* Trust indicators */}

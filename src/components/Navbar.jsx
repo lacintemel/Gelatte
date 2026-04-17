@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { ShoppingBag, Menu, X } from 'lucide-react';
-import { BRAND, NAV_LINKS, SHOP_URL } from '../constants';
+import { BRAND, NAV_LINKS } from '../constants';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -74,11 +75,9 @@ export default function Navbar() {
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
-          {/* Cart / Order Button */}
-          <a
-            href={SHOP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* Cart / Shop Button — now links to internal /shop page */}
+          <Link
+            to="/shop"
             id="cart-button"
             className={`
               flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium tracking-wider uppercase
@@ -90,8 +89,8 @@ export default function Navbar() {
             `}
           >
             <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-            <span className="hidden sm:inline">Order</span>
-          </a>
+            <span className="hidden sm:inline">Shop</span>
+          </Link>
 
           {/* Mobile menu button */}
           <button
@@ -150,10 +149,9 @@ export default function Navbar() {
             </nav>
 
             <div className="mt-auto">
-              <a
-                href={SHOP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                to="/shop"
+                onClick={() => setMobileOpen(false)}
                 id="mobile-order-button"
                 className="
                   flex items-center justify-center gap-3 w-full py-4 rounded-xl
@@ -162,8 +160,8 @@ export default function Navbar() {
                 "
               >
                 <ShoppingBag className="w-5 h-5" />
-                Order Online
-              </a>
+                Shop & Order
+              </Link>
 
               <p className="text-center text-warm-gray text-xs mt-6 font-accent tracking-widest uppercase">
                 {BRAND.tagline}

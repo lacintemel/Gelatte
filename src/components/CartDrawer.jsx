@@ -1,0 +1,183 @@
+import { X, Plus, Minus, ShoppingBag, Trash2 } from 'lucide-react';
+import { useCart } from '../context/CartContext';
+
+export default function CartDrawer() {
+  const {
+    items,
+    totalItems,
+    totalPrice,
+    isDrawerOpen,
+    setIsDrawerOpen,
+    updateQuantity,
+    removeItem,
+    clearCart,
+  } = useCart();
+
+  return (
+    <>
+      {/* Backdrop */}
+      <div
+        className={`
+          fixed inset-0 z-[60] bg-espresso/50 backdrop-blur-sm transition-opacity duration-400
+          ${isDrawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+        `}
+        onClick={() => setIsDrawerOpen(false)}
+      />
+
+      {/* Drawer */}
+      <div
+        className={`
+          fixed right-0 top-0 h-full w-full sm:w-[420px] z-[70] bg-ivory shadow-2xl
+          transform transition-transform duration-500 ease-out flex flex-col
+          ${isDrawerOpen ? 'translate-x-0' : 'translate-x-full'}
+        `}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-5 border-b border-cream-dark/30">
+          <div className="flex items-center gap-3">
+            <ShoppingBag className="w-5 h-5 text-espresso" />
+            <h2 className="font-display text-xl font-semibold text-espresso">
+              Your Cart
+            </h2>
+            <span className="px-2.5 py-0.5 rounded-full bg-espresso text-cream text-xs font-semibold">
+              {totalItems}
+            </span>
+          </div>
+          <button
+            onClick={() => setIsDrawerOpen(false)}
+            className="w-9 h-9 rounded-full hover:bg-cream flex items-center justify-center transition-colors"
+            aria-label="Close cart"
+          >
+            <X className="w-5 h-5 text-walnut" />
+          </button>
+        </div>
+
+        {/* Items */}
+        <div className="flex-1 overflow-y-auto px-6 py-4">
+          {items.length === 0 ? (
+            <div className="flex flex-col items-center justify-center h-full text-center py-20">
+              <div className="w-20 h-20 rounded-full bg-cream flex items-center justify-center mb-5">
+                <ShoppingBag className="w-8 h-8 text-warm-gray" />
+              </div>
+              <p className="font-display text-lg text-espresso mb-2">Your cart is empty</p>
+              <p className="text-warm-gray text-sm">
+                Discover our exquisite collection and add your favourites
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex gap-4 p-3 rounded-xl bg-cream-light/60 hover:bg-cream-light transition-colors group"
+                >
+                  {/* Image */}
+                  <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  {/* Details */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <h4 className="font-display text-sm font-semibold text-espresso leading-tight truncate">
+                        {item.name}
+                      </h4>
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="shrink-0 w-7 h-7 rounded-full hover:bg-cream flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
+                        aria-label={`Remove ${item.name}`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-warm-gray hover:text-red-500" />
+                      </button>
+                    </div>
+
+                    <p className="text-warm-gray text-xs mt-0.5">
+                      €{item.price.toFixed(2)} each
+                    </p>
+
+                    <div className="flex items-center justify-between mt-2.5">
+                      {/* Quantity controls */}
+                      <div className="flex items-center gap-0.5 bg-ivory rounded-full border border-cream-dark/30">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-cream transition-colors"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="w-3 h-3 text-walnut" />
+                        </button>
+                        <span className="w-7 text-center text-sm font-semibold text-espresso">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-cream transition-colors"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-3 h-3 text-walnut" />
+                        </button>
+                      </div>
+
+                      {/* Line total */}
+                      <span className="font-display text-sm font-semibold text-espresso">
+                        €{(item.price * item.quantity).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        {items.length > 0 && (
+          <div className="border-t border-cream-dark/30 px-6 py-5 space-y-4">
+            {/* Summary */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm text-warm-gray-dark">
+                <span>Subtotal ({totalItems} items)</span>
+                <span>€{totalPrice.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm text-warm-gray-dark">
+                <span>Delivery</span>
+                <span className="text-mint-dark font-medium">Free</span>
+              </div>
+              <div className="flex justify-between pt-2 border-t border-cream-dark/20">
+                <span className="font-display text-lg font-semibold text-espresso">Total</span>
+                <span className="font-display text-lg font-semibold text-espresso">
+                  €{totalPrice.toFixed(2)}
+                </span>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <button
+              className="
+                w-full py-4 rounded-xl bg-espresso text-cream font-medium text-sm
+                tracking-wider uppercase hover:bg-walnut-light transition-colors duration-300
+                flex items-center justify-center gap-2
+              "
+            >
+              <ShoppingBag className="w-4 h-4" />
+              Proceed to Checkout
+            </button>
+
+            <button
+              onClick={clearCart}
+              className="
+                w-full py-2.5 text-sm text-warm-gray hover:text-espresso
+                transition-colors duration-300 tracking-wide
+              "
+            >
+              Clear Cart
+            </button>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
