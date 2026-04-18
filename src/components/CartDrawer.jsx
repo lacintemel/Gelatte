@@ -1,5 +1,8 @@
-import { X, Plus, Minus, ShoppingBag, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { X, Plus, Minus, ShoppingBag, Trash2, Truck, Tag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 
 export default function CartDrawer() {
   const {
@@ -12,6 +15,18 @@ export default function CartDrawer() {
     removeItem,
     clearCart,
   } = useCart();
+  const { addToast } = useToast();
+  const [orderNote, setOrderNote] = useState('');
+
+  const handleRemoveItem = (item) => {
+    removeItem(item.id);
+    addToast(`${item.name} removed from cart`, 'info');
+  };
+
+  const handleClearCart = () => {
+    clearCart();
+    addToast('Cart cleared', 'info');
+  };
 
   return (
     <>
@@ -52,6 +67,19 @@ export default function CartDrawer() {
           </button>
         </div>
 
+        {/* Delivery Banner */}
+        {totalItems > 0 && (
+          <div className="mx-6 mt-4 px-4 py-3 rounded-xl bg-mint/8 border border-mint/15 flex items-center gap-3">
+            <Truck className="w-4 h-4 text-mint-dark shrink-0" />
+            <p className="text-xs text-walnut-light">
+              {totalPrice >= 20
+                ? <span className="font-semibold text-mint-dark">Free delivery</span>
+                : <>€{(20 - totalPrice).toFixed(2)} more for <span className="font-semibold">free delivery</span></>
+              }
+            </p>
+          </div>
+        )}
+
         {/* Items */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {items.length === 0 ? (
@@ -60,9 +88,16 @@ export default function CartDrawer() {
                 <ShoppingBag className="w-8 h-8 text-warm-gray" />
               </div>
               <p className="font-display text-lg text-espresso mb-2">Your cart is empty</p>
-              <p className="text-warm-gray text-sm">
+              <p className="text-warm-gray text-sm mb-6">
                 Discover our exquisite collection and add your favourites
               </p>
+              <Link
+                to="/shop"
+                onClick={() => setIsDrawerOpen(false)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-espresso text-cream text-sm font-medium tracking-wider uppercase hover:bg-walnut-light transition-colors"
+              >
+                Browse Shop
+              </Link>
             </div>
           ) : (
             <div className="space-y-4">
@@ -72,22 +107,31 @@ export default function CartDrawer() {
                   className="flex gap-4 p-3 rounded-xl bg-cream-light/60 hover:bg-cream-light transition-colors group"
                 >
                   {/* Image */}
-                  <div className="w-20 h-20 rounded-lg overflow-hidden shrink-0">
+                  <Link
+                    to={`/shop/product/${item.id}`}
+                    onClick={() => setIsDrawerOpen(false)}
+                    className="w-20 h-20 rounded-lg overflow-hidden shrink-0 img-hover-zoom"
+                  >
                     <img
                       src={item.image}
                       alt={item.name}
                       className="w-full h-full object-cover"
                     />
-                  </div>
+                  </Link>
 
                   {/* Details */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
-                      <h4 className="font-display text-sm font-semibold text-espresso leading-tight truncate">
-                        {item.name}
-                      </h4>
+                      <Link
+                        to={`/shop/product/${item.id}`}
+                        onClick={() => setIsDrawerOpen(false)}
+                      >
+                        <h4 className="font-display text-sm font-semibold text-espresso leading-tight truncate hover:text-walnut-light transition-colors">
+                          {item.name}
+                        </h4>
+                      </Link>
                       <button
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => handleRemoveItem(item)}
                         className="shrink-0 w-7 h-7 rounded-full hover:bg-cream flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
                         aria-label={`Remove ${item.name}`}
                       >
@@ -129,6 +173,26 @@ export default function CartDrawer() {
                   </div>
                 </div>
               ))}
+
+              {/* Order Notes */}
+              <div className="pt-4 border-t border-cream-dark/15">
+                <label className="flex items-center gap-2 text-xs font-medium text-walnut tracking-wide uppercase mb-2">
+                  <Tag className="w-3.5 h-3.5" />
+                  Order Notes
+                </label>
+                <textarea
+                  placeholder="Any special requests? (allergies, preferences...)"
+                  value={orderNote}
+                  onChange={(e) => setOrderNote(e.target.value)}
+                  rows={2}
+                  className="
+                    w-full px-4 py-3 rounded-xl bg-ivory border border-cream-dark/25
+                    text-espresso text-sm placeholder:text-warm-gray-light resize-none
+                    focus:outline-none focus:border-gold/50 focus:ring-2 focus:ring-gold/10
+                    transition-all duration-300
+                  "
+                />
+              </div>
             </div>
           )}
         </div>
@@ -144,18 +208,22 @@ export default function CartDrawer() {
               </div>
               <div className="flex justify-between text-sm text-warm-gray-dark">
                 <span>Delivery</span>
-                <span className="text-mint-dark font-medium">Free</span>
+                <span className="text-mint-dark font-medium">
+                  {totalPrice >= 20 ? 'Free' : '€2.50'}
+                </span>
               </div>
               <div className="flex justify-between pt-2 border-t border-cream-dark/20">
                 <span className="font-display text-lg font-semibold text-espresso">Total</span>
                 <span className="font-display text-lg font-semibold text-espresso">
-                  €{totalPrice.toFixed(2)}
+                  €{(totalPrice >= 20 ? totalPrice : totalPrice + 2.50).toFixed(2)}
                 </span>
               </div>
             </div>
 
             {/* Actions */}
-            <button
+            <Link
+              to="/checkout"
+              onClick={() => setIsDrawerOpen(false)}
               className="
                 w-full py-4 rounded-xl bg-espresso text-cream font-medium text-sm
                 tracking-wider uppercase hover:bg-walnut-light transition-colors duration-300
@@ -164,10 +232,10 @@ export default function CartDrawer() {
             >
               <ShoppingBag className="w-4 h-4" />
               Proceed to Checkout
-            </button>
+            </Link>
 
             <button
-              onClick={clearCart}
+              onClick={handleClearCart}
               className="
                 w-full py-2.5 text-sm text-warm-gray hover:text-espresso
                 transition-colors duration-300 tracking-wide
