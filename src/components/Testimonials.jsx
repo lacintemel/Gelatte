@@ -2,6 +2,7 @@ import { Star, Quote } from 'lucide-react';
 import { TESTIMONIALS } from '../constants';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import SectionHeading from './SectionHeading';
+import { useLanguage } from '../context/LanguageContext';
 
 function TestimonialCard({ testimonial, index }) {
   const [ref, isVisible] = useScrollReveal(0.1);
@@ -56,18 +57,20 @@ function TestimonialCard({ testimonial, index }) {
 }
 
 export default function Testimonials() {
+  const { t } = useLanguage();
+
   return (
     <section id="testimonials" className="py-24 md:py-32 bg-cream-light">
       <div className="max-w-7xl mx-auto px-5 md:px-8">
         <SectionHeading
-          eyebrow="What Guests Say"
-          title="Words of Appreciation"
-          subtitle="Every visit to GELATTE is crafted to be memorable. Here's what our guests have to say about their experience."
+          eyebrow={t('test_eyebrow')}
+          title={t('test_title')}
+          subtitle={t('test_sub')}
         />
 
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-          {TESTIMONIALS.map((t, i) => (
-            <TestimonialCard key={t.name} testimonial={t} index={i} />
+          {TESTIMONIALS.map((testimonial, i) => (
+            <TestimonialCard key={testimonial.name} testimonial={testimonial} index={i} />
           ))}
         </div>
       </div>

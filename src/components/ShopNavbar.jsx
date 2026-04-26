@@ -3,10 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, Menu, X, ArrowLeft } from 'lucide-react';
 import { BRAND } from '../constants';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 const SHOP_NAV_LINKS = [
-  { label: 'Home', to: '/' },
-  { label: 'Shop', to: '/shop' },
+  { label: 'Home', key: 'nav_home', to: '/' },
+  { label: 'Shop', key: 'nav_shop', to: '/shop' },
 ];
 
 export default function ShopNavbar() {
@@ -14,6 +16,7 @@ export default function ShopNavbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { totalItems, setIsDrawerOpen } = useCart();
   const location = useLocation();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -49,7 +52,7 @@ export default function ShopNavbar() {
           </Link>
           <span className="hidden md:block text-warm-gray-light text-xl font-thin">|</span>
           <span className="hidden md:block font-accent text-sm tracking-[0.15em] uppercase text-warm-gray">
-            Shop
+            {t('nav_shop')}
           </span>
         </div>
 
@@ -69,13 +72,17 @@ export default function ShopNavbar() {
                 }
               `}
             >
-              {link.label}
+              {t(link.key)}
             </Link>
           ))}
         </nav>
 
         {/* Right Side */}
         <div className="flex items-center gap-3">
+          <div className="hidden lg:block">
+            <LanguageSwitcher scrolled={true} />
+          </div>
+
           {/* Cart Button */}
           <button
             onClick={() => setIsDrawerOpen(true)}
@@ -86,7 +93,7 @@ export default function ShopNavbar() {
             "
           >
             <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-            <span className="hidden sm:inline">Cart</span>
+            <span className="hidden sm:inline">{t('nav_cart')}</span>
             {totalItems > 0 && (
               <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-gold text-espresso text-[10px] font-bold flex items-center justify-center animate-scale-in">
                 {totalItems}
@@ -120,7 +127,17 @@ export default function ShopNavbar() {
             ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}
           `}
         >
-          <div className="flex flex-col h-full pt-24 pb-8 px-8">
+          <div className="flex flex-col h-full pt-20 pb-8 px-8 overflow-y-auto">
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={() => setMobileOpen(false)}
+                className="p-2 text-espresso hover:bg-cream rounded-lg transition-colors"
+                aria-label="Close mobile menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
             <nav className="flex flex-col gap-1">
               {SHOP_NAV_LINKS.map((link, i) => (
                 <Link
@@ -129,17 +146,20 @@ export default function ShopNavbar() {
                   onClick={() => setMobileOpen(false)}
                   className="font-display text-xl text-walnut py-3 border-b border-cream-dark/50 hover:text-gold hover:pl-2 transition-all duration-300"
                 >
-                  {link.label}
+                  {t(link.key)}
                 </Link>
               ))}
             </nav>
-            <div className="mt-auto">
+            
+            <LanguageSwitcher isMobile={true} />
+
+            <div className="mt-8 mb-auto">
               <button
                 onClick={() => { setMobileOpen(false); setIsDrawerOpen(true); }}
-                className="flex items-center justify-center gap-3 w-full py-4 rounded-xl bg-espresso text-cream font-medium tracking-wider uppercase text-sm"
+                className="flex items-center justify-center gap-3 w-full py-4 rounded-xl bg-espresso text-cream font-medium tracking-wider uppercase text-sm hover:bg-walnut-light transition-colors"
               >
                 <ShoppingBag className="w-5 h-5" />
-                View Cart ({totalItems})
+                {t('nav_cart')} ({totalItems})
               </button>
             </div>
           </div>

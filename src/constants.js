@@ -56,43 +56,43 @@ export const CATEGORIES = [
 // ── Signature Products ──
 export const PRODUCTS = [
   {
-    name: "Pistachio Royale Gelato",
-    description: "Sicilian pistachios churned into velvety perfection with a hint of Madagascar vanilla",
+    name: "prod_g1_name",
+    description: "prod_g1_desc",
     price: "€8.50",
     badge: "Signature",
     image: "/images/gelato.png",
   },
   {
-    name: "Pistachio Baklava",
-    description: "Layers of golden phyllo dough filled with premium Antep pistachios and rose-infused honey",
+    name: "prod_bk1_name",
+    description: "prod_bk1_desc",
     price: "€12.00",
     badge: "Best Seller",
     image: "/images/baklava.png",
   },
   {
-    name: "Belgian Waffle Deluxe",
-    description: "Crispy Belgian waffle topped with fresh berries, artisan gelato, and Belgian chocolate",
+    name: "prod_w1_name",
+    description: "prod_w1_desc",
     price: "€14.50",
     badge: "Signature",
     image: "/images/waffle.png",
   },
   {
-    name: "Pistachio Layer Cake",
-    description: "Five layers of pistachio sponge with mascarpone cream and raspberry coulis",
+    name: "prod_ck1_name",
+    description: "prod_ck1_desc",
     price: "€9.50",
     badge: "Fresh Daily",
     image: "/images/cake.png",
   },
   {
-    name: "Artisan Croissants",
-    description: "48-hour fermented butter croissants baked to golden perfection each morning",
+    name: "prod_b1_name",
+    description: "prod_b1_desc",
     price: "€5.50",
     badge: "Fresh Daily",
     image: "/images/bakery.png",
   },
   {
-    name: "Signature Latte",
-    description: "Single-origin Ethiopian beans with silky microfoam and our house-made vanilla syrup",
+    name: "prod_c1_name",
+    description: "prod_c1_desc",
     price: "€6.50",
     badge: "Best Seller",
     image: "/images/coffee.png",
@@ -133,19 +133,15 @@ export const GALLERY = [
 
 // ── Contact Info ──
 export const CONTACT = {
-  address: "42 Via della Dolcezza, Milan 20121, Italy",
-  phone: "+39 02 1234 5678",
-  email: "hello@gelatte.com",
-  hours: [
-    { days: "Monday — Friday", time: "7:00 AM — 10:00 PM" },
-    { days: "Saturday", time: "8:00 AM — 11:00 PM" },
-    { days: "Sunday", time: "8:00 AM — 9:00 PM" },
-  ],
+  address: "Elmalı, Şarampol Cd No:1, 07400 Muratpaşa/Antalya",
+  phone: "(0242) 228 23 33",
+  email: "info@gelatte.com.tr",
+  hours: "11:00 - 21:00",
   social: {
     instagram: "https://instagram.com/gelatte",
     facebook: "https://facebook.com/gelatte",
     twitter: "https://twitter.com/gelatte",
     tiktok: "https://tiktok.com/@gelatte",
   },
-  mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2798.154!2d9.189!3d45.464!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDXCsDI3JzUwLjQiTiA5wrAxMSczMi40IkU!5e0!3m2!1sen!2sit!4v1",
+  mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3190.2319036730594!2d30.7022204!3d36.8924043!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c3906ea16a3a7f%3A0x6b876fc1566436!2sElmal%C4%B1%2C%20%C5%9Earampol%20Cd.%20No%3A1%2C%2007400%20Muratpa%C5%9Fa%2FAntalya!5e0!3m2!1sen!2str!4v1700000000000",
 };
