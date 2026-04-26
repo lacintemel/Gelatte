@@ -2,8 +2,9 @@ import { Link } from 'react-router-dom';
 import { CATEGORIES } from '../constants';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import SectionHeading from './SectionHeading';
+import { useLanguage } from '../context/LanguageContext';
 
-function CategoryCard({ category, index }) {
+function CategoryCard({ category, index, t }) {
   const [ref, isVisible] = useScrollReveal(0.1);
 
   return (
@@ -20,7 +21,7 @@ function CategoryCard({ category, index }) {
       <div className="aspect-[4/5] overflow-hidden">
         <img
           src={category.image}
-          alt={category.title}
+          alt={t(`cat_${category.title.toLowerCase()}`)}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           loading="lazy"
         />
@@ -34,10 +35,10 @@ function CategoryCard({ category, index }) {
         <div className="transform transition-transform duration-500 group-hover:-translate-y-2">
           <span className="inline-block w-8 h-[1px] bg-gold mb-4 transition-all duration-500 group-hover:w-12" />
           <h3 className="font-display text-2xl md:text-3xl text-ivory font-semibold mb-2">
-            {category.title}
+            {t(`cat_${category.title.toLowerCase()}`)}
           </h3>
           <p className="text-cream/70 text-sm leading-relaxed opacity-0 translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
-            {category.description}
+            {t(`cat_${category.title.toLowerCase()}_desc`)}
           </p>
         </div>
       </div>
@@ -49,18 +50,20 @@ function CategoryCard({ category, index }) {
 }
 
 export default function Categories() {
+  const { t } = useLanguage();
+
   return (
     <section id="categories" className="py-24 md:py-32 bg-ivory">
       <div className="max-w-7xl mx-auto px-5 md:px-8">
         <SectionHeading
-          eyebrow="Our Menu"
-          title="Crafted with Passion"
-          subtitle="From artisan gelato to specialty coffee, every creation at GELATTE is a celebration of flavour, quality, and craftsmanship."
+          eyebrow={t('cat_eyebrow')}
+          title={t('cat_title')}
+          subtitle={t('cat_sub')}
         />
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
           {CATEGORIES.map((cat, i) => (
-            <CategoryCard key={cat.title} category={cat} index={i} />
+            <CategoryCard key={cat.title} category={cat} index={i} t={t} />
           ))}
         </div>
       </div>
