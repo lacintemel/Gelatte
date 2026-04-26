@@ -1,92 +1,88 @@
 import { useScrollReveal } from '../hooks/useScrollReveal';
-import SectionHeading from './SectionHeading';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function About() {
-  const [refLeft, visLeft] = useScrollReveal(0.2);
-  const [refRight, visRight] = useScrollReveal(0.2);
+  const [ref, isVisible] = useScrollReveal(0.2);
+  const { t } = useLanguage();
 
   return (
-    <section id="about" className="py-24 md:py-32 bg-ivory">
-      <div className="max-w-7xl mx-auto px-5 md:px-8">
-        <SectionHeading
-          eyebrow="Our Story"
-          title="The GELATTE Experience"
-        />
+    <section id="about" className="py-24 md:py-32 bg-ivory relative overflow-hidden">
+      {/* Background accents */}
+      <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-cream-light/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-mint-light/20 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3" />
 
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Image Side */}
-          <div
-            ref={refLeft}
-            className={`relative ${visLeft ? 'animate-slide-left' : 'opacity-0'}`}
-          >
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              <img
-                src="/images/store-interior.png"
-                alt="GELATTE boutique interior"
-                className="w-full h-[500px] object-cover"
-              />
-              {/* Overlay accent */}
-              <div className="absolute inset-0 bg-gradient-to-t from-espresso/20 to-transparent" />
+      <div className="max-w-7xl mx-auto px-5 md:px-8 relative z-10" ref={ref}>
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+          
+          {/* Text Content */}
+          <div className={`
+            max-w-2xl
+            transition-all duration-1000 transform
+            ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-12'}
+          `}>
+            <div className="flex items-center gap-4 mb-6">
+              <span className="w-12 h-[1px] bg-gold" />
+              <span className="text-gold-dark font-accent text-sm tracking-[0.2em] uppercase">
+                {t('about_eyebrow')}
+              </span>
             </div>
 
-            {/* Floating accent card */}
-            <div className="absolute -bottom-6 -right-4 md:-right-8 bg-ivory rounded-xl p-6 shadow-xl border border-cream-dark/30 max-w-[200px]">
-              <span className="font-display text-4xl font-bold text-espresso block">5+</span>
-              <span className="text-warm-gray-dark text-sm mt-1 block">Years of Crafting Premium Desserts</span>
-            </div>
-
-            {/* Decorative mint border */}
-            <div className="absolute -top-4 -left-4 w-24 h-24 border-t-2 border-l-2 border-mint/40 rounded-tl-2xl" />
-          </div>
-
-          {/* Text Side */}
-          <div
-            ref={refRight}
-            className={`${visRight ? 'animate-slide-right' : 'opacity-0'}`}
-          >
-            <h3 className="font-accent text-lg tracking-[0.15em] uppercase text-gold mb-4">
-              Founded in 2019
-            </h3>
-            <h2 className="font-display text-3xl md:text-4xl font-semibold text-espresso leading-tight mb-6">
-              A Destination for Those Who Appreciate the Finer Things
+            <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-espresso font-bold leading-[1.1] mb-8">
+              {t('about_title')}
             </h2>
 
-            <div className="space-y-5 text-warm-gray-dark leading-relaxed">
-              <p>
-                GELATTE was born from a simple yet ambitious vision: to create a space where
-                the art of dessert-making meets the warmth of Mediterranean hospitality. Every
-                detail — from our hand-selected ingredients to our boutique interiors — reflects
-                our unwavering commitment to excellence.
+            <div className="space-y-6 text-warm-gray-dark font-body leading-relaxed">
+              <p className="text-lg md:text-xl text-espresso font-medium italic">
+                "{t('about_heading')}"
               </p>
-              <p>
-                Our artisan team crafts each gelato flavour, pastry, and coffee drink with
-                the precision of a jeweller and the passion of a storyteller. We source
-                Sicilian pistachios, Belgian chocolate, single-origin Ethiopian beans, and
-                the freshest seasonal fruits to ensure every bite is extraordinary.
-              </p>
-              <p>
-                Step into GELATTE and discover a world where cream-toned elegance, subtle
-                mint accents, and the aroma of freshly baked croissants create an
-                unforgettable sensory experience.
-              </p>
+              <p>{t('about_p1')}</p>
+              <p>{t('about_p2')}</p>
+              <p>{t('about_p3')}</p>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 mt-10 pt-10 border-t border-cream-dark/40">
-              {[
-                { num: '50+', label: 'Artisan Flavours' },
-                { num: '20K+', label: 'Happy Guests' },
-                { num: '100%', label: 'Natural Ingredients' },
-              ].map((stat) => (
-                <div key={stat.label}>
-                  <span className="font-display text-2xl md:text-3xl font-bold text-espresso block">
-                    {stat.num}
-                  </span>
-                  <span className="text-warm-gray text-xs md:text-sm tracking-wide uppercase mt-1 block">
-                    {stat.label}
-                  </span>
+            <div className="grid grid-cols-3 gap-8 mt-12 pt-12 border-t border-cream-dark/30">
+              <div>
+                <span className="block font-display text-4xl text-espresso font-bold mb-2">5+</span>
+                <span className="text-xs tracking-wider uppercase text-warm-gray-dark">{t('about_years')}</span>
+              </div>
+              <div>
+                <span className="block font-display text-4xl text-espresso font-bold mb-2">50+</span>
+                <span className="text-xs tracking-wider uppercase text-warm-gray-dark">{t('about_stat1')}</span>
+              </div>
+              <div>
+                <span className="block font-display text-4xl text-espresso font-bold mb-2">10k+</span>
+                <span className="text-xs tracking-wider uppercase text-warm-gray-dark">{t('about_stat2')}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Image grid */}
+          <div className={`
+            grid grid-cols-2 gap-4 md:gap-6
+            transition-all duration-1000 delay-300 transform
+            ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'}
+          `}>
+            <div className="space-y-4 md:space-y-6 mt-12">
+              <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
+                <img src="/images/gallery-display.png" alt="Gelatte crafting process" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+              </div>
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
+                <img src="/images/bakery.png" alt="Gelatte fresh ingredients" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+              </div>
+            </div>
+            <div className="space-y-4 md:space-y-6">
+              <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
+                <img src="/images/store-interior.png" alt="Gelatte store interior" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+              </div>
+              <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative">
+                <img src="/images/dessert.png" alt="Gelatte signature desserts" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-espresso/20" />
+                <div className="absolute bottom-6 left-6 right-6 p-6 glass rounded-xl text-ivory">
+                  <span className="font-display text-2xl font-semibold mb-1 block">{t('about_founded')}</span>
+                  <span className="text-sm text-cream/80">{t('about_stat3')}</span>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>

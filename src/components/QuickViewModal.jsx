@@ -4,12 +4,14 @@ import { X, Plus, Minus, ShoppingBag, Heart, Eye, ArrowRight } from 'lucide-reac
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function QuickViewModal({ product, onClose }) {
   const [quantity, setQuantity] = useState(1);
   const { addItem } = useCart();
   const { isWishlisted, toggleWishlist } = useWishlist();
   const { addToast } = useToast();
+  const { t } = useLanguage();
 
   if (!product) return null;
 
@@ -19,14 +21,14 @@ export default function QuickViewModal({ product, onClose }) {
     for (let i = 0; i < quantity; i++) {
       addItem(product);
     }
-    addToast(`${product.name} (×${quantity}) added to cart`, 'success');
+    addToast(`${t(product.name)} (×${quantity}) ${t('pd_added').replace('✓ ', '')}`, 'success');
     onClose();
   };
 
   const handleToggleWishlist = () => {
     toggleWishlist(product.id);
     addToast(
-      wishlisted ? `Removed from wishlist` : `${product.name} added to wishlist`,
+      wishlisted ? `Removed from wishlist` : `${t(product.name)} added to wishlist`,
       wishlisted ? 'info' : 'success'
     );
   };
@@ -69,7 +71,7 @@ export default function QuickViewModal({ product, onClose }) {
                     product.badge === 'Fresh Daily' ? 'bg-mint text-espresso' :
                     'bg-espresso text-cream'}
                 `}>
-                  {product.badge}
+                  {t(`prod_${product.badge.toLowerCase().replace(' ', '_')}`)}
                 </span>
               )}
             </div>
@@ -77,13 +79,13 @@ export default function QuickViewModal({ product, onClose }) {
             {/* Content */}
             <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col">
               <p className="text-[11px] font-medium tracking-widest uppercase text-warm-gray mb-2">
-                {product.category}
+                {t(`shop_${product.category}`)}
               </p>
               <h2 className="font-display text-2xl md:text-3xl font-bold text-espresso mb-3 leading-tight">
-                {product.name}
+                {t(product.name)}
               </h2>
               <p className="text-warm-gray-dark text-sm leading-relaxed mb-6">
-                {product.description}
+                {t(product.description)}
               </p>
 
               {/* Price */}
@@ -95,7 +97,7 @@ export default function QuickViewModal({ product, onClose }) {
 
               {/* Quantity Selector */}
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-sm font-medium text-walnut tracking-wide">Qty</span>
+                <span className="text-sm font-medium text-walnut tracking-wide">{t('pd_qty')}</span>
                 <div className="flex items-center gap-1 bg-cream-light rounded-full border border-cream-dark/30 px-1">
                   <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -128,7 +130,7 @@ export default function QuickViewModal({ product, onClose }) {
                   "
                 >
                   <ShoppingBag className="w-4 h-4" />
-                  Add to Cart
+                  {t('pd_add_to_cart')}
                 </button>
 
                 <button
@@ -154,7 +156,7 @@ export default function QuickViewModal({ product, onClose }) {
                   text-gold-dark hover:text-espresso tracking-wide transition-colors group
                 "
               >
-                View Full Details
+                {t('pd_view_details')}
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </div>
