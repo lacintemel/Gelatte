@@ -6,16 +6,19 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { useLanguage } from '../context/LanguageContext';
 
 const STEPS = [
-  { id: 1, label: 'Review', icon: ShoppingBag },
-  { id: 2, label: 'Shipping', icon: Truck },
-  { id: 3, label: 'Payment', icon: CreditCard },
-  { id: 4, label: 'Confirm', icon: Check },
+  { id: 1, labelKey: 'ch_step_review', icon: ShoppingBag },
+  { id: 2, labelKey: 'ch_step_shipping', icon: Truck },
+  { id: 3, labelKey: 'ch_step_payment', icon: CreditCard },
+  { id: 4, labelKey: 'ch_step_confirm', icon: Check },
 ];
 
 /* ── Step Indicator ── */
 function StepIndicator({ currentStep }) {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex items-center justify-center gap-0 max-w-lg mx-auto mb-10 md:mb-14">
       {STEPS.map((step, i) => {
@@ -31,7 +34,7 @@ function StepIndicator({ currentStep }) {
               </div>
               <span className={`text-[11px] font-medium tracking-wider uppercase hidden sm:block
                 ${isActive ? 'text-espresso' : isCompleted ? 'text-mint-dark' : 'text-warm-gray-light'}`}>
-                {step.label}
+                {t(step.labelKey)}
               </span>
             </div>
             {i < STEPS.length - 1 && (
@@ -46,23 +49,25 @@ function StepIndicator({ currentStep }) {
 
 /* ── Step 1: Order Review ── */
 function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, applyPromo, onNext }) {
+  const { t } = useLanguage();
+
   return (
     <div className="animate-fade-in-up">
-      <h2 className="font-display text-2xl md:text-3xl font-bold text-espresso mb-6">Review Your Order</h2>
+      <h2 className="font-display text-2xl md:text-3xl font-bold text-espresso mb-6">{t('ch_review_title')}</h2>
 
       {items.length === 0 ? (
         <div className="text-center py-16">
           <div className="w-20 h-20 rounded-full bg-cream mx-auto flex items-center justify-center mb-5">
             <ShoppingBag className="w-8 h-8 text-warm-gray" />
           </div>
-          <p className="font-display text-lg text-espresso mb-2">Your cart is empty</p>
-          <p className="text-warm-gray text-sm mb-6">Add some items before checking out</p>
+          <p className="font-display text-lg text-espresso mb-2">{t('ch_cart_empty')}</p>
+          <p className="text-warm-gray text-sm mb-6">{t('ch_cart_empty_desc')}</p>
           <Link
             to="/shop"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-espresso text-cream text-sm font-medium tracking-wider uppercase hover:bg-walnut-light transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Continue Shopping
+            {t('ch_continue_shopping')}
           </Link>
         </div>
       ) : (
@@ -75,8 +80,8 @@ function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, 
                   <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-display text-sm font-semibold text-espresso truncate">{item.name}</h4>
-                  <p className="text-warm-gray text-xs mt-0.5">Qty: {item.quantity}</p>
+                  <h4 className="font-display text-sm font-semibold text-espresso truncate">{t(item.name)}</h4>
+                  <p className="text-warm-gray text-xs mt-0.5">{t('pd_qty')}: {item.quantity}</p>
                 </div>
                 <span className="font-display text-sm font-semibold text-espresso shrink-0">
                   €{(item.price * item.quantity).toFixed(2)}
@@ -89,7 +94,7 @@ function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, 
           <div className="flex gap-3 mb-8">
             <input
               type="text"
-              placeholder="Promo code"
+              placeholder={t('ch_promo_placeholder')}
               value={promoCode}
               onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
               className="form-input flex-1"
@@ -103,28 +108,28 @@ function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, 
                   ? 'bg-mint/20 text-mint-dark border border-mint/30'
                   : 'bg-espresso text-cream hover:bg-walnut-light disabled:opacity-40 disabled:cursor-not-allowed'}`}
             >
-              {promoApplied ? '✓ Applied' : 'Apply'}
+              {promoApplied ? t('ch_applied') : t('ch_apply')}
             </button>
           </div>
 
           {/* Summary */}
           <div className="space-y-3 p-6 rounded-xl bg-ivory border border-cream-dark/20 mb-8">
             <div className="flex justify-between text-sm text-warm-gray-dark">
-              <span>Subtotal</span>
+              <span>{t('ch_subtotal')}</span>
               <span>€{totalPrice.toFixed(2)}</span>
             </div>
             {promoApplied && (
               <div className="flex justify-between text-sm text-mint-dark font-medium">
-                <span>Promo Discount (10%)</span>
+                <span>{t('ch_promo_discount')}</span>
                 <span>-€{(totalPrice * 0.1).toFixed(2)}</span>
               </div>
             )}
             <div className="flex justify-between text-sm text-warm-gray-dark">
-              <span>Delivery</span>
-              <span className="text-mint-dark font-medium">Free</span>
+              <span>{t('ch_delivery')}</span>
+              <span className="text-mint-dark font-medium">{t('ch_free')}</span>
             </div>
             <div className="flex justify-between pt-3 border-t border-cream-dark/20">
-              <span className="font-display text-lg font-semibold text-espresso">Total</span>
+              <span className="font-display text-lg font-semibold text-espresso">{t('ch_total')}</span>
               <span className="font-display text-lg font-semibold text-espresso">
                 €{(promoApplied ? totalPrice * 0.9 : totalPrice).toFixed(2)}
               </span>
@@ -135,7 +140,7 @@ function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, 
             onClick={onNext}
             className="w-full py-4 rounded-xl bg-espresso text-cream font-medium text-sm tracking-wider uppercase hover:bg-walnut-light transition-colors flex items-center justify-center gap-2"
           >
-            Continue to Shipping
+            {t('ch_continue_shipping')}
             <ChevronRight className="w-4 h-4" />
           </button>
         </>
@@ -146,20 +151,22 @@ function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, 
 
 /* ── Step 2: Shipping ── */
 function ShippingStep({ form, setForm, errors, onNext, onBack }) {
+  const { t } = useLanguage();
+
   const fields = [
-    { key: 'firstName', label: 'First Name', placeholder: 'John', icon: User, half: true },
-    { key: 'lastName', label: 'Last Name', placeholder: 'Doe', icon: User, half: true },
-    { key: 'email', label: 'Email Address', placeholder: 'john@example.com', icon: Mail, type: 'email' },
-    { key: 'phone', label: 'Phone Number', placeholder: '+1 234 567 890', icon: Phone, type: 'tel' },
-    { key: 'address', label: 'Street Address', placeholder: '123 Main Street', icon: MapPin },
-    { key: 'city', label: 'City', placeholder: 'Milan', icon: MapPin, half: true },
-    { key: 'zip', label: 'Zip Code', placeholder: '20121', icon: MapPin, half: true },
+    { key: 'firstName', label: t('ch_first_name'), placeholder: 'John', icon: User, half: true },
+    { key: 'lastName', label: t('ch_last_name'), placeholder: 'Doe', icon: User, half: true },
+    { key: 'email', label: t('ch_email_label'), placeholder: 'john@example.com', icon: Mail, type: 'email' },
+    { key: 'phone', label: t('ch_phone_label'), placeholder: '+1 234 567 890', icon: Phone, type: 'tel' },
+    { key: 'address', label: t('ch_address_label'), placeholder: '123 Main Street', icon: MapPin },
+    { key: 'city', label: t('ch_city'), placeholder: 'Milan', icon: MapPin, half: true },
+    { key: 'zip', label: t('ch_zip'), placeholder: '20121', icon: MapPin, half: true },
   ];
 
   return (
     <div className="animate-fade-in-up">
-      <h2 className="font-display text-2xl md:text-3xl font-bold text-espresso mb-2">Shipping Details</h2>
-      <p className="text-warm-gray text-sm mb-8">Where should we deliver your order?</p>
+      <h2 className="font-display text-2xl md:text-3xl font-bold text-espresso mb-2">{t('ch_shipping_title')}</h2>
+      <p className="text-warm-gray text-sm mb-8">{t('ch_shipping_desc')}</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         {fields.map((field) => {
@@ -193,10 +200,10 @@ function ShippingStep({ form, setForm, errors, onNext, onBack }) {
           <Truck className="w-5 h-5 text-mint-dark" />
         </div>
         <div className="flex-1">
-          <p className="text-sm font-semibold text-espresso">Express Delivery</p>
-          <p className="text-xs text-warm-gray">Estimated 30-45 minutes · Free for orders over €20</p>
+          <p className="text-sm font-semibold text-espresso">{t('ch_express')}</p>
+          <p className="text-xs text-warm-gray">{t('ch_express_desc')}</p>
         </div>
-        <span className="text-sm font-semibold text-mint-dark">Free</span>
+        <span className="text-sm font-semibold text-mint-dark">{t('ch_free')}</span>
       </div>
 
       <div className="flex gap-3">
@@ -204,13 +211,13 @@ function ShippingStep({ form, setForm, errors, onNext, onBack }) {
           onClick={onBack}
           className="px-6 py-4 rounded-xl border border-cream-dark/30 text-walnut text-sm font-medium tracking-wider uppercase hover:bg-cream transition-colors"
         >
-          Back
+          {t('ch_back')}
         </button>
         <button
           onClick={onNext}
           className="flex-1 py-4 rounded-xl bg-espresso text-cream font-medium text-sm tracking-wider uppercase hover:bg-walnut-light transition-colors flex items-center justify-center gap-2"
         >
-          Continue to Payment
+          {t('ch_continue_payment')}
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
@@ -220,15 +227,17 @@ function ShippingStep({ form, setForm, errors, onNext, onBack }) {
 
 /* ── Step 3: Payment ── */
 function PaymentStep({ payment, setPayment, payErrors, onNext, onBack }) {
+  const { t } = useLanguage();
+
   return (
     <div className="animate-fade-in-up">
-      <h2 className="font-display text-2xl md:text-3xl font-bold text-espresso mb-2">Payment Details</h2>
-      <p className="text-warm-gray text-sm mb-8">Your payment information is secure and encrypted.</p>
+      <h2 className="font-display text-2xl md:text-3xl font-bold text-espresso mb-2">{t('ch_payment_title')}</h2>
+      <p className="text-warm-gray text-sm mb-8">{t('ch_payment_desc')}</p>
 
       <div className="p-6 rounded-xl bg-ivory border border-cream-dark/20 mb-8">
         {/* Card Number */}
         <div className="mb-4">
-          <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">Card Number</label>
+          <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">{t('ch_card_number')}</label>
           <div className="relative">
             <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray-light" />
             <input
@@ -248,7 +257,7 @@ function PaymentStep({ payment, setPayment, payErrors, onNext, onBack }) {
 
         {/* Name */}
         <div className="mb-4">
-          <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">Cardholder Name</label>
+          <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">{t('ch_card_name')}</label>
           <div className="relative">
             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray-light" />
             <input
@@ -265,7 +274,7 @@ function PaymentStep({ payment, setPayment, payErrors, onNext, onBack }) {
         <div className="grid grid-cols-2 gap-4">
           {/* Expiry */}
           <div>
-            <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">Expiry Date</label>
+            <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">{t('ch_expiry')}</label>
             <div className="relative">
               <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray-light" />
               <input
@@ -284,7 +293,7 @@ function PaymentStep({ payment, setPayment, payErrors, onNext, onBack }) {
           </div>
           {/* CVV */}
           <div>
-            <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">CVV</label>
+            <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">{t('ch_cvv')}</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray-light" />
               <input
@@ -305,7 +314,7 @@ function PaymentStep({ payment, setPayment, payErrors, onNext, onBack }) {
       <div className="flex items-center gap-3 p-4 rounded-xl bg-cream-light border border-cream-dark/15 mb-8">
         <Lock className="w-4 h-4 text-warm-gray shrink-0" />
         <p className="text-xs text-warm-gray-dark">
-          Your payment is secured with 256-bit SSL encryption. We never store your full card details.
+          {t('ch_security_note')}
         </p>
       </div>
 
@@ -314,14 +323,14 @@ function PaymentStep({ payment, setPayment, payErrors, onNext, onBack }) {
           onClick={onBack}
           className="px-6 py-4 rounded-xl border border-cream-dark/30 text-walnut text-sm font-medium tracking-wider uppercase hover:bg-cream transition-colors"
         >
-          Back
+          {t('ch_back')}
         </button>
         <button
           onClick={onNext}
           className="flex-1 py-4 rounded-xl bg-espresso text-cream font-medium text-sm tracking-wider uppercase hover:bg-walnut-light transition-colors flex items-center justify-center gap-2"
         >
           <Lock className="w-4 h-4" />
-          Place Order
+          {t('ch_place_order')}
         </button>
       </div>
     </div>
@@ -330,6 +339,8 @@ function PaymentStep({ payment, setPayment, payErrors, onNext, onBack }) {
 
 /* ── Step 4: Confirmation ── */
 function ConfirmationStep({ orderNumber }) {
+  const { t } = useLanguage();
+
   return (
     <div className="animate-scale-in text-center py-8 md:py-16">
       {/* Animated checkmark */}
@@ -349,19 +360,19 @@ function ConfirmationStep({ orderNumber }) {
       </div>
 
       <span className="font-accent text-sm tracking-[0.2em] uppercase text-gold mb-3 block">
-        Order Confirmed
+        {t('ch_confirmed')}
       </span>
       <h2 className="font-display text-3xl md:text-4xl font-bold text-espresso mb-4">
-        Thank You!
+        {t('ch_thank_you')}
       </h2>
       <p className="text-warm-gray-dark text-base max-w-md mx-auto mb-3 leading-relaxed">
-        Your order has been placed successfully. We're preparing your items with care.
+        {t('ch_confirmed_desc')}
       </p>
 
       <div className="inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-cream-light border border-cream-dark/20 mb-10">
         <Package className="w-5 h-5 text-gold-dark" />
         <div className="text-left">
-          <p className="text-xs text-warm-gray">Order Number</p>
+          <p className="text-xs text-warm-gray">{t('ch_order_number')}</p>
           <p className="font-display text-base font-bold text-espresso tracking-wider">{orderNumber}</p>
         </div>
       </div>
@@ -372,13 +383,13 @@ function ConfirmationStep({ orderNumber }) {
           className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-espresso text-cream font-medium text-sm tracking-wider uppercase hover:bg-walnut-light transition-colors"
         >
           <ShoppingBag className="w-4 h-4" />
-          Continue Shopping
+          {t('ch_continue_shopping')}
         </Link>
         <Link
           to="/"
           className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl border border-cream-dark/30 text-walnut text-sm font-medium tracking-wider uppercase hover:bg-cream transition-colors"
         >
-          Back to Home
+          {t('ch_back_home')}
         </Link>
       </div>
     </div>
@@ -390,6 +401,7 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const { items, totalPrice, clearCart } = useCart();
   const { addToast } = useToast();
+  const { t } = useLanguage();
 
   const [step, setStep] = useState(1);
   const [promoCode, setPromoCode] = useState('');
@@ -420,14 +432,14 @@ export default function CheckoutPage() {
 
   const validateShipping = () => {
     const errs = {};
-    if (!form.firstName.trim()) errs.firstName = 'Required';
-    if (!form.lastName.trim()) errs.lastName = 'Required';
-    if (!form.email.trim()) errs.email = 'Required';
-    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = 'Invalid email';
-    if (!form.phone.trim()) errs.phone = 'Required';
-    if (!form.address.trim()) errs.address = 'Required';
-    if (!form.city.trim()) errs.city = 'Required';
-    if (!form.zip.trim()) errs.zip = 'Required';
+    if (!form.firstName.trim()) errs.firstName = t('ch_required');
+    if (!form.lastName.trim()) errs.lastName = t('ch_required');
+    if (!form.email.trim()) errs.email = t('ch_required');
+    else if (!/\S+@\S+\.\S+/.test(form.email)) errs.email = t('ch_invalid_email');
+    if (!form.phone.trim()) errs.phone = t('ch_required');
+    if (!form.address.trim()) errs.address = t('ch_required');
+    if (!form.city.trim()) errs.city = t('ch_required');
+    if (!form.zip.trim()) errs.zip = t('ch_required');
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -435,14 +447,14 @@ export default function CheckoutPage() {
   const validatePayment = () => {
     const errs = {};
     const rawCard = payment.cardNumber.replace(/\s/g, '');
-    if (!rawCard) errs.cardNumber = 'Required';
-    else if (rawCard.length < 16) errs.cardNumber = 'Enter a valid 16-digit card number';
-    if (!payment.cardName.trim()) errs.cardName = 'Required';
+    if (!rawCard) errs.cardNumber = t('ch_required');
+    else if (rawCard.length < 16) errs.cardNumber = t('ch_invalid_card');
+    if (!payment.cardName.trim()) errs.cardName = t('ch_required');
     const rawExpiry = payment.expiry.replace(/\s|\//g, '');
-    if (!rawExpiry) errs.expiry = 'Required';
-    else if (rawExpiry.length < 4) errs.expiry = 'Invalid';
-    if (!payment.cvv) errs.cvv = 'Required';
-    else if (payment.cvv.length < 3) errs.cvv = 'Invalid';
+    if (!rawExpiry) errs.expiry = t('ch_required');
+    else if (rawExpiry.length < 4) errs.expiry = t('ch_invalid');
+    if (!payment.cvv) errs.cvv = t('ch_required');
+    else if (payment.cvv.length < 3) errs.cvv = t('ch_invalid');
     setPayErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -476,14 +488,14 @@ export default function CheckoutPage() {
         <div className="max-w-7xl mx-auto px-5 md:px-8 flex items-center justify-between">
           <Link to="/shop" className="flex items-center gap-2 text-warm-gray hover:text-espresso transition-colors group">
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            <span className="text-sm font-medium tracking-wide">Back to Shop</span>
+            <span className="text-sm font-medium tracking-wide">{t('ch_back_shop')}</span>
           </Link>
           <Link to="/" className="font-display text-2xl font-bold text-espresso tracking-[0.08em]">
             GELATTE
           </Link>
           <div className="flex items-center gap-2 text-sm text-warm-gray">
             <Lock className="w-4 h-4" />
-            <span className="hidden sm:inline tracking-wide">Secure Checkout</span>
+            <span className="hidden sm:inline tracking-wide">{t('ch_secure')}</span>
           </div>
         </div>
       </header>
