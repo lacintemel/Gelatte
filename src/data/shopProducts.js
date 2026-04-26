@@ -13,8 +13,8 @@ export const SHOP_PRODUCTS = [
   // ── Gelato ──
   {
     id: 'g1',
-    name: 'Pistachio Royale',
-    description: 'Sicilian pistachios churned into velvety perfection with Madagascar vanilla',
+    name: 'prod_g1_name',
+    description: 'prod_g1_desc',
     price: 8.50,
     category: 'gelato',
     badge: 'Signature',
@@ -22,8 +22,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'g2',
-    name: 'Dark Chocolate Fondente',
-    description: '72% single-origin dark chocolate from Ecuador, rich and intensely smooth',
+    name: 'prod_g2_name',
+    description: 'prod_g2_desc',
     price: 7.50,
     category: 'gelato',
     badge: 'Best Seller',
@@ -31,8 +31,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'g3',
-    name: 'Stracciatella Classica',
-    description: 'Creamy fior di latte gelato with fine shards of Italian dark chocolate',
+    name: 'prod_g3_name',
+    description: 'prod_g3_desc',
     price: 7.00,
     category: 'gelato',
     badge: null,
@@ -40,8 +40,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'g4',
-    name: 'Mango & Passion Fruit',
-    description: 'Tropical sorbet made with ripe Alphonso mangoes and fresh passion fruit',
+    name: 'prod_g4_name',
+    description: 'prod_g4_desc',
     price: 7.50,
     category: 'gelato',
     badge: 'Fresh Daily',
@@ -51,8 +51,8 @@ export const SHOP_PRODUCTS = [
   // ── Coffee ──
   {
     id: 'c1',
-    name: 'Signature Latte',
-    description: 'Single-origin Ethiopian beans with silky microfoam and house-made vanilla syrup',
+    name: 'prod_c1_name',
+    description: 'prod_c1_desc',
     price: 6.50,
     category: 'coffee',
     badge: 'Best Seller',
@@ -60,8 +60,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'c2',
-    name: 'Cold Brew Reserve',
-    description: '18-hour steeped Colombian cold brew, smooth and naturally sweet',
+    name: 'prod_c2_name',
+    description: 'prod_c2_desc',
     price: 7.00,
     category: 'coffee',
     badge: 'Signature',
@@ -69,8 +69,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'c3',
-    name: 'Pistachio Mocha',
-    description: 'Double espresso with Belgian chocolate and Sicilian pistachio cream',
+    name: 'prod_c3_name',
+    description: 'prod_c3_desc',
     price: 8.00,
     category: 'coffee',
     badge: null,
@@ -78,8 +78,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'c4',
-    name: 'Turkish Coffee',
-    description: 'Traditional fine-ground Arabica brewed in copper cezve, served with lokum',
+    name: 'prod_c4_name',
+    description: 'prod_c4_desc',
     price: 5.50,
     category: 'coffee',
     badge: null,
@@ -89,8 +89,8 @@ export const SHOP_PRODUCTS = [
   // ── Bakery ──
   {
     id: 'b1',
-    name: 'Butter Croissant',
-    description: '48-hour fermented French butter croissants, baked golden each morning',
+    name: 'prod_b1_name',
+    description: 'prod_b1_desc',
     price: 5.50,
     category: 'bakery',
     badge: 'Fresh Daily',
@@ -98,8 +98,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'b2',
-    name: 'Pain au Chocolat',
-    description: 'Flaky pastry layered with two bars of premium Belgian dark chocolate',
+    name: 'prod_b2_name',
+    description: 'prod_b2_desc',
     price: 6.00,
     category: 'bakery',
     badge: 'Fresh Daily',
@@ -107,8 +107,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'b3',
-    name: 'Almond Croissant',
-    description: 'Twice-baked croissant filled with frangipane cream, topped with sliced almonds',
+    name: 'prod_b3_name',
+    description: 'prod_b3_desc',
     price: 6.50,
     category: 'bakery',
     badge: 'Best Seller',
@@ -116,8 +116,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'b4',
-    name: 'Berry Danish',
-    description: 'Puff pastry with vanilla custard and seasonal mixed berries, dusted with sugar',
+    name: 'prod_b4_name',
+    description: 'prod_b4_desc',
     price: 5.50,
     category: 'bakery',
     badge: null,
@@ -127,8 +127,8 @@ export const SHOP_PRODUCTS = [
   // ── Waffles ──
   {
     id: 'w1',
-    name: 'Belgian Waffle Deluxe',
-    description: 'Crispy Belgian waffle with fresh berries, artisan gelato, and Belgian chocolate',
+    name: 'prod_w1_name',
+    description: 'prod_w1_desc',
     price: 14.50,
     category: 'waffle',
     badge: 'Signature',
@@ -136,8 +136,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'w2',
-    name: 'Pistachio Dream Waffle',
-    description: 'Golden waffle drizzled with pistachio cream, crushed nuts, and honey',
+    name: 'prod_w2_name',
+    description: 'prod_w2_desc',
     price: 13.50,
     category: 'waffle',
     badge: 'Best Seller',
@@ -145,8 +145,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'w3',
-    name: 'Nutella & Banana Waffle',
-    description: 'Classic waffle loaded with warm Nutella, sliced banana, and powdered sugar',
+    name: 'prod_w3_name',
+    description: 'prod_w3_desc',
     price: 12.00,
     category: 'waffle',
     badge: null,
@@ -156,8 +156,8 @@ export const SHOP_PRODUCTS = [
   // ── Baklava ──
   {
     id: 'bk1',
-    name: 'Pistachio Baklava',
-    description: 'Layers of golden phyllo filled with premium Antep pistachios and rose honey',
+    name: 'prod_bk1_name',
+    description: 'prod_bk1_desc',
     price: 12.00,
     category: 'baklava',
     badge: 'Best Seller',
@@ -165,8 +165,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'bk2',
-    name: 'Walnut Baklava',
-    description: 'Traditional Turkish baklava with crunchy walnuts and fragrant syrup',
+    name: 'prod_bk2_name',
+    description: 'prod_bk2_desc',
     price: 10.00,
     category: 'baklava',
     badge: null,
@@ -174,8 +174,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'bk3',
-    name: 'Baklava Assortment Box',
-    description: 'Curated selection of 12 pieces — pistachio, walnut, and cashew varieties',
+    name: 'prod_bk3_name',
+    description: 'prod_bk3_desc',
     price: 28.00,
     category: 'baklava',
     badge: 'Signature',
@@ -185,8 +185,8 @@ export const SHOP_PRODUCTS = [
   // ── Cakes ──
   {
     id: 'ck1',
-    name: 'Pistachio Layer Cake',
-    description: 'Five layers of pistachio sponge with mascarpone cream and raspberry coulis',
+    name: 'prod_ck1_name',
+    description: 'prod_ck1_desc',
     price: 9.50,
     category: 'cake',
     badge: 'Signature',
@@ -194,8 +194,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'ck2',
-    name: 'Tiramisu Classico',
-    description: 'Coffee-soaked savoiardi with mascarpone cream and premium cocoa',
+    name: 'prod_ck2_name',
+    description: 'prod_ck2_desc',
     price: 8.50,
     category: 'cake',
     badge: 'Best Seller',
@@ -203,8 +203,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'ck3',
-    name: 'Red Velvet Slice',
-    description: 'Moist red velvet cake with cream cheese frosting and white chocolate shavings',
+    name: 'prod_ck3_name',
+    description: 'prod_ck3_desc',
     price: 8.00,
     category: 'cake',
     badge: null,
@@ -214,8 +214,8 @@ export const SHOP_PRODUCTS = [
   // ── Desserts ──
   {
     id: 'd1',
-    name: 'Chocolate Mousse Royale',
-    description: 'Belgian chocolate mousse with gold leaf, chocolate shavings, and raspberry',
+    name: 'prod_d1_name',
+    description: 'prod_d1_desc',
     price: 11.00,
     category: 'dessert',
     badge: 'Signature',
@@ -223,8 +223,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'd2',
-    name: 'Crème Brûlée',
-    description: 'Madagascar vanilla bean custard with caramelised sugar crust',
+    name: 'prod_d2_name',
+    description: 'prod_d2_desc',
     price: 9.00,
     category: 'dessert',
     badge: null,
@@ -232,8 +232,8 @@ export const SHOP_PRODUCTS = [
   },
   {
     id: 'd3',
-    name: 'Panna Cotta',
-    description: 'Silky Italian cream dessert with seasonal berry compote and fresh mint',
+    name: 'prod_d3_name',
+    description: 'prod_d3_desc',
     price: 8.50,
     category: 'dessert',
     badge: 'Fresh Daily',
