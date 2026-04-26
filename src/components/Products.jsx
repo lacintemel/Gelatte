@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { PRODUCTS } from '../constants';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import SectionHeading from './SectionHeading';
+import { useLanguage } from '../context/LanguageContext';
 
 const BADGE_STYLES = {
   'Signature': 'bg-espresso text-cream',
@@ -10,8 +11,11 @@ const BADGE_STYLES = {
   'Fresh Daily': 'bg-mint text-espresso',
 };
 
-function ProductCard({ product, index }) {
+function ProductCard({ product, index, t }) {
   const [ref, isVisible] = useScrollReveal(0.1);
+
+  // Map badge text for translations (e.g., 'Signature' -> 'prod_signature')
+  const badgeKey = product.badge ? `prod_${product.badge.toLowerCase().replace(' ', '_')}` : null;
 
   return (
     <div
@@ -40,7 +44,7 @@ function ProductCard({ product, index }) {
             absolute top-4 left-4 px-3 py-1.5 rounded-full text-[11px] font-semibold tracking-wider uppercase
             ${BADGE_STYLES[product.badge] || 'bg-espresso text-cream'}
           `}>
-            {product.badge}
+            {t(badgeKey)}
           </span>
         )}
 
@@ -62,10 +66,10 @@ function ProductCard({ product, index }) {
       {/* Content */}
       <div className="p-5 md:p-6">
         <h3 className="font-display text-lg md:text-xl font-semibold text-espresso mb-2 group-hover:text-walnut-light transition-colors">
-          {product.name}
+          {t(product.name)}
         </h3>
         <p className="text-warm-gray-dark text-sm leading-relaxed mb-4 line-clamp-2">
-          {product.description}
+          {t(product.description)}
         </p>
 
         <div className="flex items-center justify-between">
@@ -80,7 +84,7 @@ function ProductCard({ product, index }) {
               border-b border-gold-light/40 hover:border-espresso/40 pb-0.5
             "
           >
-            Order Now
+            {t('prod_order_now')}
           </Link>
         </div>
       </div>
@@ -89,18 +93,20 @@ function ProductCard({ product, index }) {
 }
 
 export default function Products() {
+  const { t } = useLanguage();
+
   return (
     <section id="products" className="py-24 md:py-32 bg-cream-light">
       <div className="max-w-7xl mx-auto px-5 md:px-8">
         <SectionHeading
-          eyebrow="Signature Collection"
-          title="Our Finest Creations"
-          subtitle="Each item is meticulously crafted by our artisan team, using premium ingredients sourced from the world's finest producers."
+          eyebrow={t('prod_eyebrow')}
+          title={t('prod_title')}
+          subtitle={t('prod_sub')}
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {PRODUCTS.map((product, i) => (
-            <ProductCard key={product.name} product={product} index={i} />
+            <ProductCard key={product.name} product={product} index={i} t={t} />
           ))}
         </div>
 
@@ -117,7 +123,7 @@ export default function Products() {
             "
           >
             <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-            View Full Menu & Order
+            {t('prod_view_menu')}
           </Link>
         </div>
       </div>
