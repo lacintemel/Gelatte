@@ -1,8 +1,9 @@
 import { GALLERY } from '../constants';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import SectionHeading from './SectionHeading';
+import { useLanguage } from '../context/LanguageContext';
 
-function GalleryItem({ item, index, className = '' }) {
+function GalleryItem({ item, index, className = '', t }) {
   const [ref, isVisible] = useScrollReveal(0.1);
 
   return (
@@ -34,6 +35,8 @@ function GalleryItem({ item, index, className = '' }) {
 }
 
 export default function Gallery() {
+  const { t } = useLanguage();
+
   return (
     <section id="gallery" className="py-24 md:py-32 bg-espresso relative overflow-hidden">
       {/* Decorative elements */}
@@ -43,9 +46,9 @@ export default function Gallery() {
 
       <div className="max-w-7xl mx-auto px-5 md:px-8">
         <SectionHeading
-          eyebrow="Our Space"
-          title="A Luxury Store Experience"
-          subtitle="Step inside our boutique where cream surfaces, mint accents, warm lighting, and artisan displays create an atmosphere of refined indulgence."
+          eyebrow={t('gal_eyebrow')}
+          title={t('gal_title')}
+          subtitle={t('gal_sub')}
           light
         />
 
@@ -56,6 +59,7 @@ export default function Gallery() {
             item={GALLERY[0]}
             index={0}
             className="col-span-2 row-span-2"
+            t={t}
           />
 
           {/* Regular items */}
@@ -63,21 +67,25 @@ export default function Gallery() {
             item={GALLERY[1]}
             index={1}
             className="col-span-1 row-span-1"
+            t={t}
           />
           <GalleryItem
             item={GALLERY[2]}
             index={2}
             className="col-span-1 row-span-1"
+            t={t}
           />
           <GalleryItem
             item={GALLERY[3]}
             index={3}
             className="col-span-1 row-span-1"
+            t={t}
           />
           <GalleryItem
             item={GALLERY[4]}
             index={4}
             className="col-span-1 row-span-1"
+            t={t}
           />
         </div>
       </div>
