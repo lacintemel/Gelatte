@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { X, Plus, Minus, ShoppingBag, Trash2, Truck, Tag } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function CartDrawer() {
   const {
@@ -17,10 +18,11 @@ export default function CartDrawer() {
   } = useCart();
   const { addToast } = useToast();
   const [orderNote, setOrderNote] = useState('');
+  const { t } = useLanguage();
 
   const handleRemoveItem = (item) => {
     removeItem(item.id);
-    addToast(`${item.name} removed from cart`, 'info');
+    addToast(`${t(item.name)} removed from cart`, 'info');
   };
 
   const handleClearCart = () => {
@@ -52,7 +54,7 @@ export default function CartDrawer() {
           <div className="flex items-center gap-3">
             <ShoppingBag className="w-5 h-5 text-espresso" />
             <h2 className="font-display text-xl font-semibold text-espresso">
-              Your Cart
+              {t('cart_title')}
             </h2>
             <span className="px-2.5 py-0.5 rounded-full bg-espresso text-cream text-xs font-semibold">
               {totalItems}
@@ -73,8 +75,8 @@ export default function CartDrawer() {
             <Truck className="w-4 h-4 text-mint-dark shrink-0" />
             <p className="text-xs text-walnut-light">
               {totalPrice >= 20
-                ? <span className="font-semibold text-mint-dark">Free delivery</span>
-                : <>€{(20 - totalPrice).toFixed(2)} more for <span className="font-semibold">free delivery</span></>
+                ? <span className="font-semibold text-mint-dark">{t('cart_free_delivery')}</span>
+                : <>€{(20 - totalPrice).toFixed(2)} {t('cart_more_for_free')}</>
               }
             </p>
           </div>
@@ -87,16 +89,16 @@ export default function CartDrawer() {
               <div className="w-20 h-20 rounded-full bg-cream flex items-center justify-center mb-5">
                 <ShoppingBag className="w-8 h-8 text-warm-gray" />
               </div>
-              <p className="font-display text-lg text-espresso mb-2">Your cart is empty</p>
+              <p className="font-display text-lg text-espresso mb-2">{t('cart_empty')}</p>
               <p className="text-warm-gray text-sm mb-6">
-                Discover our exquisite collection and add your favourites
+                {t('cart_empty_desc')}
               </p>
               <Link
                 to="/shop"
                 onClick={() => setIsDrawerOpen(false)}
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-espresso text-cream text-sm font-medium tracking-wider uppercase hover:bg-walnut-light transition-colors"
               >
-                Browse Shop
+                {t('cart_browse')}
               </Link>
             </div>
           ) : (
@@ -114,7 +116,7 @@ export default function CartDrawer() {
                   >
                     <img
                       src={item.image}
-                      alt={item.name}
+                      alt={t(item.name)}
                       className="w-full h-full object-cover"
                     />
                   </Link>
@@ -127,20 +129,20 @@ export default function CartDrawer() {
                         onClick={() => setIsDrawerOpen(false)}
                       >
                         <h4 className="font-display text-sm font-semibold text-espresso leading-tight truncate hover:text-walnut-light transition-colors">
-                          {item.name}
+                          {t(item.name)}
                         </h4>
                       </Link>
                       <button
                         onClick={() => handleRemoveItem(item)}
                         className="shrink-0 w-7 h-7 rounded-full hover:bg-cream flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all"
-                        aria-label={`Remove ${item.name}`}
+                        aria-label={`Remove ${t(item.name)}`}
                       >
                         <Trash2 className="w-3.5 h-3.5 text-warm-gray hover:text-red-500" />
                       </button>
                     </div>
 
                     <p className="text-warm-gray text-xs mt-0.5">
-                      €{item.price.toFixed(2)} each
+                      €{item.price.toFixed(2)} {t('cart_each')}
                     </p>
 
                     <div className="flex items-center justify-between mt-2.5">
@@ -178,10 +180,10 @@ export default function CartDrawer() {
               <div className="pt-4 border-t border-cream-dark/15">
                 <label className="flex items-center gap-2 text-xs font-medium text-walnut tracking-wide uppercase mb-2">
                   <Tag className="w-3.5 h-3.5" />
-                  Order Notes
+                  {t('cart_notes')}
                 </label>
                 <textarea
-                  placeholder="Any special requests? (allergies, preferences...)"
+                  placeholder={t('cart_notes_placeholder')}
                   value={orderNote}
                   onChange={(e) => setOrderNote(e.target.value)}
                   rows={2}
@@ -203,17 +205,17 @@ export default function CartDrawer() {
             {/* Summary */}
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-warm-gray-dark">
-                <span>Subtotal ({totalItems} items)</span>
+                <span>{t('cart_subtotal')} ({totalItems} {t('shop_products')})</span>
                 <span>€{totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm text-warm-gray-dark">
-                <span>Delivery</span>
+                <span>{t('cart_delivery')}</span>
                 <span className="text-mint-dark font-medium">
-                  {totalPrice >= 20 ? 'Free' : '€2.50'}
+                  {totalPrice >= 20 ? t('cart_free') : '€2.50'}
                 </span>
               </div>
               <div className="flex justify-between pt-2 border-t border-cream-dark/20">
-                <span className="font-display text-lg font-semibold text-espresso">Total</span>
+                <span className="font-display text-lg font-semibold text-espresso">{t('cart_total')}</span>
                 <span className="font-display text-lg font-semibold text-espresso">
                   €{(totalPrice >= 20 ? totalPrice : totalPrice + 2.50).toFixed(2)}
                 </span>
@@ -231,7 +233,7 @@ export default function CartDrawer() {
               "
             >
               <ShoppingBag className="w-4 h-4" />
-              Proceed to Checkout
+              {t('cart_checkout')}
             </Link>
 
             <button
@@ -241,7 +243,7 @@ export default function CartDrawer() {
                 transition-colors duration-300 tracking-wide
               "
             >
-              Clear Cart
+              {t('cart_clear')}
             </button>
           </div>
         )}
