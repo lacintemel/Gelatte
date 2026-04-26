@@ -9,9 +9,11 @@ import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
 import { SHOP_CATEGORIES, SHOP_PRODUCTS } from '../data/shopProducts';
 import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useLanguage } from '../context/LanguageContext';
 import ShopNavbar from '../components/ShopNavbar';
 import CartDrawer from '../components/CartDrawer';
 import QuickViewModal from '../components/QuickViewModal';
+import { CONTACT } from '../constants';
 
 const ITEMS_PER_PAGE = 8;
 
@@ -29,15 +31,18 @@ function ProductCardGrid({ product, index, onQuickView }) {
   const { addToast } = useToast();
   const [ref, isVisible] = useScrollReveal(0.05);
   const [added, setAdded] = useState(false);
+  const { t } = useLanguage();
 
   const wishlisted = isWishlisted(product.id);
+
+  const badgeKey = product.badge ? `prod_${product.badge.toLowerCase().replace(' ', '_')}` : null;
 
   const handleAdd = (e) => {
     e.preventDefault();
     e.stopPropagation();
     addItem(product);
     setAdded(true);
-    addToast(`${product.name} added to cart`, 'success');
+    addToast(`${product.name} ${t('pd_added').replace('✓ ', '')}`, 'success');
     setTimeout(() => setAdded(false), 1200);
   };
 
@@ -86,7 +91,7 @@ function ProductCardGrid({ product, index, onQuickView }) {
               absolute top-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase
               ${BADGE_STYLES[product.badge] || 'bg-espresso text-cream'}
             `}>
-              {product.badge}
+              {t(badgeKey)}
             </span>
           )}
 
@@ -127,10 +132,10 @@ function ProductCardGrid({ product, index, onQuickView }) {
                 : 'bg-ivory text-espresso w-11 h-11 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 hover:bg-cream hover:scale-110'
               }
             `}
-            aria-label={`Add ${product.name} to cart`}
+            aria-label={`Add ${t(product.name)} to cart`}
           >
             {added ? (
-              <>✓ Added</>
+              <>{t('shop_added')}</>
             ) : (
               <Plus className="w-5 h-5" />
             )}
@@ -143,13 +148,13 @@ function ProductCardGrid({ product, index, onQuickView }) {
         <p className="text-[11px] font-medium tracking-widest uppercase text-warm-gray mb-1.5">
           {product.category}
         </p>
-        <Link to={`/shop/product/${product.id}`}>
-          <h3 className="font-display text-base md:text-lg font-semibold text-espresso mb-1.5 leading-tight group-hover:text-walnut-light transition-colors">
-            {product.name}
+        <Link to={`/shop/product/${product.id}`} className="block group/title">
+          <h3 className="font-display text-lg font-semibold text-espresso mb-1 group-hover/title:text-walnut-light transition-colors truncate">
+            {t(product.name)}
           </h3>
         </Link>
-        <p className="text-warm-gray-dark text-xs leading-relaxed mb-3 line-clamp-2">
-          {product.description}
+        <p className="text-warm-gray text-sm mb-4 line-clamp-2 leading-relaxed">
+          {t(product.description)}
         </p>
 
         <div className="flex items-center justify-between pt-3 border-t border-cream-dark/20">
@@ -164,7 +169,7 @@ function ProductCardGrid({ product, index, onQuickView }) {
             "
           >
             <ShoppingBag className="w-3.5 h-3.5" />
-            Add
+            {t('shop_add')}
           </button>
         </div>
       </div>
@@ -179,13 +184,15 @@ function ProductCardList({ product, onQuickView }) {
   const { addToast } = useToast();
   const [ref, isVisible] = useScrollReveal(0.05);
   const [added, setAdded] = useState(false);
+  const { t } = useLanguage();
 
   const wishlisted = isWishlisted(product.id);
+  const badgeKey = product.badge ? `prod_${product.badge.toLowerCase().replace(' ', '_')}` : null;
 
   const handleAdd = () => {
     addItem(product);
     setAdded(true);
-    addToast(`${product.name} added to cart`, 'success');
+    addToast(`${product.name} ${t('pd_added').replace('✓ ', '')}`, 'success');
     setTimeout(() => setAdded(false), 1200);
   };
 
@@ -222,7 +229,7 @@ function ProductCardList({ product, onQuickView }) {
               absolute top-3 left-3 px-2 py-0.5 rounded-full text-[9px] font-semibold tracking-wider uppercase
               ${BADGE_STYLES[product.badge] || 'bg-espresso text-cream'}
             `}>
-              {product.badge}
+              {t(badgeKey)}
             </span>
           )}
         </div>
@@ -273,10 +280,10 @@ function ProductCardList({ product, onQuickView }) {
                   : 'bg-espresso text-cream hover:bg-walnut-light'}
               `}
             >
-              {added ? '✓ Added' : (
+              {added ? t('shop_added') : (
                 <>
                   <ShoppingBag className="w-3.5 h-3.5" />
-                  Add
+                  {t('shop_add')}
                 </>
               )}
             </button>
@@ -352,6 +359,7 @@ export default function ShopPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const { totalItems, totalPrice, setIsDrawerOpen } = useCart();
+  const { t } = useLanguage();
 
   const filteredProducts = useMemo(() => {
     let products = SHOP_PRODUCTS;
@@ -433,19 +441,18 @@ export default function ShopPage() {
             className="inline-flex items-center gap-2 text-warm-gray text-sm hover:text-espresso transition-colors mb-6 group"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
-            Back to Home
+            {t('shop_back')}
           </Link>
 
           <div className="max-w-2xl">
             <span className="font-accent text-base tracking-[0.2em] uppercase text-gold mb-3 block">
-              Our Collection
+              {t('shop_collection')}
             </span>
             <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-espresso leading-tight mb-4">
-              Shop GELATTE
+              {t('shop_title')}
             </h1>
             <p className="text-warm-gray-dark text-base md:text-lg leading-relaxed">
-              Browse our full collection of artisan gelato, specialty coffees, fresh pastries,
-              and luxury desserts — all available for delivery or pickup.
+              {t('shop_desc')}
             </p>
           </div>
         </div>
@@ -460,7 +467,7 @@ export default function ShopPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray" />
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder={t('shop_search')}
               value={searchQuery}
               onChange={handleSearchChange}
               className="
@@ -485,10 +492,10 @@ export default function ShopPage() {
                 transition-all duration-300
               "
             >
-              <option value="default">Sort: Default</option>
-              <option value="price-asc">Price: Low to High</option>
-              <option value="price-desc">Price: High to Low</option>
-              <option value="name">Name: A to Z</option>
+              <option value="default">{t('shop_sort_default')}</option>
+              <option value="price-asc">{t('shop_sort_price_asc')}</option>
+              <option value="price-desc">{t('shop_sort_price_desc')}</option>
+              <option value="name">{t('shop_sort_name')}</option>
             </select>
           </div>
 
@@ -516,7 +523,7 @@ export default function ShopPage() {
 
           {/* Results count */}
           <span className="text-sm text-warm-gray hidden md:block ml-auto">
-            {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
+            {filteredProducts.length} {t('shop_products')}
           </span>
         </div>
 
@@ -535,7 +542,7 @@ export default function ShopPage() {
                 }
               `}
             >
-              {cat.label}
+              {t(`shop_${cat.id}`)}
             </button>
           ))}
         </div>
@@ -577,15 +584,15 @@ export default function ShopPage() {
             <div className="w-20 h-20 rounded-full bg-cream mx-auto flex items-center justify-center mb-5">
               <Search className="w-8 h-8 text-warm-gray" />
             </div>
-            <p className="font-display text-xl text-espresso mb-2">No products found</p>
+            <p className="font-display text-xl text-espresso mb-2">{t('shop_no_products')}</p>
             <p className="text-warm-gray text-sm">
-              Try a different search or category filter
+              {t('shop_try_different')}
             </p>
             <button
               onClick={() => { setActiveCategory('all'); setSearchQuery(''); setCurrentPage(1); }}
               className="mt-4 text-sm text-gold-dark hover:text-espresso transition-colors underline underline-offset-4"
             >
-              Clear all filters
+              {t('shop_clear_filters')}
             </button>
           </div>
         )}
@@ -601,19 +608,19 @@ export default function ShopPage() {
 
             <div className="relative max-w-xl mx-auto text-center">
               <span className="font-accent text-sm tracking-[0.2em] uppercase text-gold mb-3 block">
-                Stay Updated
+                {t('shop_newsletter_eyebrow')}
               </span>
               <h2 className="font-display text-2xl md:text-3xl font-bold text-ivory mb-3">
-                Get 10% Off Your First Order
+                {t('shop_newsletter_title')}
               </h2>
               <p className="text-cream/60 text-sm leading-relaxed mb-8">
-                Subscribe to our newsletter for exclusive offers, new arrivals, and your welcome discount.
+                {t('shop_newsletter_desc')}
               </p>
 
               <div className="flex gap-3 max-w-md mx-auto">
                 <input
                   type="email"
-                  placeholder="Your email address"
+                  placeholder={t('shop_newsletter_placeholder')}
                   className="
                     flex-1 px-5 py-4 rounded-xl bg-walnut-light/50 border border-cream/10
                     text-ivory text-sm placeholder:text-cream/40
@@ -623,12 +630,12 @@ export default function ShopPage() {
                 />
                 <button className="px-6 py-4 rounded-xl bg-gold text-espresso font-medium text-sm tracking-wider uppercase hover:bg-gold-light transition-colors flex items-center gap-2">
                   <Send className="w-4 h-4" />
-                  <span className="hidden sm:inline">Subscribe</span>
+                  <span className="hidden sm:inline">{t('shop_subscribe')}</span>
                 </button>
               </div>
 
               <p className="text-cream/30 text-xs mt-4">
-                Use code <span className="font-semibold text-gold/60">GELATTE10</span> at checkout
+                {t('shop_newsletter_code').split('code')[0]}<span className="font-semibold text-gold/60">GELATTE10</span>{t('shop_newsletter_code').split('code')[1]}
               </p>
             </div>
           </div>
@@ -669,7 +676,7 @@ export default function ShopPage() {
 
             {/* Shop Links */}
             <div>
-              <h4 className="font-display text-sm font-semibold text-ivory uppercase tracking-wider mb-4">Shop</h4>
+              <h4 className="font-display text-sm font-semibold text-ivory uppercase tracking-wider mb-4">{t('nav_shop')}</h4>
               <ul className="space-y-2.5">
                 {SHOP_CATEGORIES.filter(c => c.id !== 'all').map((cat) => (
                   <li key={cat.id}>
@@ -677,7 +684,7 @@ export default function ShopPage() {
                       onClick={() => { handleCategoryChange(cat.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                       className="text-sm text-cream/50 hover:text-gold transition-colors"
                     >
-                      {cat.label}
+                      {t(`shop_${cat.id}`)}
                     </button>
                   </li>
                 ))}
@@ -686,11 +693,16 @@ export default function ShopPage() {
 
             {/* Help */}
             <div>
-              <h4 className="font-display text-sm font-semibold text-ivory uppercase tracking-wider mb-4">Help</h4>
+              <h4 className="font-display text-sm font-semibold text-ivory uppercase tracking-wider mb-4">{t('shop_help')}</h4>
               <ul className="space-y-2.5">
-                {['Delivery Info', 'Returns Policy', 'FAQs', 'Contact Us'].map((item) => (
-                  <li key={item}>
-                    <span className="text-sm text-cream/50 hover:text-gold transition-colors cursor-pointer">{item}</span>
+                {[
+                  { key: 'shop_delivery' },
+                  { key: 'shop_returns' },
+                  { key: 'shop_faqs' },
+                  { key: 'shop_contact_us' }
+                ].map((item) => (
+                  <li key={item.key}>
+                    <span className="text-sm text-cream/50 hover:text-gold transition-colors cursor-pointer">{t(item.key)}</span>
                   </li>
                 ))}
               </ul>
@@ -698,24 +710,30 @@ export default function ShopPage() {
 
             {/* Contact */}
             <div>
-              <h4 className="font-display text-sm font-semibold text-ivory uppercase tracking-wider mb-4">Contact</h4>
+              <h4 className="font-display text-sm font-semibold text-ivory uppercase tracking-wider mb-4">{t('nav_contact')}</h4>
               <div className="space-y-2.5 text-sm text-cream/50">
-                <p>42 Via della Dolcezza</p>
-                <p>Milan 20121, Italy</p>
-                <p className="text-gold/70">hello@gelatte.com</p>
-                <p>+39 02 1234 5678</p>
+                <p>{CONTACT.address}</p>
+                <p className="text-gold/70">{CONTACT.email}</p>
+                <p>{CONTACT.phone}</p>
               </div>
             </div>
           </div>
 
           <div className="border-t border-cream/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-xs tracking-wide text-cream/30">
-              © {new Date().getFullYear()} GELATTE. All rights reserved.
+              © {new Date().getFullYear()} GELATTE. {t('foot_rights')}
+            </p>
+            <p className="text-xs tracking-wide text-gold-light">
+              {t('foot_created_by')}
             </p>
             <div className="flex gap-6">
-              {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map((item) => (
-                <span key={item} className="text-xs text-cream/30 hover:text-cream/60 transition-colors cursor-pointer">
-                  {item}
+              {[
+                { key: 'shop_privacy' },
+                { key: 'shop_terms' },
+                { key: 'shop_cookies' }
+              ].map((item) => (
+                <span key={item.key} className="text-xs text-cream/30 hover:text-cream/60 transition-colors cursor-pointer">
+                  {t(item.key)}
                 </span>
               ))}
             </div>
