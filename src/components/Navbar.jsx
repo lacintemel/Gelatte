@@ -2,10 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Menu, X } from 'lucide-react';
 import { BRAND, NAV_LINKS } from '../constants';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSwitcher from './LanguageSwitcher';
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -68,13 +71,17 @@ export default function Navbar() {
                 }
               `}
             >
-              {link.label}
+              {t(`nav_${link.label.toLowerCase()}`)}
             </a>
           ))}
         </nav>
 
         {/* Right Side */}
         <div className="flex items-center gap-4">
+          <div className="hidden lg:block">
+            <LanguageSwitcher scrolled={scrolled} />
+          </div>
+
           {/* Cart / Shop Button — now links to internal /shop page */}
           <Link
             to="/shop"
@@ -89,7 +96,7 @@ export default function Navbar() {
             `}
           >
             <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-            <span className="hidden sm:inline">Shop</span>
+            <span className="hidden sm:inline">{t('nav_shop')}</span>
           </Link>
 
           {/* Mobile menu button */}
@@ -129,7 +136,17 @@ export default function Navbar() {
             ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}
           `}
         >
-          <div className="flex flex-col h-full pt-24 pb-8 px-8">
+          <div className="flex flex-col h-full pt-20 pb-8 px-8 overflow-y-auto">
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={() => setMobileOpen(false)}
+                className="p-2 text-espresso hover:bg-cream rounded-lg transition-colors"
+                aria-label="Close mobile menu"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            
             <nav className="flex flex-col gap-1" id="mobile-nav">
               {NAV_LINKS.map((link, i) => (
                 <a
@@ -143,12 +160,14 @@ export default function Navbar() {
                   `}
                   style={{ animationDelay: `${i * 0.08}s` }}
                 >
-                  {link.label}
+                  {t(`nav_${link.label.toLowerCase()}`)}
                 </a>
               ))}
             </nav>
+            
+            <LanguageSwitcher isMobile={true} />
 
-            <div className="mt-auto">
+            <div className="mt-8 mb-auto">
               <Link
                 to="/shop"
                 onClick={() => setMobileOpen(false)}
@@ -160,7 +179,7 @@ export default function Navbar() {
                 "
               >
                 <ShoppingBag className="w-5 h-5" />
-                Shop & Order
+                {t('shop_and_order')}
               </Link>
 
               <p className="text-center text-warm-gray text-xs mt-6 font-accent tracking-widest uppercase">
