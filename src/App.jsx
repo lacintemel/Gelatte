@@ -8,22 +8,26 @@ import ShopPage from './pages/ShopPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CheckoutPage from './pages/CheckoutPage';
 
+import { LanguageProvider } from './context/LanguageContext';
+
 export default function App() {
   return (
-    <ToastProvider>
-      <WishlistProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<LandingPage />} />
-              <Route path="/shop" element={<ShopPage />} />
-              <Route path="/shop/product/:id" element={<ProductDetailPage />} />
-              <Route path="/checkout" element={<CheckoutPage />} />
-            </Routes>
-          </BrowserRouter>
-        </CartProvider>
-      </WishlistProvider>
-    </ToastProvider>
+    <LanguageProvider>
+      <ToastProvider>
+        <WishlistProvider>
+          <CartProvider>
+            <BrowserRouter>
+              <ScrollToTop />
+              <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/shop" element={<ShopPage />} />
+                <Route path="/shop/product/:id" element={<ProductDetailPage />} />
+                <Route path="/checkout" element={<CheckoutPage />} />
+              </Routes>
+            </BrowserRouter>
+          </CartProvider>
+        </WishlistProvider>
+      </ToastProvider>
+    </LanguageProvider>
   );
 }
