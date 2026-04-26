@@ -1,8 +1,10 @@
 import { ArrowRight, ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { BRAND } from '../constants';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Hero() {
+  const { t } = useLanguage();
+
   return (
     <section id="home" className="relative min-h-screen flex items-center overflow-hidden">
       {/* Background Image */}
@@ -28,24 +30,23 @@ export default function Hero() {
           <div className="animate-fade-in-up mb-6">
             <span className="inline-flex items-center gap-3 text-gold-light font-accent text-base md:text-lg tracking-[0.25em] uppercase">
               <span className="w-8 h-[1px] bg-gold-light" />
-              {BRAND.tagline}
+              {t('hero_eyebrow')}
               <span className="w-8 h-[1px] bg-gold-light" />
             </span>
           </div>
 
           {/* Headline */}
           <h1 className="animate-fade-in-up delay-200 font-display text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-ivory leading-[0.95] mb-8">
-            Where Every
+            {t('hero_title_1')}
             <br />
-            <span className="text-mint-light italic font-medium">Flavour</span>
+            <span className="text-mint-light italic font-medium">{t('hero_title_2')}</span>
             <br />
-            Tells a Story
+            {t('hero_title_3')}
           </h1>
 
           {/* Subheadline */}
           <p className="animate-fade-in-up delay-400 font-body text-base md:text-lg text-cream/80 leading-relaxed max-w-xl mb-10">
-            Discover an exquisite world of artisan gelato, specialty coffees, fresh-baked pastries,
-            and luxurious desserts — all crafted with passion in our Mediterranean-inspired boutique.
+            {t('hero_sub')}
           </p>
 
           {/* CTA Buttons */}
@@ -60,7 +61,7 @@ export default function Hero() {
                 transition-all duration-300
               "
             >
-              Explore Menu
+              {t('hero_explore')}
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </a>
 
@@ -74,7 +75,7 @@ export default function Hero() {
                 transition-all duration-300
               "
             >
-              Order Online
+              {t('hero_order')}
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
@@ -83,15 +84,15 @@ export default function Hero() {
           <div className="animate-fade-in delay-700 mt-14 flex items-center gap-8 text-cream/50 text-sm">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-mint" />
-              <span>Premium Ingredients</span>
+              <span>{t('hero_premium')}</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-gold" />
-              <span>Handcrafted Daily</span>
+              <span>{t('hero_handcrafted')}</span>
             </div>
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-mint-light" />
-              <span>Since 2019</span>
+              <span>{t('hero_since')}</span>
             </div>
           </div>
         </div>
@@ -102,7 +103,7 @@ export default function Hero() {
         href="#categories"
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-cream/40 hover:text-cream/70 transition-colors animate-float"
       >
-        <span className="text-xs tracking-[0.2em] uppercase font-light">Scroll</span>
+        <span className="text-xs tracking-[0.2em] uppercase font-light">{t('hero_scroll')}</span>
         <ChevronDown className="w-5 h-5" />
       </a>
     </section>
