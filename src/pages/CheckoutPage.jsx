@@ -77,14 +77,14 @@ function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, 
             {items.map((item) => (
               <div key={item.id} className="flex gap-4 p-4 rounded-xl bg-ivory border border-cream-dark/20">
                 <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-cream-light">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  <img src={item.images?.[0] || item.image} alt={item.name} className="w-full h-full object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h4 className="font-display text-sm font-semibold text-espresso truncate">{t(item.name)}</h4>
                   <p className="text-warm-gray text-xs mt-0.5">{t('pd_qty')}: {item.quantity}</p>
                 </div>
                 <span className="font-display text-sm font-semibold text-espresso shrink-0">
-                  €{(item.price * item.quantity).toFixed(2)}
+                  €{((item.price - (item.discount || 0)) * item.quantity).toFixed(2)}
                 </span>
               </div>
             ))}
