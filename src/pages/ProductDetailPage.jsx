@@ -6,7 +6,7 @@ import {
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
-import { SHOP_PRODUCTS } from '../data/shopProducts';
+import { useProducts } from '../context/ProductContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useLanguage } from '../context/LanguageContext';
 import ShopNavbar from '../components/ShopNavbar';
@@ -40,7 +40,7 @@ function RelatedCard({ product }) {
       <Link to={`/shop/product/${product.id}`}>
         <div className="relative aspect-square overflow-hidden bg-cream-light">
           <img
-            src={product.image}
+            src={product.images?.[0] || product.image}
             alt={t(product.name)}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
@@ -60,7 +60,16 @@ function RelatedCard({ product }) {
           </h3>
         </Link>
         <div className="flex items-center justify-between pt-2 border-t border-cream-dark/20 mt-2">
-          <span className="font-display text-lg font-semibold text-espresso">€{product.price.toFixed(2)}</span>
+          <div className="flex flex-col">
+            {product.discount > 0 && (
+              <span className="text-[10px] text-warm-gray line-through leading-none mb-0.5">
+                €{product.price.toFixed(2)}
+              </span>
+            )}
+            <span className="font-display text-lg font-semibold text-espresso leading-none">
+              €{(product.price - (product.discount || 0)).toFixed(2)}
+            </span>
+          </div>
           <button
             onClick={handleAdd}
             className="flex items-center gap-1.5 text-xs font-medium text-gold-dark hover:text-espresso tracking-wider uppercase transition-colors"
@@ -84,15 +93,16 @@ export default function ProductDetailPage() {
   const { isWishlisted, toggleWishlist } = useWishlist();
   const { addToast } = useToast();
   const { t } = useLanguage();
+  const { products } = useProducts();
 
-  const product = SHOP_PRODUCTS.find((p) => p.id === id);
+  const product = products.find((p) => p.id === id);
 
   const relatedProducts = useMemo(() => {
     if (!product) return [];
-    return SHOP_PRODUCTS
-      .filter((p) => p.category === product.category && p.id !== product.id)
+    return products
+      .filter((p) => p.category === product.category && p.id !== product.id && p.status !== 'inactive')
       .slice(0, 4);
-  }, [product]);
+  }, [product, products]);
 
   if (!product) {
     return (
@@ -157,7 +167,7 @@ export default function ProductDetailPage() {
           {/* Image */}
           <div className="relative rounded-2xl overflow-hidden bg-cream-light aspect-square shadow-[0_4px_30px_rgba(62,39,35,0.08)]">
             <img
-              src={product.image}
+              src={product.images?.[0] || product.image}
               alt={t(product.name)}
               className="w-full h-full object-cover"
             />
@@ -210,8 +220,13 @@ export default function ProductDetailPage() {
 
             {/* Price */}
             <div className="flex items-baseline gap-3 mb-8">
+              {product.discount > 0 && (
+                <span className="font-display text-2xl font-bold text-warm-gray line-through">
+                  €{product.price.toFixed(2)}
+                </span>
+              )}
               <span className="font-display text-4xl font-bold text-espresso">
-                €{product.price.toFixed(2)}
+                €{(product.price - (product.discount || 0)).toFixed(2)}
               </span>
               <span className="text-sm text-warm-gray">{t('pd_incl_tax')}</span>
             </div>
@@ -252,7 +267,7 @@ export default function ProductDetailPage() {
                 ) : (
                   <>
                     <ShoppingBag className="w-5 h-5" />
-                    {t('pd_add_to_cart')} · €{(product.price * quantity).toFixed(2)}
+                    {t('pd_add_to_cart')} · €{((product.price - (product.discount || 0)) * quantity).toFixed(2)}
                   </>
                 )}
               </button>
