@@ -115,7 +115,7 @@ export default function CartDrawer() {
                     className="w-20 h-20 rounded-lg overflow-hidden shrink-0 img-hover-zoom"
                   >
                     <img
-                      src={item.image}
+                      src={item.images?.[0] || item.image}
                       alt={t(item.name)}
                       className="w-full h-full object-cover"
                     />
@@ -142,7 +142,8 @@ export default function CartDrawer() {
                     </div>
 
                     <p className="text-warm-gray text-xs mt-0.5">
-                      €{item.price.toFixed(2)} {t('cart_each')}
+                      €{(item.price - (item.discount || 0)).toFixed(2)} {t('cart_each')}
+                      {item.discount > 0 && <span className="ml-1 line-through text-[10px]">€{item.price.toFixed(2)}</span>}
                     </p>
 
                     <div className="flex items-center justify-between mt-2.5">
@@ -169,7 +170,7 @@ export default function CartDrawer() {
 
                       {/* Line total */}
                       <span className="font-display text-sm font-semibold text-espresso">
-                        €{(item.price * item.quantity).toFixed(2)}
+                        €{((item.price - (item.discount || 0)) * item.quantity).toFixed(2)}
                       </span>
                     </div>
                   </div>
