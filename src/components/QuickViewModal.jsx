@@ -60,7 +60,7 @@ export default function QuickViewModal({ product, onClose }) {
             {/* Image */}
             <div className="relative w-full md:w-1/2 aspect-square bg-cream-light shrink-0">
               <img
-                src={product.image}
+                src={product.images?.[0] || product.image}
                 alt={product.name}
                 className="w-full h-full object-cover"
               />
@@ -90,8 +90,13 @@ export default function QuickViewModal({ product, onClose }) {
 
               {/* Price */}
               <div className="flex items-center gap-3 mb-6">
+                {product.discount > 0 && (
+                  <span className="font-display text-2xl font-bold text-warm-gray line-through">
+                    €{product.price.toFixed(2)}
+                  </span>
+                )}
                 <span className="font-display text-3xl font-bold text-espresso">
-                  €{product.price.toFixed(2)}
+                  €{(product.price - (product.discount || 0)).toFixed(2)}
                 </span>
               </div>
 
