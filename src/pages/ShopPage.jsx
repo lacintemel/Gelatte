@@ -7,7 +7,7 @@ import {
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useToast } from '../context/ToastContext';
-import { SHOP_CATEGORIES, SHOP_PRODUCTS } from '../data/shopProducts';
+import { useProducts } from '../context/ProductContext';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useLanguage } from '../context/LanguageContext';
 import ShopNavbar from '../components/ShopNavbar';
@@ -79,7 +79,7 @@ function ProductCardGrid({ product, index, onQuickView }) {
       <Link to={`/shop/product/${product.id}`} className="block">
         <div className="relative aspect-square overflow-hidden bg-cream-light">
           <img
-            src={product.image}
+            src={product.images?.[0] || product.image}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
@@ -158,9 +158,16 @@ function ProductCardGrid({ product, index, onQuickView }) {
         </p>
 
         <div className="flex items-center justify-between pt-3 border-t border-cream-dark/20">
-          <span className="font-display text-lg font-semibold text-espresso">
-            €{product.price.toFixed(2)}
-          </span>
+          <div className="flex flex-col">
+            {product.discount > 0 && (
+              <span className="text-[10px] text-warm-gray line-through leading-none mb-0.5">
+                €{product.price.toFixed(2)}
+              </span>
+            )}
+            <span className="font-display text-lg font-semibold text-espresso leading-none">
+              €{(product.price - (product.discount || 0)).toFixed(2)}
+            </span>
+          </div>
           <button
             onClick={handleAdd}
             className="
@@ -219,7 +226,7 @@ function ProductCardList({ product, onQuickView }) {
       <Link to={`/shop/product/${product.id}`} className="w-36 md:w-48 shrink-0">
         <div className="relative h-full overflow-hidden bg-cream-light">
           <img
-            src={product.image}
+            src={product.images?.[0] || product.image}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
@@ -252,9 +259,16 @@ function ProductCardList({ product, onQuickView }) {
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="font-display text-xl font-semibold text-espresso">
-            €{product.price.toFixed(2)}
-          </span>
+          <div className="flex flex-col">
+            {product.discount > 0 && (
+              <span className="text-xs text-warm-gray line-through leading-none mb-0.5">
+                €{product.price.toFixed(2)}
+              </span>
+            )}
+            <span className="font-display text-xl font-semibold text-espresso leading-none">
+              €{(product.price - (product.discount || 0)).toFixed(2)}
+            </span>
+          </div>
           <div className="flex items-center gap-2">
             <button
               onClick={handleWishlist}
@@ -360,19 +374,20 @@ export default function ShopPage() {
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const { totalItems, totalPrice, setIsDrawerOpen } = useCart();
   const { t } = useLanguage();
+  const { products, categories: SHOP_CATEGORIES } = useProducts();
 
   const filteredProducts = useMemo(() => {
-    let products = SHOP_PRODUCTS;
+    let currentProducts = products.filter(p => p.status !== 'inactive');
 
     // Filter by category
     if (activeCategory !== 'all') {
-      products = products.filter((p) => p.category === activeCategory);
+      currentProducts = currentProducts.filter((p) => p.category === activeCategory);
     }
 
     // Filter by search
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
-      products = products.filter(
+      currentProducts = currentProducts.filter(
         (p) =>
           p.name.toLowerCase().includes(q) ||
           p.description.toLowerCase().includes(q) ||
@@ -381,12 +396,12 @@ export default function ShopPage() {
     }
 
     // Sort
-    if (sortBy === 'price-asc') products = [...products].sort((a, b) => a.price - b.price);
-    if (sortBy === 'price-desc') products = [...products].sort((a, b) => b.price - a.price);
-    if (sortBy === 'name') products = [...products].sort((a, b) => a.name.localeCompare(b.name));
+    if (sortBy === 'price-asc') currentProducts = [...currentProducts].sort((a, b) => (a.price - (a.discount||0)) - (b.price - (b.discount||0)));
+    if (sortBy === 'price-desc') currentProducts = [...currentProducts].sort((a, b) => (b.price - (b.discount||0)) - (a.price - (a.discount||0)));
+    if (sortBy === 'name') currentProducts = [...currentProducts].sort((a, b) => a.name.localeCompare(b.name));
 
-    return products;
-  }, [activeCategory, searchQuery, sortBy]);
+    return currentProducts;
+  }, [products, activeCategory, searchQuery, sortBy]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const paginatedProducts = filteredProducts.slice(
