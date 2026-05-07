@@ -4,17 +4,21 @@ import { useProducts } from '../../context/ProductContext';
 import { ArrowLeft, Save } from 'lucide-react';
 import ImageUpload from '../../components/admin/ImageUpload';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
+import { translations } from '../../data/translations';
 
 export default function AdminProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products, categories, addProduct, updateProduct } = useProducts();
+  const { SUPPORTED_LANGS } = useLanguage();
+  const [activeLang, setActiveLang] = useState('tr');
   
   const isEditing = Boolean(id);
   
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
+    name: { tr: '', en: '', de: '', ru: '' },
+    description: { tr: '', en: '', de: '', ru: '' },
     price: '',
     discount: '0',
     stock: '10',
@@ -30,9 +34,26 @@ export default function AdminProductForm() {
     if (isEditing) {
       const product = products.find(p => p.id === id);
       if (product) {
+        const initialName = { tr: '', en: '', de: '', ru: '' };
+        const initialDesc = { tr: '', en: '', de: '', ru: '' };
+        
+        SUPPORTED_LANGS.forEach(l => {
+          if (product.name && typeof product.name === 'object') {
+            initialName[l] = product.name[l] || '';
+          } else {
+            initialName[l] = translations[l]?.[product.name] || product.name || '';
+          }
+          
+          if (product.description && typeof product.description === 'object') {
+            initialDesc[l] = product.description[l] || '';
+          } else {
+            initialDesc[l] = translations[l]?.[product.description] || product.description || '';
+          }
+        });
+
         setFormData({
-          name: product.name || '',
-          description: product.description || '',
+          name: initialName,
+          description: initialDesc,
           price: product.price?.toString() || '',
           discount: product.discount?.toString() || '0',
           stock: product.stock?.toString() || '0',
@@ -50,20 +71,35 @@ export default function AdminProductForm() {
         navigate('/admin/products');
       }
     }
-  }, [id, isEditing, products, categories, navigate]);
+  }, [id, isEditing, products, categories, navigate, SUPPORTED_LANGS]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: null }));
     }
   };
 
+  const handleLangFieldChange = (e, field) => {
+    const { value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [field]: {
+        ...prev[field],
+        [activeLang]: value
+      }
+    }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: null }));
+    }
+  };
+
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Product name is required';
+    if (!formData.name.tr?.trim() && !formData.name.en?.trim()) {
+      newErrors.name = 'Product name is required (TR or EN)';
+    }
     
     const priceNum = parseFloat(formData.price);
     if (isNaN(priceNum) || priceNum < 0) {
@@ -142,13 +178,33 @@ export default function AdminProductForm() {
           <div className="bg-ivory p-6 rounded-2xl shadow-sm border border-cream-dark/25 space-y-4">
             <h2 className="font-display text-xl font-semibold text-espresso border-b border-cream-dark/25 pb-4">Basic Information</h2>
             
+            {/* Language Tabs */}
+            <div className="flex gap-2 mb-4 border-b border-cream-dark/25 pb-2">
+              {SUPPORTED_LANGS.map(l => (
+                <button
+                  key={l}
+                  type="button"
+                  onClick={() => setActiveLang(l)}
+                  className={`px-4 py-1.5 rounded-t-lg text-sm font-medium uppercase transition-colors ${
+                    activeLang === l 
+                      ? 'bg-champagne text-espresso border-b-2 border-espresso' 
+                      : 'text-warm-gray-dark hover:text-espresso hover:bg-cream'
+                  }`}
+                >
+                  {l}
+                </button>
+              ))}
+            </div>
+
             <div>
-              <label className="block text-sm font-medium text-warm-gray-dark mb-1">Product Name *</label>
+              <label className="block text-sm font-medium text-warm-gray-dark mb-1">
+                Product Name ({activeLang.toUpperCase()}) *
+              </label>
               <input
                 type="text"
                 name="name"
-                value={formData.name}
-                onChange={handleChange}
+                value={formData.name[activeLang] || ''}
+                onChange={(e) => handleLangFieldChange(e, 'name')}
                 className="w-full px-4 py-2.5 rounded-xl bg-champagne border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50"
                 placeholder="e.g. Pistachio Gelato"
               />
@@ -156,11 +212,13 @@ export default function AdminProductForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-warm-gray-dark mb-1">Description</label>
+              <label className="block text-sm font-medium text-warm-gray-dark mb-1">
+                Description ({activeLang.toUpperCase()})
+              </label>
               <textarea
                 name="description"
-                value={formData.description}
-                onChange={handleChange}
+                value={formData.description[activeLang] || ''}
+                onChange={(e) => handleLangFieldChange(e, 'description')}
                 rows="4"
                 className="w-full px-4 py-2.5 rounded-xl bg-champagne border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50 resize-none"
                 placeholder="Product description..."
