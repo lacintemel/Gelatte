@@ -61,7 +61,7 @@ export default function QuickViewModal({ product, onClose }) {
             <div className="relative w-full md:w-1/2 aspect-square bg-cream-light shrink-0">
               <img
                 src={product.images?.[0] || product.image}
-                alt={product.name}
+                alt={t(product.name)}
                 className="w-full h-full object-cover"
               />
               {product.badge && (
