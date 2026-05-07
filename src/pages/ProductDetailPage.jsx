@@ -27,7 +27,7 @@ function RelatedCard({ product }) {
 
   const handleAdd = () => {
     addItem(product);
-    addToast(`${product.name} ${t('pd_added').replace('✓ ', '')}`, 'success');
+    addToast(`${t(product.name)} ${t('pd_added').replace('✓ ', '')}`, 'success');
   };
 
   return (
@@ -214,7 +214,7 @@ export default function ProductDetailPage() {
             <div className="luxury-divider-wide mb-6" />
 
             <p className="text-walnut-light text-base leading-relaxed mb-8">
-              {product.description}. Every order is prepared fresh with premium ingredients, ensuring
+              {t(product.description)}. Every order is prepared fresh with premium ingredients, ensuring
               an exceptional experience with every bite.
             </p>
 
