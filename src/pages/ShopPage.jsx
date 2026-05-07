@@ -42,7 +42,7 @@ function ProductCardGrid({ product, index, onQuickView }) {
     e.stopPropagation();
     addItem(product);
     setAdded(true);
-    addToast(`${product.name} ${t('pd_added').replace('✓ ', '')}`, 'success');
+    addToast(`${t(product.name)} ${t('pd_added').replace('✓ ', '')}`, 'success');
     setTimeout(() => setAdded(false), 1200);
   };
 
@@ -51,7 +51,7 @@ function ProductCardGrid({ product, index, onQuickView }) {
     e.stopPropagation();
     toggleWishlist(product.id);
     addToast(
-      wishlisted ? `Removed from wishlist` : `${product.name} added to wishlist`,
+      wishlisted ? `Removed from wishlist` : `${t(product.name)} added to wishlist`,
       wishlisted ? 'info' : 'success'
     );
   };
@@ -80,7 +80,7 @@ function ProductCardGrid({ product, index, onQuickView }) {
         <div className="relative aspect-square overflow-hidden bg-cream-light">
           <img
             src={product.images?.[0] || product.image}
-            alt={product.name}
+            alt={t(product.name)}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
           />
@@ -199,14 +199,14 @@ function ProductCardList({ product, onQuickView }) {
   const handleAdd = () => {
     addItem(product);
     setAdded(true);
-    addToast(`${product.name} ${t('pd_added').replace('✓ ', '')}`, 'success');
+    addToast(`${t(product.name)} ${t('pd_added').replace('✓ ', '')}`, 'success');
     setTimeout(() => setAdded(false), 1200);
   };
 
   const handleWishlist = () => {
     toggleWishlist(product.id);
     addToast(
-      wishlisted ? `Removed from wishlist` : `${product.name} added to wishlist`,
+      wishlisted ? `Removed from wishlist` : `${t(product.name)} added to wishlist`,
       wishlisted ? 'info' : 'success'
     );
   };
@@ -227,7 +227,7 @@ function ProductCardList({ product, onQuickView }) {
         <div className="relative h-full overflow-hidden bg-cream-light">
           <img
             src={product.images?.[0] || product.image}
-            alt={product.name}
+            alt={t(product.name)}
             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
           />
@@ -250,11 +250,11 @@ function ProductCardList({ product, onQuickView }) {
           </p>
           <Link to={`/shop/product/${product.id}`}>
             <h3 className="font-display text-base md:text-lg font-semibold text-espresso mb-1 group-hover:text-walnut-light transition-colors">
-              {product.name}
+              {t(product.name)}
             </h3>
           </Link>
           <p className="text-warm-gray-dark text-xs leading-relaxed line-clamp-2 mb-3">
-            {product.description}
+            {t(product.description)}
           </p>
         </div>
 
@@ -389,8 +389,8 @@ export default function ShopPage() {
       const q = searchQuery.toLowerCase();
       currentProducts = currentProducts.filter(
         (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q) ||
+          (t(p.name) || '').toLowerCase().includes(q) ||
+          (t(p.description) || '').toLowerCase().includes(q) ||
           p.category.toLowerCase().includes(q)
       );
     }
@@ -398,7 +398,7 @@ export default function ShopPage() {
     // Sort
     if (sortBy === 'price-asc') currentProducts = [...currentProducts].sort((a, b) => (a.price - (a.discount||0)) - (b.price - (b.discount||0)));
     if (sortBy === 'price-desc') currentProducts = [...currentProducts].sort((a, b) => (b.price - (b.discount||0)) - (a.price - (a.discount||0)));
-    if (sortBy === 'name') currentProducts = [...currentProducts].sort((a, b) => a.name.localeCompare(b.name));
+    if (sortBy === 'name') currentProducts = [...currentProducts].sort((a, b) => (t(a.name) || '').localeCompare(t(b.name) || ''));
 
     return currentProducts;
   }, [products, activeCategory, searchQuery, sortBy]);
