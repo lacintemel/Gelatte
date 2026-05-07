@@ -2,15 +2,18 @@ import React, { useState, useMemo } from 'react';
 import { useProducts } from '../../context/ProductContext';
 import { Plus, Search, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function AdminProducts() {
   const { products, deleteProduct, categories } = useProducts();
+  const { t } = useLanguage();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
-      const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const nameStr = (t(p.name) || '').toLowerCase();
+      const matchesSearch = nameStr.includes(searchQuery.toLowerCase()) || 
                            p.id.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter;
       return matchesSearch && matchesCategory;
@@ -83,13 +86,13 @@ export default function AdminProducts() {
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-lg bg-cream flex-shrink-0 flex items-center justify-center overflow-hidden border border-cream-dark/20">
                           {product.images?.[0] || product.image ? (
-                            <img src={product.images?.[0] || product.image} alt={product.name} className="w-full h-full object-cover" />
+                            <img src={product.images?.[0] || product.image} alt={t(product.name)} className="w-full h-full object-cover" />
                           ) : (
                             <ImageIcon className="w-5 h-5 text-warm-gray/50" />
                           )}
                         </div>
                         <div>
-                          <p className="font-medium text-espresso">{product.name}</p>
+                          <p className="font-medium text-espresso">{t(product.name)}</p>
                           <p className="text-xs text-warm-gray">ID: {product.id}</p>
                         </div>
                       </div>
