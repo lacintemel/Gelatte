@@ -2,9 +2,11 @@ import React from 'react';
 import { useProducts } from '../../context/ProductContext';
 import { Package, FolderTree, TrendingUp, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../context/LanguageContext';
 
 export default function AdminDashboard() {
   const { products, categories } = useProducts();
+  const { t } = useLanguage();
 
   const activeProducts = products.filter(p => p.status === 'active').length;
   const lowStockProducts = products.filter(p => p.stock > 0 && p.stock <= 5).length;
@@ -47,10 +49,10 @@ export default function AdminDashboard() {
             <div key={product.id} className="p-4 px-6 flex items-center justify-between hover:bg-champagne/50 transition-colors">
               <div className="flex items-center">
                 <div className="w-12 h-12 rounded-lg bg-cream overflow-hidden mr-4 border border-cream-dark/20">
-                  <img src={product.images ? product.images[0] : product.image} alt={product.name} className="w-full h-full object-cover" />
+                  <img src={product.images ? product.images[0] : product.image} alt={t(product.name)} className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h4 className="font-medium text-espresso">{product.name}</h4>
+                  <h4 className="font-medium text-espresso">{t(product.name)}</h4>
                   <p className="text-xs text-warm-gray uppercase tracking-wider">{product.category}</p>
                 </div>
               </div>
