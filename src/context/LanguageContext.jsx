@@ -19,6 +19,10 @@ export function LanguageProvider({ children }) {
   }, []);
 
   const t = useCallback((key) => {
+    // Support dynamic translations directly stored as objects
+    if (key && typeof key === 'object') {
+      return key[lang] || key['en'] || Object.values(key)[0] || '';
+    }
     return translations[lang]?.[key] || translations['en']?.[key] || key;
   }, [lang]);
 
