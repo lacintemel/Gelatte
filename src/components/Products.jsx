@@ -33,7 +33,7 @@ function ProductCard({ product, index, t }) {
       <div className="relative aspect-square overflow-hidden">
         <img
           src={product.image}
-          alt={product.name}
+          alt={t(product.name)}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           loading="lazy"
         />
@@ -57,7 +57,7 @@ function ProductCard({ product, index, t }) {
             group-hover:opacity-100 group-hover:translate-y-0
             hover:bg-cream hover:scale-110
           "
-          aria-label={`Order ${product.name}`}
+          aria-label={`Order ${t(product.name)}`}
         >
           <ShoppingBag className="w-5 h-5 text-espresso" />
         </Link>
@@ -106,7 +106,7 @@ export default function Products() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {PRODUCTS.map((product, i) => (
-            <ProductCard key={product.name} product={product} index={i} t={t} />
+            <ProductCard key={i} product={product} index={i} t={t} />
           ))}
         </div>
 
