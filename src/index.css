@@ -41,6 +41,25 @@ body {
   background-color: var(--color-ivory);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* ── Dark Mode Theme ── */
+[data-theme="dark"] {
+  --color-cream: #1e1a17;
+  --color-cream-light: #252019;
+  --color-cream-dark: #3a332a;
+  --color-champagne: #151210;
+  --color-beige: #2a241c;
+  --color-beige-warm: #3d3528;
+  --color-ivory: #1a1613;
+  --color-walnut: #e8dfd0;
+  --color-walnut-light: #c4b8a6;
+  --color-espresso: #f5f0e8;
+  --color-espresso-light: #d4c5b0;
+  --color-warm-gray: #9e9689;
+  --color-warm-gray-light: #6a635a;
+  --color-warm-gray-dark: #b8b0a4;
 }
 
 /* ── Custom Scrollbar ── */
