@@ -139,4 +139,42 @@ export const tr = {
   prod_d1_name: "Çikolatalı Mousse Lüks", prod_d1_desc: "Altın yaprağı, çikolata rendesi ve ahududu ile Belçika çikolatalı mousse",
   prod_d2_name: "Crème Brûlée", prod_d2_desc: "Karamelize şeker kabuğu ile Madagaskar vanilyalı muhallebi",
   prod_d3_name: "Panna Cotta", prod_d3_desc: "Mevsimsel meyve kompostosu ve taze nane ile ipeksi İtalyan kreması",
+
+  // Advanced Filters
+  shop_filters: "Filtreler", shop_filter_price: "Fiyat Aralığı", shop_filter_min: "Min",
+  shop_filter_max: "Maks", shop_filter_apply: "Filtreleri Uygula", shop_filter_reset: "Sıfırla",
+  shop_filter_badge: "Tür", shop_filter_all_badges: "Tüm Türler",
+  shop_filter_in_stock: "Sadece Stokta", shop_filter_active: "Aktif Filtreler",
+
+  // Reviews
+  rv_title: "Müşteri Yorumları", rv_write: "Yorum Yaz", rv_name: "Adınız",
+  rv_name_ph: "Adınızı girin", rv_comment: "Yorumunuz", rv_comment_ph: "Deneyiminizi paylaşın...",
+  rv_rating: "Değerlendirme", rv_submit: "Yorum Gönder", rv_no_reviews: "Henüz yorum yok",
+  rv_be_first: "Bu ürün hakkında deneyiminizi paylaşan ilk kişi olun.",
+  rv_avg: "ortalama", rv_based_on: "Toplam", rv_reviews_count: "değerlendirme",
+  rv_thank_you: "Yorumunuz için teşekkürler!", rv_submitted: "Yorum başarıyla gönderildi",
+
+  // Orders
+  ord_title: "Siparişler", ord_all: "Tüm Siparişler", ord_pending: "Beklemede", ord_preparing: "Hazırlanıyor",
+  ord_shipped: "Kargolandı", ord_delivered: "Teslim Edildi", ord_cancelled: "İptal Edildi",
+  ord_no_orders: "Henüz sipariş yok", ord_order: "Sipariş", ord_date: "Tarih", ord_status: "Durum",
+  ord_total: "Toplam", ord_items: "Ürünler", ord_customer: "Müşteri", ord_details: "Sipariş Detayı",
+  ord_update_status: "Durumu Güncelle", ord_shipping_info: "Teslimat Bilgileri",
+
+  // Coupons
+  cp_title: "Kuponlar", cp_add: "Kupon Ekle", cp_code: "Kod", cp_discount: "İndirim",
+  cp_type_percent: "Yüzdelik", cp_type_fixed: "Sabit Tutar", cp_min_order: "Min. Sipariş",
+  cp_valid_from: "Geçerlilik Başlangıcı", cp_valid_to: "Geçerlilik Sonu", cp_uses: "Kullanım",
+  cp_max_uses: "Maks Kullanım", cp_active: "Aktif", cp_inactive: "Pasif",
+  cp_no_coupons: "Henüz kupon oluşturulmadı", cp_delete_confirm: "Bu kuponu silinsin mi?",
+  cp_invalid: "Geçersiz kupon kodu", cp_expired: "Bu kuponun süresi dolmuş",
+  cp_min_not_met: "Minimum sipariş tutarına ulaşılmadı",
+
+  // Dark Mode
+  dm_dark: "Karanlık Mod", dm_light: "Aydınlık Mod",
+
+  // Admin Dashboard Charts
+  adm_revenue: "Gelir", adm_orders_count: "Siparişler", adm_top_products: "En Çok Satan Ürünler",
+  adm_category_dist: "Kategori Dağılımı", adm_weekly: "Bu Hafta", adm_monthly: "Bu Ay",
+  adm_daily_sales: "Günlük Satışlar", adm_recent_orders: "Son Siparişler",
 };

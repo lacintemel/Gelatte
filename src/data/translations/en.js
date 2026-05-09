@@ -125,4 +125,42 @@ export const en = {
   prod_d1_name: "Chocolate Mousse Royale", prod_d1_desc: "Belgian chocolate mousse with gold leaf, chocolate shavings, and raspberry",
   prod_d2_name: "Crème Brûlée", prod_d2_desc: "Madagascar vanilla bean custard with caramelised sugar crust",
   prod_d3_name: "Panna Cotta", prod_d3_desc: "Silky Italian cream dessert with seasonal berry compote and fresh mint",
+
+  // Advanced Filters
+  shop_filters: "Filters", shop_filter_price: "Price Range", shop_filter_min: "Min",
+  shop_filter_max: "Max", shop_filter_apply: "Apply Filters", shop_filter_reset: "Reset",
+  shop_filter_badge: "Type", shop_filter_all_badges: "All Types",
+  shop_filter_in_stock: "In Stock Only", shop_filter_active: "Active Filters",
+
+  // Reviews
+  rv_title: "Customer Reviews", rv_write: "Write a Review", rv_name: "Your Name",
+  rv_name_ph: "Enter your name", rv_comment: "Your Review", rv_comment_ph: "Share your experience...",
+  rv_rating: "Rating", rv_submit: "Submit Review", rv_no_reviews: "No reviews yet",
+  rv_be_first: "Be the first to share your experience with this product.",
+  rv_avg: "average", rv_based_on: "Based on", rv_reviews_count: "reviews",
+  rv_thank_you: "Thank you for your review!", rv_submitted: "Review submitted successfully",
+
+  // Orders
+  ord_title: "Orders", ord_all: "All Orders", ord_pending: "Pending", ord_preparing: "Preparing",
+  ord_shipped: "Shipped", ord_delivered: "Delivered", ord_cancelled: "Cancelled",
+  ord_no_orders: "No orders yet", ord_order: "Order", ord_date: "Date", ord_status: "Status",
+  ord_total: "Total", ord_items: "Items", ord_customer: "Customer", ord_details: "Order Details",
+  ord_update_status: "Update Status", ord_shipping_info: "Shipping Information",
+
+  // Coupons
+  cp_title: "Coupons", cp_add: "Add Coupon", cp_code: "Code", cp_discount: "Discount",
+  cp_type_percent: "Percentage", cp_type_fixed: "Fixed Amount", cp_min_order: "Min. Order",
+  cp_valid_from: "Valid From", cp_valid_to: "Valid To", cp_uses: "Uses",
+  cp_max_uses: "Max Uses", cp_active: "Active", cp_inactive: "Inactive",
+  cp_no_coupons: "No coupons created yet", cp_delete_confirm: "Delete this coupon?",
+  cp_invalid: "Invalid coupon code", cp_expired: "This coupon has expired",
+  cp_min_not_met: "Minimum order amount not met",
+
+  // Dark Mode
+  dm_dark: "Dark Mode", dm_light: "Light Mode",
+
+  // Admin Dashboard Charts
+  adm_revenue: "Revenue", adm_orders_count: "Orders", adm_top_products: "Top Products",
+  adm_category_dist: "Category Distribution", adm_weekly: "This Week", adm_monthly: "This Month",
+  adm_daily_sales: "Daily Sales", adm_recent_orders: "Recent Orders",
 };
