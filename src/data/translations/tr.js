@@ -177,4 +177,33 @@ export const tr = {
   adm_revenue: "Gelir", adm_orders_count: "Siparişler", adm_top_products: "En Çok Satan Ürünler",
   adm_category_dist: "Kategori Dağılımı", adm_weekly: "Bu Hafta", adm_monthly: "Bu Ay",
   adm_daily_sales: "Günlük Satışlar", adm_recent_orders: "Son Siparişler",
+
+  // Auth & Hesap
+  auth_login: "Giriş Yap", auth_register: "Hesap Oluştur",
+  auth_login_desc: "Gelatte hesabınıza giriş yapın",
+  auth_register_desc: "Online sipariş vermek için hesap oluşturun",
+  auth_email: "E-posta", auth_password: "Şifre", auth_name: "Ad Soyad",
+  auth_name_ph: "Adınız ve soyadınız", auth_phone: "Telefon",
+  auth_confirm_pw: "Şifre Tekrar", auth_current_pw: "Mevcut Şifre",
+  auth_new_pw: "Yeni Şifre", auth_change_pw: "Şifre Değiştir",
+  auth_no_account: "Hesabınız yok mu?", auth_have_account: "Zaten hesabınız var mı?",
+  auth_invalid_credentials: "Geçersiz e-posta veya şifre",
+  auth_not_admin: "Bu hesap admin erişimine sahip değil",
+  auth_email_exists: "Bu e-posta adresiyle bir hesap zaten mevcut",
+  auth_weak_password: "Şifre en az 6 karakter olmalıdır",
+  auth_missing_fields: "Lütfen tüm zorunlu alanları doldurun",
+  auth_passwords_mismatch: "Şifreler eşleşmiyor",
+  auth_welcome_back: "Tekrar hoş geldiniz!", auth_register_success: "Hesabınız başarıyla oluşturuldu!",
+  auth_profile: "Profil", auth_my_orders: "Siparişlerim", auth_logout: "Çıkış Yap",
+  auth_profile_saved: "Profil başarıyla kaydedildi", auth_password_changed: "Şifre başarıyla değiştirildi",
+  auth_address: "Adres", auth_delivery_pref: "Teslimat Tercihi",
+  auth_pref_delivery: "Teslimat", auth_pref_takeaway: "Gel Al",
+  auth_save: "Değişiklikleri Kaydet",
+
+  // Sipariş Durumları (güncel)
+  ord_new: "Yeni", ord_preparing: "Hazırlanıyor", ord_ready: "Hazır",
+  ord_completed: "Tamamlandı", ord_cancelled: "İptal Edildi",
+
+  // Ürün Erişilebilirliği
+  prod_dine_in_only: "Sadece Mekanda", prod_online_available: "Online Sipariş",
 };

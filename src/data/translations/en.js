@@ -163,4 +163,33 @@ export const en = {
   adm_revenue: "Revenue", adm_orders_count: "Orders", adm_top_products: "Top Products",
   adm_category_dist: "Category Distribution", adm_weekly: "This Week", adm_monthly: "This Month",
   adm_daily_sales: "Daily Sales", adm_recent_orders: "Recent Orders",
+
+  // Auth & Account
+  auth_login: "Sign In", auth_register: "Create Account",
+  auth_login_desc: "Sign in to your Gelatte account",
+  auth_register_desc: "Create an account to order online",
+  auth_email: "Email", auth_password: "Password", auth_name: "Full Name",
+  auth_name_ph: "Your full name", auth_phone: "Phone",
+  auth_confirm_pw: "Confirm Password", auth_current_pw: "Current Password",
+  auth_new_pw: "New Password", auth_change_pw: "Change Password",
+  auth_no_account: "Don't have an account?", auth_have_account: "Already have an account?",
+  auth_invalid_credentials: "Invalid email or password",
+  auth_not_admin: "This account does not have admin access",
+  auth_email_exists: "An account with this email already exists",
+  auth_weak_password: "Password must be at least 6 characters",
+  auth_missing_fields: "Please fill in all required fields",
+  auth_passwords_mismatch: "Passwords do not match",
+  auth_welcome_back: "Welcome back!", auth_register_success: "Account created successfully!",
+  auth_profile: "Profile", auth_my_orders: "My Orders", auth_logout: "Logout",
+  auth_profile_saved: "Profile saved successfully", auth_password_changed: "Password changed successfully",
+  auth_address: "Address", auth_delivery_pref: "Delivery Preference",
+  auth_pref_delivery: "Delivery", auth_pref_takeaway: "Takeaway",
+  auth_save: "Save Changes",
+
+  // Order Statuses (updated)
+  ord_new: "New", ord_preparing: "Preparing", ord_ready: "Ready",
+  ord_completed: "Completed", ord_cancelled: "Cancelled",
+
+  // Product Availability
+  prod_dine_in_only: "Dine-in Only", prod_online_available: "Order Online",
 };
