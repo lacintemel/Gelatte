@@ -12,7 +12,14 @@ export function ProductProvider({ children }) {
     const storedCategories = localStorage.getItem('gelatte_categories');
 
     if (storedProducts) {
-      setProducts(JSON.parse(storedProducts));
+      // Migrate existing products to add new flags if missing
+      const parsed = JSON.parse(storedProducts);
+      const migrated = parsed.map(p => ({
+        ...p,
+        showInMenu: p.showInMenu !== undefined ? p.showInMenu : true,
+        availableForOnlineOrder: p.availableForOnlineOrder !== undefined ? p.availableForOnlineOrder : true,
+      }));
+      setProducts(migrated);
     } else {
       // Map initial products to include new fields like stock, discount, status, availability
       const initialized = INITIAL_PRODUCTS.map(p => ({
