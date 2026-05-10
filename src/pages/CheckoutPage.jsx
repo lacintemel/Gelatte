@@ -7,6 +7,8 @@ import {
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useOrders } from '../context/OrderContext';
+import { useCoupons } from '../context/CouponContext';
 
 const STEPS = [
   { id: 1, labelKey: 'ch_step_review', icon: ShoppingBag },
@@ -402,10 +404,13 @@ export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
   const { addToast } = useToast();
   const { t } = useLanguage();
+  const { addOrder } = useOrders();
+  const { validateCoupon, applyCoupon, calculateDiscount } = useCoupons();
 
   const [step, setStep] = useState(1);
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [orderNumber, setOrderNumber] = useState('');
 
   // Shipping form
@@ -422,11 +427,14 @@ export default function CheckoutPage() {
   const [payErrors, setPayErrors] = useState({});
 
   const applyPromo = () => {
-    if (promoCode.trim() === 'GELATTE10' || promoCode.trim() === 'WELCOME') {
+    const result = validateCoupon(promoCode.trim(), totalPrice);
+    if (result.valid) {
       setPromoApplied(true);
-      addToast('Promo code applied! 10% discount', 'success');
+      setAppliedCoupon(result.coupon);
+      const disc = calculateDiscount(result.coupon, totalPrice);
+      addToast(`Promo code applied! €${disc.toFixed(2)} discount`, 'success');
     } else {
-      addToast('Invalid promo code', 'warning');
+      addToast(t(result.error), 'warning');
     }
   };
 
@@ -471,8 +479,21 @@ export default function CheckoutPage() {
       }
     } else if (from === 3) {
       if (validatePayment()) {
-        const num = 'GL-' + Date.now().toString(36).toUpperCase().slice(-6) + Math.random().toString(36).toUpperCase().slice(2, 5);
-        setOrderNumber(num);
+        const discountAmount = appliedCoupon ? calculateDiscount(appliedCoupon, totalPrice) : 0;
+        const finalTotal = totalPrice - discountAmount;
+
+        const order = addOrder({
+          items: items.map(i => ({ id: i.id, name: i.name, price: i.price, discount: i.discount || 0, quantity: i.quantity, image: i.images?.[0] || i.image })),
+          customer: form,
+          subtotal: totalPrice,
+          discountAmount,
+          couponCode: appliedCoupon?.code || null,
+          total: finalTotal,
+        });
+
+        if (appliedCoupon) applyCoupon(appliedCoupon.code);
+
+        setOrderNumber(order.id);
         clearCart();
         setStep(4);
         addToast('Order placed successfully!', 'success');
