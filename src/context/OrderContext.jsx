@@ -3,12 +3,20 @@ import { createContext, useContext, useState, useCallback, useEffect } from 'rea
 const OrderContext = createContext(null);
 const STORAGE_KEY = 'gelatte_orders';
 
-const ORDER_STATUSES = ['pending', 'preparing', 'shipped', 'delivered', 'cancelled'];
+const ORDER_STATUSES = ['new', 'preparing', 'ready', 'completed', 'cancelled'];
 
 function loadOrders() {
   try {
     const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    // Migrate old statuses
+    const orders = JSON.parse(data);
+    return orders.map(o => {
+      if (o.status === 'pending') return { ...o, status: 'new' };
+      if (o.status === 'shipped') return { ...o, status: 'ready' };
+      if (o.status === 'delivered') return { ...o, status: 'completed' };
+      return o;
+    });
   } catch {
     return [];
   }
@@ -25,7 +33,7 @@ export function OrderProvider({ children }) {
     const order = {
       id: 'GL-' + Date.now().toString(36).toUpperCase().slice(-6) + Math.random().toString(36).toUpperCase().slice(2, 5),
       ...orderData,
-      status: 'pending',
+      status: 'new',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -57,12 +65,17 @@ export function OrderProvider({ children }) {
     [orders]
   );
 
+  const getOrdersByCustomer = useCallback(
+    (email) => orders.filter((o) => o.customer?.email?.toLowerCase() === email?.toLowerCase()),
+    [orders]
+  );
+
   // Stats for dashboard
   const stats = {
     totalOrders: orders.length,
     totalRevenue: orders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (o.total || 0), 0),
-    pendingOrders: orders.filter(o => o.status === 'pending').length,
-    deliveredOrders: orders.filter(o => o.status === 'delivered').length,
+    newOrders: orders.filter(o => o.status === 'new').length,
+    completedOrders: orders.filter(o => o.status === 'completed').length,
   };
 
   return (
@@ -73,6 +86,7 @@ export function OrderProvider({ children }) {
         updateOrderStatus,
         getOrderById,
         getOrdersByStatus,
+        getOrdersByCustomer,
         stats,
         ORDER_STATUSES,
       }}

@@ -15,6 +15,9 @@ import LandingPage from './pages/LandingPage';
 import ShopPage from './pages/ShopPage';
 import ProductDetailPage from './pages/ProductDetailPage';
 import CheckoutPage from './pages/CheckoutPage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import AccountPage from './pages/AccountPage';
 
 // Admin Components
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
@@ -47,6 +50,11 @@ export default function App() {
                             <Route path="/shop" element={<ShopPage />} />
                             <Route path="/shop/product/:id" element={<ProductDetailPage />} />
                             <Route path="/checkout" element={<CheckoutPage />} />
+
+                            {/* Customer Auth */}
+                            <Route path="/login" element={<LoginPage />} />
+                            <Route path="/register" element={<RegisterPage />} />
+                            <Route path="/account" element={<AccountPage />} />
 
                             {/* Admin Login */}
                             <Route path="/admin/login" element={<AdminLogin />} />
