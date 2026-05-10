@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Menu, X, ArrowLeft } from 'lucide-react';
+import { ShoppingBag, Menu, X, ArrowLeft, Sun, Moon, User, LogIn } from 'lucide-react';
 import { BRAND } from '../constants';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 import LanguageSwitcher from './LanguageSwitcher';
 
 const SHOP_NAV_LINKS = [
@@ -17,6 +19,8 @@ export default function ShopNavbar() {
   const { totalItems, setIsDrawerOpen } = useCart();
   const location = useLocation();
   const { t } = useLanguage();
+  const { isDark, toggleTheme } = useTheme();
+  const { isAuthenticated, currentUser } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -82,6 +86,24 @@ export default function ShopNavbar() {
           <div className="hidden lg:block">
             <LanguageSwitcher scrolled={true} />
           </div>
+
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="w-10 h-10 rounded-full flex items-center justify-center text-walnut-light hover:text-espresso hover:bg-cream transition-all duration-300"
+            aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+
+          {/* User Account / Login */}
+          <Link
+            to={isAuthenticated ? '/account' : '/login'}
+            className="hidden sm:flex w-10 h-10 rounded-full items-center justify-center text-walnut-light hover:text-espresso hover:bg-cream transition-all duration-300"
+            title={isAuthenticated ? currentUser?.name : 'Login'}
+          >
+            {isAuthenticated ? <User className="w-5 h-5" /> : <LogIn className="w-5 h-5" />}
+          </Link>
 
           {/* Cart Button */}
           <button
