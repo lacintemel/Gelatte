@@ -38,8 +38,9 @@ function ProductCardGrid({ product, index, onQuickView }) {
   const badgeKey = product.badge ? `prod_${product.badge.toLowerCase().replace(' ', '_')}` : null;
 
   const handleAdd = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
+    e?.preventDefault();
+    e?.stopPropagation();
+    if (product.availableForOnlineOrder === false) return;
     addItem(product);
     setAdded(true);
     addToast(`${t(product.name)} ${t('pd_added').replace('✓ ', '')}`, 'success');
@@ -95,6 +96,13 @@ function ProductCardGrid({ product, index, onQuickView }) {
             </span>
           )}
 
+          {/* Unavailable Badge */}
+          {product.availableForOnlineOrder === false && (
+            <span className="absolute bottom-3 left-3 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wider uppercase bg-warm-gray text-ivory">
+              {t('prod_dine_in_only')}
+            </span>
+          )}
+
           {/* Hover Actions */}
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 translate-x-3 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-400">
             {/* Wishlist */}
@@ -122,24 +130,26 @@ function ProductCardGrid({ product, index, onQuickView }) {
           </div>
 
           {/* Add to cart overlay */}
-          <button
-            onClick={handleAdd}
-            className={`
-              absolute bottom-3 right-3 rounded-full flex items-center justify-center
-              shadow-lg transition-all duration-400 font-medium text-xs tracking-wider uppercase
-              ${added
-                ? 'bg-mint text-espresso w-auto px-4 py-3 gap-2'
-                : 'bg-ivory text-espresso w-11 h-11 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 hover:bg-cream hover:scale-110'
-              }
-            `}
-            aria-label={`Add ${t(product.name)} to cart`}
-          >
-            {added ? (
-              <>{t('shop_added')}</>
-            ) : (
-              <Plus className="w-5 h-5" />
-            )}
-          </button>
+          {product.availableForOnlineOrder !== false && (
+            <button
+              onClick={handleAdd}
+              className={`
+                absolute bottom-3 right-3 rounded-full flex items-center justify-center
+                shadow-lg transition-all duration-400 font-medium text-xs tracking-wider uppercase
+                ${added
+                  ? 'bg-mint text-espresso w-auto px-4 py-3 gap-2'
+                  : 'bg-ivory text-espresso w-11 h-11 opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 hover:bg-cream hover:scale-110'
+                }
+              `}
+              aria-label={`Add ${t(product.name)} to cart`}
+            >
+              {added ? (
+                <>{t('shop_added')}</>
+              ) : (
+                <Plus className="w-5 h-5" />
+              )}
+            </button>
+          )}
         </div>
       </Link>
 
@@ -168,16 +178,22 @@ function ProductCardGrid({ product, index, onQuickView }) {
               €{(product.price - (product.discount || 0)).toFixed(2)}
             </span>
           </div>
-          <button
-            onClick={handleAdd}
-            className="
-              flex items-center gap-1.5 text-xs font-medium text-gold-dark hover:text-espresso
-              tracking-wider uppercase transition-colors duration-300
-            "
-          >
-            <ShoppingBag className="w-3.5 h-3.5" />
-            {t('shop_add')}
-          </button>
+          {product.availableForOnlineOrder !== false ? (
+            <button
+              onClick={handleAdd}
+              className="
+                flex items-center gap-1.5 text-xs font-medium text-gold-dark hover:text-espresso
+                tracking-wider uppercase transition-colors duration-300
+              "
+            >
+              <ShoppingBag className="w-3.5 h-3.5" />
+              {t('shop_add')}
+            </button>
+          ) : (
+            <span className="text-[10px] font-medium text-warm-gray tracking-wider uppercase">
+              {t('prod_dine_in_only')}
+            </span>
+          )}
         </div>
       </div>
     </div>
