@@ -1,8 +1,8 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ShoppingBag, Plus, Search, SlidersHorizontal, ArrowLeft, Heart, Eye,
-  Grid3X3, List, ChevronLeft, ChevronRight, Send,
+  Grid3X3, List, ChevronLeft, ChevronRight, Send, X, Filter,
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
@@ -368,25 +368,55 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
 export default function ShopPage() {
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [sortBy, setSortBy] = useState('default');
   const [viewMode, setViewMode] = useState('grid');
   const [currentPage, setCurrentPage] = useState(1);
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Advanced filters
+  const [priceRange, setPriceRange] = useState([0, 50]);
+  const [selectedBadge, setSelectedBadge] = useState('all');
+  const [inStockOnly, setInStockOnly] = useState(false);
+
   const { totalItems, totalPrice, setIsDrawerOpen } = useCart();
   const { t } = useLanguage();
   const { products, categories: SHOP_CATEGORIES } = useProducts();
 
+  // Debounced search
+  const searchTimerRef = useRef(null);
+  useEffect(() => {
+    searchTimerRef.current = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+    return () => clearTimeout(searchTimerRef.current);
+  }, [searchQuery]);
+
+  // Price bounds
+  const priceBounds = useMemo(() => {
+    if (!products.length) return [0, 50];
+    const prices = products.map(p => p.price - (p.discount || 0));
+    return [Math.floor(Math.min(...prices)), Math.ceil(Math.max(...prices))];
+  }, [products]);
+
+  const activeFilterCount = useMemo(() => {
+    let count = 0;
+    if (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1]) count++;
+    if (selectedBadge !== 'all') count++;
+    if (inStockOnly) count++;
+    return count;
+  }, [priceRange, priceBounds, selectedBadge, inStockOnly]);
+
   const filteredProducts = useMemo(() => {
     let currentProducts = products.filter(p => p.status !== 'inactive');
 
-    // Filter by category
     if (activeCategory !== 'all') {
       currentProducts = currentProducts.filter((p) => p.category === activeCategory);
     }
 
-    // Filter by search
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase();
       currentProducts = currentProducts.filter(
         (p) =>
           (t(p.name) || '').toLowerCase().includes(q) ||
@@ -395,13 +425,28 @@ export default function ShopPage() {
       );
     }
 
-    // Sort
+    // Price range filter
+    currentProducts = currentProducts.filter((p) => {
+      const effectivePrice = p.price - (p.discount || 0);
+      return effectivePrice >= priceRange[0] && effectivePrice <= priceRange[1];
+    });
+
+    // Badge filter
+    if (selectedBadge !== 'all') {
+      currentProducts = currentProducts.filter((p) => p.badge === selectedBadge);
+    }
+
+    // Stock filter
+    if (inStockOnly) {
+      currentProducts = currentProducts.filter((p) => (p.stock || 0) > 0);
+    }
+
     if (sortBy === 'price-asc') currentProducts = [...currentProducts].sort((a, b) => (a.price - (a.discount||0)) - (b.price - (b.discount||0)));
     if (sortBy === 'price-desc') currentProducts = [...currentProducts].sort((a, b) => (b.price - (b.discount||0)) - (a.price - (a.discount||0)));
     if (sortBy === 'name') currentProducts = [...currentProducts].sort((a, b) => (t(a.name) || '').localeCompare(t(b.name) || ''));
 
     return currentProducts;
-  }, [products, activeCategory, searchQuery, sortBy]);
+  }, [products, activeCategory, debouncedSearch, sortBy, priceRange, selectedBadge, inStockOnly]);
 
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
   const paginatedProducts = filteredProducts.slice(
@@ -409,7 +454,6 @@ export default function ShopPage() {
     currentPage * ITEMS_PER_PAGE
   );
 
-  // Reset page when filters change
   const handleCategoryChange = (cat) => {
     setActiveCategory(cat);
     setCurrentPage(1);
@@ -494,6 +538,25 @@ export default function ShopPage() {
             />
           </div>
 
+          {/* Filter Toggle */}
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`
+              flex items-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium tracking-wide transition-all duration-300
+              ${showFilters || activeFilterCount > 0
+                ? 'bg-espresso text-cream border-espresso'
+                : 'bg-ivory border-cream-dark/25 text-walnut-light hover:bg-cream'}
+            `}
+          >
+            <Filter className="w-4 h-4" />
+            {t('shop_filters')}
+            {activeFilterCount > 0 && (
+              <span className="w-5 h-5 rounded-full bg-gold text-espresso text-[10px] font-bold flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
+          </button>
+
           {/* Sort */}
           <div className="relative">
             <SlidersHorizontal className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray pointer-events-none" />
@@ -535,6 +598,121 @@ export default function ShopPage() {
               <List className="w-4 h-4" />
             </button>
           </div>
+
+        {/* Advanced Filter Panel */}
+        {showFilters && (
+          <div className="mb-8 p-5 md:p-6 rounded-2xl bg-ivory border border-cream-dark/20 shadow-sm animate-fade-in-up">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="font-display text-lg font-semibold text-espresso">{t('shop_filters')}</h3>
+              <button
+                onClick={() => {
+                  setPriceRange([priceBounds[0], priceBounds[1]]);
+                  setSelectedBadge('all');
+                  setInStockOnly(false);
+                }}
+                className="text-xs font-medium text-gold-dark hover:text-espresso tracking-wider uppercase transition-colors"
+              >
+                {t('shop_filter_reset')}
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {/* Price Range */}
+              <div>
+                <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-3">
+                  {t('shop_filter_price')}
+                </label>
+                <div className="flex items-center gap-3">
+                  <div className="relative flex-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-gray text-xs">€</span>
+                    <input
+                      type="number"
+                      min={priceBounds[0]}
+                      max={priceRange[1]}
+                      value={priceRange[0]}
+                      onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
+                      className="w-full pl-7 pr-2 py-2.5 rounded-lg bg-cream-light border border-cream-dark/25 text-espresso text-sm focus:outline-none focus:border-gold/50 transition-all"
+                      placeholder={t('shop_filter_min')}
+                    />
+                  </div>
+                  <span className="text-warm-gray text-sm">—</span>
+                  <div className="relative flex-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-gray text-xs">€</span>
+                    <input
+                      type="number"
+                      min={priceRange[0]}
+                      max={priceBounds[1]}
+                      value={priceRange[1]}
+                      onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                      className="w-full pl-7 pr-2 py-2.5 rounded-lg bg-cream-light border border-cream-dark/25 text-espresso text-sm focus:outline-none focus:border-gold/50 transition-all"
+                      placeholder={t('shop_filter_max')}
+                    />
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <input
+                    type="range"
+                    min={priceBounds[0]}
+                    max={priceBounds[1]}
+                    value={priceRange[1]}
+                    onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
+                    className="w-full accent-gold h-1.5 rounded-full appearance-none bg-cream-dark cursor-pointer"
+                  />
+                </div>
+              </div>
+
+              {/* Badge Filter */}
+              <div>
+                <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-3">
+                  {t('shop_filter_badge')}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {['all', 'Signature', 'Best Seller', 'Fresh Daily'].map((badge) => (
+                    <button
+                      key={badge}
+                      onClick={() => setSelectedBadge(badge)}
+                      className={`
+                        px-3 py-2 rounded-lg text-xs font-medium tracking-wide transition-all duration-300
+                        ${selectedBadge === badge
+                          ? 'bg-espresso text-cream shadow-sm'
+                          : 'bg-cream-light text-walnut-light border border-cream-dark/20 hover:bg-cream'}
+                      `}
+                    >
+                      {badge === 'all' ? t('shop_filter_all_badges') : t(`prod_${badge.toLowerCase().replace(' ', '_')}`)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* In Stock Toggle */}
+              <div>
+                <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-3">
+                  {t('shop_filter_in_stock')}
+                </label>
+                <button
+                  onClick={() => setInStockOnly(!inStockOnly)}
+                  className={`
+                    flex items-center gap-3 px-4 py-3 rounded-lg border transition-all duration-300 w-full
+                    ${inStockOnly
+                      ? 'bg-mint/10 border-mint/30 text-mint-dark'
+                      : 'bg-cream-light border-cream-dark/20 text-warm-gray'}
+                  `}
+                >
+                  <div className={`
+                    w-10 h-5 rounded-full relative transition-all duration-300
+                    ${inStockOnly ? 'bg-mint' : 'bg-cream-dark'}
+                  `}>
+                    <div className={`
+                      absolute top-0.5 w-4 h-4 rounded-full bg-ivory shadow-sm transition-all duration-300
+                      ${inStockOnly ? 'left-[22px]' : 'left-0.5'}
+                    `} />
+                  </div>
+                  <span className="text-sm font-medium">{t('shop_filter_in_stock')}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
           {/* Results count */}
           <span className="text-sm text-warm-gray hidden md:block ml-auto">
