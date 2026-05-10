@@ -9,6 +9,7 @@ import { useToast } from '../context/ToastContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useOrders } from '../context/OrderContext';
 import { useCoupons } from '../context/CouponContext';
+import { useAuth } from '../context/AuthContext';
 
 const STEPS = [
   { id: 1, labelKey: 'ch_step_review', icon: ShoppingBag },
@@ -406,6 +407,7 @@ export default function CheckoutPage() {
   const { t } = useLanguage();
   const { addOrder } = useOrders();
   const { validateCoupon, applyCoupon, calculateDiscount } = useCoupons();
+  const { currentUser, isAuthenticated } = useAuth();
 
   const [step, setStep] = useState(1);
   const [promoCode, setPromoCode] = useState('');
@@ -413,10 +415,15 @@ export default function CheckoutPage() {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [orderNumber, setOrderNumber] = useState('');
 
-  // Shipping form
+  // Shipping form — pre-fill from logged-in user
   const [form, setForm] = useState({
-    firstName: '', lastName: '', email: '', phone: '',
-    address: '', city: '', zip: '',
+    firstName: currentUser?.name?.split(' ')[0] || '',
+    lastName: currentUser?.name?.split(' ').slice(1).join(' ') || '',
+    email: currentUser?.email || '',
+    phone: currentUser?.phone || '',
+    address: currentUser?.address || '',
+    city: currentUser?.city || '',
+    zip: currentUser?.zip || '',
   });
   const [errors, setErrors] = useState({});
 
