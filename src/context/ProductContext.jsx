@@ -14,12 +14,14 @@ export function ProductProvider({ children }) {
     if (storedProducts) {
       setProducts(JSON.parse(storedProducts));
     } else {
-      // Map initial products to include new fields like stock, discount, status
+      // Map initial products to include new fields like stock, discount, status, availability
       const initialized = INITIAL_PRODUCTS.map(p => ({
         ...p,
         stock: 10,
         discount: 0,
         status: 'active',
+        showInMenu: true,
+        availableForOnlineOrder: true,
         images: [p.image] // Support multiple images
       }));
       setProducts(initialized);
