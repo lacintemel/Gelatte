@@ -25,6 +25,8 @@ export default function AdminProductForm() {
     category: categories[0]?.id || '',
     badge: '',
     status: 'active',
+    showInMenu: true,
+    availableForOnlineOrder: true,
   });
   
   const [images, setImages] = useState([]);
@@ -60,6 +62,8 @@ export default function AdminProductForm() {
           category: product.category || categories[0]?.id || '',
           badge: product.badge || '',
           status: product.status || 'active',
+          showInMenu: product.showInMenu !== false,
+          availableForOnlineOrder: product.availableForOnlineOrder !== false,
         });
         
         if (product.images && product.images.length > 0) {
@@ -139,7 +143,9 @@ export default function AdminProductForm() {
       category: formData.category,
       badge: formData.badge || null,
       status: formData.status,
-      image: images[0], // primary image for compatibility
+      showInMenu: formData.showInMenu,
+      availableForOnlineOrder: formData.availableForOnlineOrder,
+      image: images[0],
       images: images,
     };
 
@@ -325,6 +331,45 @@ export default function AdminProductForm() {
                 <option value="Fresh Daily">Fresh Daily</option>
               </select>
             </div>
+          </div>
+
+          {/* Availability */}
+          <div className="bg-ivory p-6 rounded-2xl shadow-sm border border-cream-dark/25 space-y-4">
+            <h2 className="font-display text-xl font-semibold text-espresso border-b border-cream-dark/25 pb-4">Availability</h2>
+            
+            {/* Show in Menu */}
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, showInMenu: !prev.showInMenu }))}
+              className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                formData.showInMenu ? 'bg-mint/10 border-mint/30' : 'bg-cream-light border-cream-dark/20'
+              }`}
+            >
+              <div className="text-left">
+                <p className="text-sm font-medium text-espresso">Show in Menu</p>
+                <p className="text-[11px] text-warm-gray">Visible in the website menu section</p>
+              </div>
+              <div className={`w-11 h-6 rounded-full relative transition-all ${formData.showInMenu ? 'bg-mint' : 'bg-cream-dark'}`}>
+                <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-ivory shadow-sm transition-all ${formData.showInMenu ? 'left-[22px]' : 'left-0.5'}`} />
+              </div>
+            </button>
+
+            {/* Available for Online Order */}
+            <button
+              type="button"
+              onClick={() => setFormData(prev => ({ ...prev, availableForOnlineOrder: !prev.availableForOnlineOrder }))}
+              className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                formData.availableForOnlineOrder ? 'bg-gold/10 border-gold/30' : 'bg-cream-light border-cream-dark/20'
+              }`}
+            >
+              <div className="text-left">
+                <p className="text-sm font-medium text-espresso">Available for Online Order</p>
+                <p className="text-[11px] text-warm-gray">Customers can order this product online</p>
+              </div>
+              <div className={`w-11 h-6 rounded-full relative transition-all ${formData.availableForOnlineOrder ? 'bg-gold' : 'bg-cream-dark'}`}>
+                <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-ivory shadow-sm transition-all ${formData.availableForOnlineOrder ? 'left-[22px]' : 'left-0.5'}`} />
+              </div>
+            </button>
           </div>
         </div>
       </div>
