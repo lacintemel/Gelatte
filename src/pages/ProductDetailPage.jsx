@@ -11,6 +11,8 @@ import { useScrollReveal } from '../hooks/useScrollReveal';
 import { useLanguage } from '../context/LanguageContext';
 import ShopNavbar from '../components/ShopNavbar';
 import CartDrawer from '../components/CartDrawer';
+import ProductReviews from '../components/ProductReviews';
+import { useReviews } from '../context/ReviewContext';
 
 const BADGE_STYLES = {
   'Signature': 'bg-espresso text-cream',
@@ -94,6 +96,7 @@ export default function ProductDetailPage() {
   const { addToast } = useToast();
   const { t } = useLanguage();
   const { products } = useProducts();
+  const { getAverageRating, getReviewCount } = useReviews();
 
   const product = products.find((p) => p.id === id);
 
@@ -205,10 +208,10 @@ export default function ProductDetailPage() {
             <div className="flex items-center gap-2 mb-5">
               <div className="flex gap-0.5">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-gold fill-current" />
+                  <Star key={i} className={`w-4 h-4 ${i < Math.round(getAverageRating(product.id)) ? 'text-gold fill-current' : 'text-cream-dark'}`} />
                 ))}
               </div>
-              <span className="text-sm text-warm-gray">(4.9 · 128 {t('pd_reviews')})</span>
+              <span className="text-sm text-warm-gray">({getAverageRating(product.id) > 0 ? getAverageRating(product.id).toFixed(1) : '—'} · {getReviewCount(product.id)} {t('pd_reviews')})</span>
             </div>
 
             <div className="luxury-divider-wide mb-6" />
@@ -326,6 +329,9 @@ export default function ProductDetailPage() {
           </div>
         </section>
       )}
+
+      {/* Reviews */}
+      <ProductReviews productId={product.id} />
 
       {/* Footer */}
       <footer className="bg-espresso text-cream/60 py-10">
