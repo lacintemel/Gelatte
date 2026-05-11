@@ -46,20 +46,24 @@ body {
 
 /* ── Dark Mode Theme ── */
 [data-theme="dark"] {
-  --color-cream: #1e1a17;
-  --color-cream-light: #252019;
-  --color-cream-dark: #3a332a;
-  --color-champagne: #151210;
-  --color-beige: #2a241c;
-  --color-beige-warm: #3d3528;
-  --color-ivory: #1a1613;
-  --color-walnut: #e8dfd0;
-  --color-walnut-light: #c4b8a6;
-  --color-espresso: #f5f0e8;
-  --color-espresso-light: #d4c5b0;
-  --color-warm-gray: #9e9689;
-  --color-warm-gray-light: #6a635a;
-  --color-warm-gray-dark: #b8b0a4;
+  --color-cream: #22252A;
+  --color-cream-light: #2A2E34;
+  --color-cream-dark: #3A3F47;
+  --color-champagne: #1C1E23;
+  --color-beige: #32373F;
+  --color-beige-warm: #3D434C;
+  --color-ivory: #15171A;
+  --color-walnut: #E5E7EB;
+  --color-walnut-light: #F3F4F6;
+  --color-espresso: #FFFFFF;
+  --color-espresso-light: #D1D5DB;
+  --color-warm-gray: #9CA3AF;
+  --color-warm-gray-light: #6B7280;
+  --color-warm-gray-dark: #D1D5DB;
+}
+
+[data-theme="dark"] img {
+  filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.05));
 }
 
 /* ── Custom Scrollbar ── */
