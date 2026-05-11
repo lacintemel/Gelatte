@@ -58,13 +58,13 @@ export default function Navbar() {
         </a>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center gap-8" id="desktop-nav">
+        <nav className="hidden lg:flex items-center gap-5 xl:gap-8" id="desktop-nav">
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
               className={`
-                relative font-body text-sm tracking-[0.08em] uppercase transition-colors duration-300
+                whitespace-nowrap relative font-body text-xs xl:text-sm tracking-[0.08em] uppercase transition-colors duration-300
                 after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[1.5px]
                 after:bg-gold after:transition-all after:duration-300 hover:after:w-full
                 ${scrolled
@@ -79,7 +79,7 @@ export default function Navbar() {
         </nav>
 
         {/* Right Side */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden lg:block">
             <LanguageSwitcher scrolled={scrolled} />
           </div>
@@ -87,12 +87,14 @@ export default function Navbar() {
           {/* Dark Mode Toggle */}
           <button
             onClick={toggleTheme}
-            className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
-              scrolled ? 'text-walnut-light hover:text-espresso hover:bg-cream' : 'text-cream/80 hover:text-ivory hover:bg-ivory/10'
+            className={`hidden lg:flex w-9 h-9 rounded-full items-center justify-center border transition-all duration-300 ${
+              scrolled
+                ? 'bg-ivory/50 text-espresso border-cream-dark/40 hover:bg-cream'
+                : 'bg-black/10 text-ivory border-ivory/30 hover:bg-black/20 hover:border-ivory/50'
             }`}
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
           {/* Cart / Shop Button — now links to internal /shop page */}
@@ -113,17 +115,26 @@ export default function Navbar() {
           </Link>
 
           {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className={`
-              lg:hidden p-2 rounded-lg transition-colors duration-300
-              ${scrolled ? 'text-espresso hover:bg-cream' : 'text-ivory hover:bg-ivory/10'}
-            `}
-            id="mobile-menu-button"
-            aria-label="Toggle mobile menu"
-          >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex lg:hidden items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors duration-300
+                ${scrolled ? 'text-espresso hover:bg-cream' : 'text-ivory hover:bg-ivory/10'}
+              `}
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className={`p-2 rounded-lg transition-colors duration-300
+                ${scrolled ? 'text-espresso hover:bg-cream' : 'text-ivory hover:bg-ivory/10'}
+              `}
+              id="mobile-menu-button"
+              aria-label="Toggle mobile menu"
+            >
+              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
