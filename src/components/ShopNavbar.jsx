@@ -82,7 +82,7 @@ export default function ShopNavbar() {
         </nav>
 
         {/* Right Side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-4">
           <div className="hidden lg:block">
             <LanguageSwitcher scrolled={true} />
           </div>
@@ -90,19 +90,19 @@ export default function ShopNavbar() {
           {/* Dark Mode Toggle */}
           <button
             onClick={toggleTheme}
-            className="w-10 h-10 rounded-full flex items-center justify-center text-walnut-light hover:text-espresso hover:bg-cream transition-all duration-300"
+            className="hidden lg:flex w-9 h-9 rounded-full items-center justify-center bg-ivory/50 text-espresso border border-cream-dark/40 hover:bg-cream transition-all duration-300"
             aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
           >
-            {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
           {/* User Account / Login */}
           <Link
             to={isAuthenticated ? '/account' : '/login'}
-            className="hidden sm:flex w-10 h-10 rounded-full items-center justify-center text-walnut-light hover:text-espresso hover:bg-cream transition-all duration-300"
+            className="hidden sm:flex w-9 h-9 rounded-full items-center justify-center bg-ivory/50 text-espresso border border-cream-dark/40 hover:bg-cream transition-all duration-300"
             title={isAuthenticated ? currentUser?.name : 'Login'}
           >
-            {isAuthenticated ? <User className="w-5 h-5" /> : <LogIn className="w-5 h-5" />}
+            {isAuthenticated ? <User className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
           </Link>
 
           {/* Cart Button */}
@@ -124,13 +124,27 @@ export default function ShopNavbar() {
           </button>
 
           {/* Mobile menu */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-lg text-espresso hover:bg-cream transition-colors"
-            aria-label="Toggle mobile menu"
-          >
-            {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex lg:hidden items-center gap-1">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg text-espresso hover:bg-cream transition-colors"
+            >
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <Link
+              to={isAuthenticated ? '/account' : '/login'}
+              className="p-2 rounded-lg text-espresso hover:bg-cream transition-colors"
+            >
+              {isAuthenticated ? <User className="w-5 h-5" /> : <LogIn className="w-5 h-5" />}
+            </Link>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="p-2 rounded-lg text-espresso hover:bg-cream transition-colors"
+              aria-label="Toggle mobile menu"
+            >
+              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </div>
 
