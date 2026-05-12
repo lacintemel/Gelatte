@@ -186,7 +186,7 @@ export default function ShopNavbar() {
                 </Link>
               ))}
             </nav>
-            
+
             <LanguageSwitcher isMobile={true} />
 
             <div className="mt-8 mb-auto">
