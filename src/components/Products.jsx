@@ -1,9 +1,7 @@
-import { ShoppingBag } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { PRODUCTS } from '../constants';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import SectionHeading from './SectionHeading';
 import { useLanguage } from '../context/LanguageContext';
+import { PRODUCTS } from '../constants';
 
 const BADGE_STYLES = {
   'Signature': 'bg-espresso text-cream',
@@ -47,46 +45,16 @@ function ProductCard({ product, index, t }) {
             {t(badgeKey)}
           </span>
         )}
-
-        {/* Quick order overlay */}
-        <Link
-          to="/shop"
-          className="
-            absolute bottom-4 right-4 w-12 h-12 rounded-full bg-ivory flex items-center justify-center
-            shadow-lg opacity-0 translate-y-4 transition-all duration-400
-            group-hover:opacity-100 group-hover:translate-y-0
-            hover:bg-cream hover:scale-110
-          "
-          aria-label={`Order ${t(product.name)}`}
-        >
-          <ShoppingBag className="w-5 h-5 text-espresso" />
-        </Link>
       </div>
 
-      {/* Content */}
+      {/* Content — informational only (no order buttons) */}
       <div className="p-5 md:p-6">
         <h3 className="font-display text-lg md:text-xl font-semibold text-espresso mb-2 group-hover:text-walnut-light transition-colors">
           {t(product.name)}
         </h3>
-        <p className="text-warm-gray-dark text-sm leading-relaxed mb-4 line-clamp-2">
+        <p className="text-warm-gray-dark text-sm leading-relaxed line-clamp-2">
           {t(product.description)}
         </p>
-
-        <div className="flex items-center justify-between">
-          <span className="font-display text-xl font-semibold text-espresso">
-            {product.price}
-          </span>
-          <Link
-            to="/shop"
-            className="
-              text-sm font-medium text-gold-dark hover:text-espresso
-              tracking-wide uppercase transition-colors duration-300
-              border-b border-gold-light/40 hover:border-espresso/40 pb-0.5
-            "
-          >
-            {t('prod_order_now')}
-          </Link>
-        </div>
       </div>
     </div>
   );
@@ -108,23 +76,6 @@ export default function Products() {
           {PRODUCTS.map((product, i) => (
             <ProductCard key={i} product={product} index={i} t={t} />
           ))}
-        </div>
-
-        {/* CTA */}
-        <div className="text-center mt-16">
-          <Link
-            to="/shop"
-            id="products-order-cta"
-            className="
-              inline-flex items-center gap-3 px-10 py-4 rounded-full
-              bg-espresso text-cream font-medium text-sm tracking-wider uppercase
-              hover:bg-walnut-light hover:shadow-xl transition-all duration-300
-              group
-            "
-          >
-            <ShoppingBag className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-            {t('prod_view_menu')}
-          </Link>
         </div>
       </div>
     </section>
