@@ -87,7 +87,7 @@ function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, 
                   <p className="text-warm-gray text-xs mt-0.5">{t('pd_qty')}: {item.quantity}</p>
                 </div>
                 <span className="font-display text-sm font-semibold text-espresso shrink-0">
-                  €{((item.price - (item.discount || 0)) * item.quantity).toFixed(2)}
+                  ₺{((item.price - (item.discount || 0)) * item.quantity).toFixed(2)}
                 </span>
               </div>
             ))}
@@ -119,12 +119,12 @@ function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, 
           <div className="space-y-3 p-6 rounded-xl bg-ivory border border-cream-dark/20 mb-8">
             <div className="flex justify-between text-sm text-warm-gray-dark">
               <span>{t('ch_subtotal')}</span>
-              <span>€{totalPrice.toFixed(2)}</span>
+              <span>₺{totalPrice.toFixed(2)}</span>
             </div>
             {promoApplied && (
               <div className="flex justify-between text-sm text-mint-dark font-medium">
                 <span>{t('ch_promo_discount')}</span>
-                <span>-€{(totalPrice * 0.1).toFixed(2)}</span>
+                <span>-₺{(totalPrice * 0.1).toFixed(2)}</span>
               </div>
             )}
             <div className="flex justify-between text-sm text-warm-gray-dark">
@@ -134,7 +134,7 @@ function ReviewStep({ items, totalPrice, promoCode, setPromoCode, promoApplied, 
             <div className="flex justify-between pt-3 border-t border-cream-dark/20">
               <span className="font-display text-lg font-semibold text-espresso">{t('ch_total')}</span>
               <span className="font-display text-lg font-semibold text-espresso">
-                €{(promoApplied ? totalPrice * 0.9 : totalPrice).toFixed(2)}
+                ₺{(promoApplied ? totalPrice * 0.9 : totalPrice).toFixed(2)}
               </span>
             </div>
           </div>
@@ -439,7 +439,7 @@ export default function CheckoutPage() {
       setPromoApplied(true);
       setAppliedCoupon(result.coupon);
       const disc = calculateDiscount(result.coupon, totalPrice);
-      addToast(`Promo code applied! €${disc.toFixed(2)} discount`, 'success');
+      addToast(`Promo code applied! ₺${disc.toFixed(2)} discount`, 'success');
     } else {
       addToast(t(result.error), 'warning');
     }

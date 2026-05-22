@@ -119,7 +119,7 @@ export default function AccountPage() {
                         <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border ${STATUS_COLORS[order.status]}`}>
                           <StatusIcon className="w-3 h-3" /> {t(`ord_${order.status}`)}
                         </span>
-                        <span className="font-display text-lg font-bold text-espresso">€{(order.total || 0).toFixed(2)}</span>
+                        <span className="font-display text-lg font-bold text-espresso">₺{(order.total || 0).toFixed(2)}</span>
                       </div>
                     </div>
                     <div className="flex flex-wrap gap-2">
