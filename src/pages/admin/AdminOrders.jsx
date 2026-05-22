@@ -105,7 +105,7 @@ export default function AdminOrders() {
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-5 py-4 font-display font-semibold text-espresso">
-                      €{(order.total || 0).toFixed(2)}
+                      ₺{(order.total || 0).toFixed(2)}
                     </td>
                     <td className="px-5 py-4">
                       <div className="relative inline-block">
@@ -193,14 +193,14 @@ export default function AdminOrders() {
                     <p className="text-sm font-medium text-espresso">{t(item.name)}</p>
                     <p className="text-xs text-warm-gray">x{item.quantity}</p>
                   </div>
-                  <span className="text-sm font-semibold text-espresso">€{((item.price - (item.discount || 0)) * item.quantity).toFixed(2)}</span>
+                  <span className="text-sm font-semibold text-espresso">₺{((item.price - (item.discount || 0)) * item.quantity).toFixed(2)}</span>
                 </div>
               ))}
             </div>
 
             <div className="flex justify-between pt-4 border-t border-cream-dark/20">
               <span className="font-display text-lg font-semibold text-espresso">{t('ord_total')}</span>
-              <span className="font-display text-lg font-semibold text-espresso">€{(selectedOrder.total || 0).toFixed(2)}</span>
+              <span className="font-display text-lg font-semibold text-espresso">₺{(selectedOrder.total || 0).toFixed(2)}</span>
             </div>
           </div>
         </div>
