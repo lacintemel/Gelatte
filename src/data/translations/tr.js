@@ -102,7 +102,7 @@ export const tr = {
   ch_first_name: "Ad", ch_last_name: "Soyad", ch_email_label: "E-posta Adresi",
   ch_phone_label: "Telefon Numarası", ch_address_label: "Sokak Adresi",
   ch_city: "Şehir", ch_zip: "Posta Kodu",
-  ch_express: "Hızlı Teslimat", ch_express_desc: "Tahmini 30-45 dakika · 20€ üzeri siparişlerde ücretsiz",
+  ch_express: "Hızlı Teslimat", ch_express_desc: "Tahmini 30-45 dakika · 20₺ üzeri siparişlerde ücretsiz",
   ch_back: "Geri", ch_continue_payment: "Ödeme Bilgilerine Geç",
   ch_payment_title: "Ödeme Bilgileri", ch_payment_desc: "Ödeme bilgileriniz güvenli ve şifrelidir.",
   ch_card_number: "Kart Numarası", ch_card_name: "Kart Sahibi",
