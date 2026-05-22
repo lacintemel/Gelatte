@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, Menu, X, Sun, Moon } from 'lucide-react';
-import { BRAND, NAV_LINKS } from '../constants';
+import { BRAND, NAV_LINKS, EXTERNAL_MENU_URL } from '../constants';
 import { useLanguage } from '../context/LanguageContext';
 import { useTheme } from '../context/ThemeContext';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -60,21 +60,41 @@ export default function Navbar() {
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-5 xl:gap-8" id="desktop-nav">
           {NAV_LINKS.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className={`
-                whitespace-nowrap relative font-body text-xs xl:text-sm tracking-[0.08em] uppercase transition-colors duration-300
-                after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[1.5px]
-                after:bg-gold after:transition-all after:duration-300 hover:after:w-full
-                ${scrolled
-                  ? 'text-walnut-light hover:text-espresso'
-                  : 'text-cream/90 hover:text-ivory'
-                }
-              `}
-            >
-              {t(`nav_${link.label.toLowerCase()}`)}
-            </a>
+            link.external ? (
+              <a
+                key={link.href}
+                href={EXTERNAL_MENU_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`
+                  whitespace-nowrap relative font-body text-xs xl:text-sm tracking-[0.08em] uppercase transition-colors duration-300
+                  after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[1.5px]
+                  after:bg-gold after:transition-all after:duration-300 hover:after:w-full
+                  ${scrolled
+                    ? 'text-walnut-light hover:text-espresso'
+                    : 'text-cream/90 hover:text-ivory'
+                  }
+                `}
+              >
+                {t(`nav_${link.label.toLowerCase()}`)}
+              </a>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                className={`
+                  whitespace-nowrap relative font-body text-xs xl:text-sm tracking-[0.08em] uppercase transition-colors duration-300
+                  after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[1.5px]
+                  after:bg-gold after:transition-all after:duration-300 hover:after:w-full
+                  ${scrolled
+                    ? 'text-walnut-light hover:text-espresso'
+                    : 'text-cream/90 hover:text-ivory'
+                  }
+                `}
+              >
+                {t(`nav_${link.label.toLowerCase()}`)}
+              </a>
+            )
           ))}
         </nav>
 
@@ -173,19 +193,37 @@ export default function Navbar() {
             
             <nav className="flex flex-col gap-1" id="mobile-nav">
               {NAV_LINKS.map((link, i) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`
-                    font-display text-xl text-walnut py-3 border-b border-cream-dark/50
-                    hover:text-gold hover:pl-2 transition-all duration-300
-                    ${mobileOpen ? 'animate-slide-right' : 'opacity-0'}
-                  `}
-                  style={{ animationDelay: `${i * 0.08}s` }}
-                >
-                  {t(`nav_${link.label.toLowerCase()}`)}
-                </a>
+                link.external ? (
+                  <a
+                    key={link.href}
+                    href={EXTERNAL_MENU_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setMobileOpen(false)}
+                    className={`
+                      font-display text-xl text-walnut py-3 border-b border-cream-dark/50
+                      hover:text-gold hover:pl-2 transition-all duration-300
+                      ${mobileOpen ? 'animate-slide-right' : 'opacity-0'}
+                    `}
+                    style={{ animationDelay: `${i * 0.08}s` }}
+                  >
+                    {t(`nav_${link.label.toLowerCase()}`)}
+                  </a>
+                ) : (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`
+                      font-display text-xl text-walnut py-3 border-b border-cream-dark/50
+                      hover:text-gold hover:pl-2 transition-all duration-300
+                      ${mobileOpen ? 'animate-slide-right' : 'opacity-0'}
+                    `}
+                    style={{ animationDelay: `${i * 0.08}s` }}
+                  >
+                    {t(`nav_${link.label.toLowerCase()}`)}
+                  </a>
+                )
               ))}
             </nav>
             
