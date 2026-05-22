@@ -66,7 +66,7 @@ export default function AdminCoupons() {
                   <div>
                     <span className="font-display text-lg font-bold text-espresso tracking-wider">{coupon.code}</span>
                     <p className="text-xs text-warm-gray">
-                      {coupon.type === 'percent' ? `${coupon.discount}%` : `€${coupon.discount}`} {t('cp_discount').toLowerCase()}
+                      {coupon.type === 'percent' ? `${coupon.discount}%` : `₺${coupon.discount}`} {t('cp_discount').toLowerCase()}
                     </p>
                   </div>
                 </div>
@@ -83,7 +83,7 @@ export default function AdminCoupons() {
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div className="p-2 rounded-lg bg-cream-light">
                   <p className="text-[10px] text-warm-gray uppercase tracking-wider">{t('cp_min_order')}</p>
-                  <p className="text-sm font-semibold text-espresso">€{coupon.minOrder}</p>
+                  <p className="text-sm font-semibold text-espresso">₺{coupon.minOrder}</p>
                 </div>
                 <div className="p-2 rounded-lg bg-cream-light">
                   <p className="text-[10px] text-warm-gray uppercase tracking-wider">{t('cp_uses')}</p>

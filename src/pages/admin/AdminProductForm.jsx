@@ -245,7 +245,7 @@ export default function AdminProductForm() {
             <h2 className="font-display text-xl font-semibold text-espresso border-b border-cream-dark/25 pb-4">Pricing & Inventory</h2>
             
             <div>
-              <label className="block text-sm font-medium text-warm-gray-dark mb-1">Price (€) *</label>
+              <label className="block text-sm font-medium text-warm-gray-dark mb-1">Price (₺) *</label>
               <input
                 type="number"
                 step="0.01"
@@ -259,7 +259,7 @@ export default function AdminProductForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-warm-gray-dark mb-1">Discount (€)</label>
+              <label className="block text-sm font-medium text-warm-gray-dark mb-1">Discount (₺)</label>
               <input
                 type="number"
                 step="0.01"

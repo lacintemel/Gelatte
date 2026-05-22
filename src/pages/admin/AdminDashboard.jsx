@@ -115,7 +115,7 @@ export default function AdminDashboard() {
   const stats = [
     { label: 'Total Products', value: products.length, icon: Package, color: 'text-blue-500', bg: 'bg-blue-50' },
     { label: t('adm_orders_count'), value: orderStats.totalOrders, icon: ShoppingCart, color: 'text-purple-500', bg: 'bg-purple-50', link: '/admin/orders' },
-    { label: t('adm_revenue'), value: `€${orderStats.totalRevenue.toFixed(0)}`, icon: DollarSign, color: 'text-green-500', bg: 'bg-green-50' },
+    { label: t('adm_revenue'), value: `₺${orderStats.totalRevenue.toFixed(0)}`, icon: DollarSign, color: 'text-green-500', bg: 'bg-green-50' },
     { label: 'Out of Stock', value: outOfStockProducts, icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-50' },
   ];
 
@@ -158,7 +158,7 @@ export default function AdminDashboard() {
           </div>
           <div className="mt-4 pt-4 border-t border-cream-dark/15 flex items-center justify-between">
             <span className="text-sm text-warm-gray">{t('adm_weekly')} {t('adm_revenue')}</span>
-            <span className="font-display text-xl font-bold text-espresso">€{weeklyRevenue.reduce((a, b) => a + b, 0).toFixed(2)}</span>
+            <span className="font-display text-xl font-bold text-espresso">₺{weeklyRevenue.reduce((a, b) => a + b, 0).toFixed(2)}</span>
           </div>
         </div>
 
@@ -196,7 +196,7 @@ export default function AdminDashboard() {
                 }`}>
                   {t(`ord_${order.status}`)}
                 </span>
-                <p className="font-display font-semibold text-espresso">€{(order.total || 0).toFixed(2)}</p>
+                <p className="font-display font-semibold text-espresso">₺{(order.total || 0).toFixed(2)}</p>
               </div>
             </div>
           ))}
@@ -227,7 +227,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-espresso">€{product.price.toFixed(2)}</p>
+                <p className="font-semibold text-espresso">₺{product.price.toFixed(2)}</p>
                 <p className={`text-xs mt-1 ${product.stock > 5 ? 'text-green-500' : product.stock > 0 ? 'text-orange-500' : 'text-red-500'}`}>
                   {product.stock} in stock
                 </p>

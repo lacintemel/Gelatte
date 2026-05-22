@@ -101,9 +101,9 @@ export default function AdminProducts() {
                       {product.category}
                     </td>
                     <td className="p-4">
-                      <div className="text-sm font-medium text-espresso">€{finalPrice.toFixed(2)}</div>
+                      <div className="text-sm font-medium text-espresso">₺{finalPrice.toFixed(2)}</div>
                       {product.discount > 0 && (
-                        <div className="text-xs text-warm-gray line-through">€{product.price.toFixed(2)}</div>
+                        <div className="text-xs text-warm-gray line-through">₺{product.price.toFixed(2)}</div>
                       )}
                     </td>
                     <td className="p-4">
