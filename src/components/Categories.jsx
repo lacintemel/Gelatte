@@ -1,5 +1,4 @@
-import { Link } from 'react-router-dom';
-import { CATEGORIES } from '../constants';
+import { CATEGORIES, EXTERNAL_MENU_URL } from '../constants';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import SectionHeading from './SectionHeading';
 import { useLanguage } from '../context/LanguageContext';
@@ -8,8 +7,10 @@ function CategoryCard({ category, index, t }) {
   const [ref, isVisible] = useScrollReveal(0.1);
 
   return (
-    <Link
-      to="/shop"
+    <a
+      href={EXTERNAL_MENU_URL}
+      target="_blank"
+      rel="noopener noreferrer"
       ref={ref}
       className={`
         group relative overflow-hidden rounded-2xl cursor-pointer
@@ -45,7 +46,7 @@ function CategoryCard({ category, index, t }) {
 
       {/* Corner accent */}
       <div className="absolute top-4 right-4 w-8 h-8 border-t border-r border-mint/40 rounded-tr-lg opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-    </Link>
+    </a>
   );
 }
 

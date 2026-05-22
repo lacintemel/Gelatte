@@ -2,6 +2,10 @@
 // All "Order", "Shop", and cart-related buttons redirect to this URL
 export const SHOP_URL = "https://example.com";
 
+// ── External QR Menu URL ──
+// All menu-related buttons, cards, and links redirect to this URL
+export const EXTERNAL_MENU_URL = "https://qr-menu.simprasuite.com/gelatte/2/menu/99061987-e780-4282-b198-63b9c62b11fe";
+
 // ── Brand ──
 export const BRAND = {
   name: "GELATTE",
@@ -12,7 +16,7 @@ export const BRAND = {
 // ── Navigation Links ──
 export const NAV_LINKS = [
   { label: "Home", href: "#home" },
-  { label: "Menu", href: "#categories" },
+  { label: "Menu", href: "#categories", external: true },
   { label: "Products", href: "#products" },
   { label: "About", href: "#about" },
   { label: "Gallery", href: "#gallery" },
