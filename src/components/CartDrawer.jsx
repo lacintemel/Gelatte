@@ -76,7 +76,7 @@ export default function CartDrawer() {
             <p className="text-xs text-walnut-light">
               {totalPrice >= 20
                 ? <span className="font-semibold text-mint-dark">{t('cart_free_delivery')}</span>
-                : <>€{(20 - totalPrice).toFixed(2)} {t('cart_more_for_free')}</>
+                : <>₺{(20 - totalPrice).toFixed(2)} {t('cart_more_for_free')}</>
               }
             </p>
           </div>
@@ -142,8 +142,8 @@ export default function CartDrawer() {
                     </div>
 
                     <p className="text-warm-gray text-xs mt-0.5">
-                      €{(item.price - (item.discount || 0)).toFixed(2)} {t('cart_each')}
-                      {item.discount > 0 && <span className="ml-1 line-through text-[10px]">€{item.price.toFixed(2)}</span>}
+                      ₺{(item.price - (item.discount || 0)).toFixed(2)} {t('cart_each')}
+                      {item.discount > 0 && <span className="ml-1 line-through text-[10px]">₺{item.price.toFixed(2)}</span>}
                     </p>
 
                     <div className="flex items-center justify-between mt-2.5">
@@ -170,7 +170,7 @@ export default function CartDrawer() {
 
                       {/* Line total */}
                       <span className="font-display text-sm font-semibold text-espresso">
-                        €{((item.price - (item.discount || 0)) * item.quantity).toFixed(2)}
+                        ₺{((item.price - (item.discount || 0)) * item.quantity).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -207,18 +207,18 @@ export default function CartDrawer() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm text-warm-gray-dark">
                 <span>{t('cart_subtotal')} ({totalItems} {t('shop_products')})</span>
-                <span>€{totalPrice.toFixed(2)}</span>
+                <span>₺{totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm text-warm-gray-dark">
                 <span>{t('cart_delivery')}</span>
                 <span className="text-mint-dark font-medium">
-                  {totalPrice >= 20 ? t('cart_free') : '€2.50'}
+                  {totalPrice >= 20 ? t('cart_free') : '₺2.50'}
                 </span>
               </div>
               <div className="flex justify-between pt-2 border-t border-cream-dark/20">
                 <span className="font-display text-lg font-semibold text-espresso">{t('cart_total')}</span>
                 <span className="font-display text-lg font-semibold text-espresso">
-                  €{(totalPrice >= 20 ? totalPrice : totalPrice + 2.50).toFixed(2)}
+                  ₺{(totalPrice >= 20 ? totalPrice : totalPrice + 2.50).toFixed(2)}
                 </span>
               </div>
             </div>

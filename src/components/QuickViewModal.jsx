@@ -92,11 +92,11 @@ export default function QuickViewModal({ product, onClose }) {
               <div className="flex items-center gap-3 mb-6">
                 {product.discount > 0 && (
                   <span className="font-display text-2xl font-bold text-warm-gray line-through">
-                    €{product.price.toFixed(2)}
+                    ₺{product.price.toFixed(2)}
                   </span>
                 )}
                 <span className="font-display text-3xl font-bold text-espresso">
-                  €{(product.price - (product.discount || 0)).toFixed(2)}
+                  ₺{(product.price - (product.discount || 0)).toFixed(2)}
                 </span>
               </div>
 

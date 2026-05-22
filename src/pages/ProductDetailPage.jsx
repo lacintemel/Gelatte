@@ -65,11 +65,11 @@ function RelatedCard({ product }) {
           <div className="flex flex-col">
             {product.discount > 0 && (
               <span className="text-[10px] text-warm-gray line-through leading-none mb-0.5">
-                €{product.price.toFixed(2)}
+                ₺{product.price.toFixed(2)}
               </span>
             )}
             <span className="font-display text-lg font-semibold text-espresso leading-none">
-              €{(product.price - (product.discount || 0)).toFixed(2)}
+              ₺{(product.price - (product.discount || 0)).toFixed(2)}
             </span>
           </div>
           <button
@@ -225,11 +225,11 @@ export default function ProductDetailPage() {
             <div className="flex items-baseline gap-3 mb-8">
               {product.discount > 0 && (
                 <span className="font-display text-2xl font-bold text-warm-gray line-through">
-                  €{product.price.toFixed(2)}
+                  ₺{product.price.toFixed(2)}
                 </span>
               )}
               <span className="font-display text-4xl font-bold text-espresso">
-                €{(product.price - (product.discount || 0)).toFixed(2)}
+                ₺{(product.price - (product.discount || 0)).toFixed(2)}
               </span>
               <span className="text-sm text-warm-gray">{t('pd_incl_tax')}</span>
             </div>
@@ -270,7 +270,7 @@ export default function ProductDetailPage() {
                 ) : (
                   <>
                     <ShoppingBag className="w-5 h-5" />
-                    {t('pd_add_to_cart')} · €{((product.price - (product.discount || 0)) * quantity).toFixed(2)}
+                    {t('pd_add_to_cart')} · ₺{((product.price - (product.discount || 0)) * quantity).toFixed(2)}
                   </>
                 )}
               </button>

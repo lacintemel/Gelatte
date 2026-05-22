@@ -88,7 +88,7 @@ export const en = {
   ch_first_name: "First Name", ch_last_name: "Last Name", ch_email_label: "Email Address",
   ch_phone_label: "Phone Number", ch_address_label: "Street Address",
   ch_city: "City", ch_zip: "Zip Code",
-  ch_express: "Express Delivery", ch_express_desc: "Estimated 30-45 minutes · Free for orders over €20",
+  ch_express: "Express Delivery", ch_express_desc: "Estimated 30-45 minutes · Free for orders over ₺20",
   ch_back: "Back", ch_continue_payment: "Continue to Payment",
   ch_payment_title: "Payment Details", ch_payment_desc: "Your payment information is secure and encrypted.",
   ch_card_number: "Card Number", ch_card_name: "Cardholder Name",

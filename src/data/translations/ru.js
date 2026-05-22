@@ -88,7 +88,7 @@ export const ru = {
   ch_first_name: "Имя", ch_last_name: "Фамилия", ch_email_label: "Email адрес",
   ch_phone_label: "Номер телефона", ch_address_label: "Улица, дом, квартира",
   ch_city: "Город", ch_zip: "Индекс",
-  ch_express: "Экспресс доставка", ch_express_desc: "Примерно 30-45 минут · Бесплатно для заказов свыше 20€",
+  ch_express: "Экспресс доставка", ch_express_desc: "Примерно 30-45 минут · Бесплатно для заказов свыше 20₺",
   ch_back: "Назад", ch_continue_payment: "Продолжить к оплате",
   ch_payment_title: "Детали оплаты", ch_payment_desc: "Ваша платежная информация безопасна и зашифрована.",
   ch_card_number: "Номер карты", ch_card_name: "Имя на карте",
