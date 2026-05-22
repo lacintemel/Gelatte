@@ -171,11 +171,11 @@ function ProductCardGrid({ product, index, onQuickView }) {
           <div className="flex flex-col">
             {product.discount > 0 && (
               <span className="text-[10px] text-warm-gray line-through leading-none mb-0.5">
-                €{product.price.toFixed(2)}
+                ₺{product.price.toFixed(2)}
               </span>
             )}
             <span className="font-display text-lg font-semibold text-espresso leading-none">
-              €{(product.price - (product.discount || 0)).toFixed(2)}
+              ₺{(product.price - (product.discount || 0)).toFixed(2)}
             </span>
           </div>
           {product.availableForOnlineOrder !== false ? (
@@ -278,11 +278,11 @@ function ProductCardList({ product, onQuickView }) {
           <div className="flex flex-col">
             {product.discount > 0 && (
               <span className="text-xs text-warm-gray line-through leading-none mb-0.5">
-                €{product.price.toFixed(2)}
+                ₺{product.price.toFixed(2)}
               </span>
             )}
             <span className="font-display text-xl font-semibold text-espresso leading-none">
-              €{(product.price - (product.discount || 0)).toFixed(2)}
+              ₺{(product.price - (product.discount || 0)).toFixed(2)}
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -640,7 +640,7 @@ export default function ShopPage() {
                 </label>
                 <div className="flex items-center gap-3">
                   <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-gray text-xs">€</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-gray text-xs">₺</span>
                     <input
                       type="number"
                       min={priceBounds[0]}
@@ -653,7 +653,7 @@ export default function ShopPage() {
                   </div>
                   <span className="text-warm-gray text-sm">—</span>
                   <div className="relative flex-1">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-gray text-xs">€</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-warm-gray text-xs">₺</span>
                     <input
                       type="number"
                       min={priceRange[0]}
@@ -864,7 +864,7 @@ export default function ShopPage() {
         >
           <ShoppingBag className="w-5 h-5" />
           <span className="font-medium text-sm">
-            {totalItems} item{totalItems !== 1 ? 's' : ''} · €{totalPrice.toFixed(2)}
+            {totalItems} item{totalItems !== 1 ? 's' : ''} · ₺{totalPrice.toFixed(2)}
           </span>
         </button>
       )}
