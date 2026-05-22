@@ -88,7 +88,7 @@ export const de = {
   ch_first_name: "Vorname", ch_last_name: "Nachname", ch_email_label: "E-Mail-Adresse",
   ch_phone_label: "Telefonnummer", ch_address_label: "Straßenadresse",
   ch_city: "Stadt", ch_zip: "Postleitzahl",
-  ch_express: "Expresslieferung", ch_express_desc: "Geschätzt 30-45 Minuten · Kostenlos ab 20€",
+  ch_express: "Expresslieferung", ch_express_desc: "Geschätzt 30-45 Minuten · Kostenlos ab 20₺",
   ch_back: "Zurück", ch_continue_payment: "Weiter zur Zahlung",
   ch_payment_title: "Zahlungsdetails", ch_payment_desc: "Ihre Zahlungsinformationen sind sicher und verschlüsselt.",
   ch_card_number: "Kartennummer", ch_card_name: "Karteninhaber",
