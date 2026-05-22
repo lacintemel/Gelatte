@@ -1,5 +1,5 @@
 import { ArrowRight, ChevronDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { EXTERNAL_MENU_URL } from '../constants';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Hero() {
@@ -65,8 +65,10 @@ export default function Hero() {
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
             </a>
 
-            <Link
-              to="/shop"
+            <a
+              href={EXTERNAL_MENU_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               id="hero-order-cta"
               className="
                 group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full
@@ -77,7 +79,7 @@ export default function Hero() {
             >
               {t('hero_order')}
               <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
+            </a>
           </div>
 
           {/* Trust indicators */}
