@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { ToastProvider } from './context/ToastContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -71,6 +71,9 @@ export default function App() {
                                 <Route path="coupons" element={<AdminCoupons />} />
                               </Route>
                             </Route>
+
+                            {/* Catch-all — redirect unknown routes to home */}
+                            <Route path="*" element={<Navigate to="/" replace />} />
                           </Routes>
                         </BrowserRouter>
                       </CouponProvider>
