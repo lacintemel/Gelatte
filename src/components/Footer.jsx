@@ -1,6 +1,6 @@
 import { ArrowUp, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { BRAND, NAV_LINKS, CONTACT } from '../constants';
+import { BRAND, NAV_LINKS, CONTACT, EXTERNAL_MENU_URL } from '../constants';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function Footer() {
@@ -43,7 +43,9 @@ export default function Footer() {
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
                   <a
-                    href={link.href}
+                    href={link.external ? EXTERNAL_MENU_URL : link.href}
+                    target={link.external ? '_blank' : undefined}
+                    rel={link.external ? 'noopener noreferrer' : undefined}
                     className="text-cream/60 hover:text-ivory text-sm uppercase tracking-wider transition-colors inline-flex items-center gap-2 group"
                   >
                     <span className="w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-4" />
