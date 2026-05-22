@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Menu, X, ArrowLeft, Sun, Moon, User, LogIn } from 'lucide-react';
+import { ShoppingBag, Sun, Moon, User, LogIn } from 'lucide-react';
 import { BRAND } from '../constants';
 import { useCart } from '../context/CartContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -15,7 +15,6 @@ const SHOP_NAV_LINKS = [
 
 export default function ShopNavbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const { totalItems, setIsDrawerOpen } = useCart();
   const location = useLocation();
   const { t } = useLanguage();
@@ -27,11 +26,6 @@ export default function ShopNavbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [mobileOpen]);
 
   return (
     <header
@@ -87,7 +81,7 @@ export default function ShopNavbar() {
             <LanguageSwitcher scrolled={true} />
           </div>
 
-          {/* Dark Mode Toggle */}
+          {/* Dark Mode Toggle (Desktop) */}
           <button
             onClick={toggleTheme}
             className="hidden lg:flex w-9 h-9 rounded-full items-center justify-center bg-ivory/50 text-espresso border border-cream-dark/40 hover:bg-cream transition-all duration-300"
@@ -96,7 +90,7 @@ export default function ShopNavbar() {
             {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
 
-          {/* User Account / Login */}
+          {/* User Account / Login (Desktop) */}
           <Link
             to={isAuthenticated ? '/account' : '/login'}
             className="hidden sm:flex w-9 h-9 rounded-full items-center justify-center bg-ivory/50 text-espresso border border-cream-dark/40 hover:bg-cream transition-all duration-300"
@@ -105,11 +99,11 @@ export default function ShopNavbar() {
             {isAuthenticated ? <User className="w-4 h-4" /> : <LogIn className="w-4 h-4" />}
           </Link>
 
-          {/* Cart Button */}
+          {/* Cart Button (Desktop) */}
           <button
             onClick={() => setIsDrawerOpen(true)}
             className="
-              relative flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium tracking-wider uppercase
+              relative hidden sm:flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium tracking-wider uppercase
               bg-espresso text-cream hover:bg-walnut-light hover:shadow-lg
               transition-all duration-300 group
             "
@@ -123,8 +117,8 @@ export default function ShopNavbar() {
             )}
           </button>
 
-          {/* Mobile menu */}
-          <div className="flex lg:hidden items-center gap-1">
+          {/* Mobile actions */}
+          <div className="flex sm:hidden items-center gap-1">
             <button
               onClick={toggleTheme}
               className="p-2 rounded-lg text-espresso hover:bg-cream transition-colors"
@@ -137,67 +131,19 @@ export default function ShopNavbar() {
             >
               {isAuthenticated ? <User className="w-5 h-5" /> : <LogIn className="w-5 h-5" />}
             </Link>
+            {/* Cart Icon — replaces three-dot / hamburger menu on mobile */}
             <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="p-2 rounded-lg text-espresso hover:bg-cream transition-colors"
-              aria-label="Toggle mobile menu"
+              onClick={() => setIsDrawerOpen(true)}
+              className="relative p-2 rounded-lg text-espresso hover:bg-cream transition-colors"
+              aria-label="Open cart"
             >
-              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <ShoppingBag className="w-6 h-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[18px] min-h-[18px] rounded-full bg-gold text-espresso text-[9px] font-bold flex items-center justify-center animate-scale-in">
+                  {totalItems}
+                </span>
+              )}
             </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      <div
-        className={`
-          lg:hidden fixed inset-0 top-0 z-40 transition-all duration-500
-          ${mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
-        `}
-      >
-        <div className="absolute inset-0 bg-espresso/60 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-        <div
-          className={`
-            absolute right-0 top-0 h-full w-[80%] max-w-sm bg-ivory shadow-2xl
-            transform transition-transform duration-500 ease-out
-            ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}
-          `}
-        >
-          <div className="flex flex-col h-full pt-20 pb-8 px-8 overflow-y-auto">
-            <div className="flex justify-end mb-4">
-              <button
-                onClick={() => setMobileOpen(false)}
-                className="p-2 text-espresso hover:bg-cream rounded-lg transition-colors"
-                aria-label="Close mobile menu"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-
-            <nav className="flex flex-col gap-1">
-              {SHOP_NAV_LINKS.map((link, i) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileOpen(false)}
-                  className="font-display text-xl text-walnut py-3 border-b border-cream-dark/50 hover:text-gold hover:pl-2 transition-all duration-300"
-                >
-                  {t(link.key)}
-                </Link>
-              ))}
-            </nav>
-
-            <LanguageSwitcher isMobile={true} />
-
-            <div className="mt-8 mb-auto">
-              <button
-                onClick={() => { setMobileOpen(false); setIsDrawerOpen(true); }}
-                className="flex items-center justify-center gap-3 w-full py-4 rounded-xl bg-espresso text-cream font-medium tracking-wider uppercase text-sm hover:bg-walnut-light transition-colors"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                {t('nav_cart')} ({totalItems})
-              </button>
-            </div>
           </div>
         </div>
       </div>
