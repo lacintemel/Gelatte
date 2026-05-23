@@ -18,6 +18,8 @@ import CheckoutPage from './pages/CheckoutPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AccountPage from './pages/AccountPage';
+import PaymentSuccessPage from './pages/PaymentSuccessPage';
+import PaymentFailPage from './pages/PaymentFailPage';
 
 // Admin Components
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
@@ -50,6 +52,8 @@ export default function App() {
                             <Route path="/shop" element={<ShopPage />} />
                             <Route path="/shop/product/:id" element={<ProductDetailPage />} />
                             <Route path="/checkout" element={<CheckoutPage />} />
+                            <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                            <Route path="/payment/fail" element={<PaymentFailPage />} />
 
                             {/* Customer Auth */}
                             <Route path="/login" element={<LoginPage />} />

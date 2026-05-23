@@ -228,114 +228,64 @@ function ShippingStep({ form, setForm, errors, onNext, onBack }) {
   );
 }
 
-/* ── Step 3: Payment ── */
-function PaymentStep({ payment, setPayment, payErrors, onNext, onBack }) {
+/* ── Step 3: Payment (PayTR Hosted iframe) ── */
+function PaymentStep({ iframeToken, paymentLoading, paymentError, onBack, onRetry }) {
   const { t } = useLanguage();
 
   return (
     <div className="animate-fade-in-up">
       <h2 className="font-display text-2xl md:text-3xl font-bold text-espresso mb-2">{t('ch_payment_title')}</h2>
-      <p className="text-warm-gray text-sm mb-8">{t('ch_payment_desc')}</p>
+      <p className="text-warm-gray text-sm mb-8">
+        {t('ch_payment_secure_desc') || 'Complete your payment securely. Your card details are handled by our payment provider and never stored on our servers.'}
+      </p>
 
-      <div className="p-6 rounded-xl bg-ivory border border-cream-dark/20 mb-8">
-        {/* Card Number */}
-        <div className="mb-4">
-          <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">{t('ch_card_number')}</label>
-          <div className="relative">
-            <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray-light" />
-            <input
-              type="text"
-              placeholder="1234  5678  9012  3456"
-              value={payment.cardNumber}
-              onChange={(e) => {
-                const v = e.target.value.replace(/\D/g, '').slice(0, 16);
-                const formatted = v.replace(/(.{4})/g, '$1  ').trim();
-                setPayment({ ...payment, cardNumber: formatted });
-              }}
-              className={`form-input pl-11 tracking-widest ${payErrors.cardNumber ? 'error' : ''}`}
-            />
-          </div>
-          {payErrors.cardNumber && <p className="text-red-500 text-xs mt-1.5 ml-1">{payErrors.cardNumber}</p>}
+      {/* PayTR iframe container */}
+      {paymentLoading && (
+        <div className="flex flex-col items-center justify-center py-16 gap-4">
+          <div className="w-10 h-10 border-3 border-cream-dark/30 border-t-espresso rounded-full animate-spin" />
+          <p className="text-warm-gray text-sm">{t('ch_loading_payment') || 'Loading secure payment form...'}</p>
         </div>
+      )}
 
-        {/* Name */}
-        <div className="mb-4">
-          <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">{t('ch_card_name')}</label>
-          <div className="relative">
-            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray-light" />
-            <input
-              type="text"
-              placeholder="John Doe"
-              value={payment.cardName}
-              onChange={(e) => setPayment({ ...payment, cardName: e.target.value })}
-              className={`form-input pl-11 ${payErrors.cardName ? 'error' : ''}`}
-            />
-          </div>
-          {payErrors.cardName && <p className="text-red-500 text-xs mt-1.5 ml-1">{payErrors.cardName}</p>}
+      {paymentError && (
+        <div className="p-6 rounded-xl bg-red-50 border border-red-200 mb-8 text-center">
+          <p className="text-red-700 text-sm mb-4">{paymentError}</p>
+          <button
+            onClick={onRetry}
+            className="px-6 py-3 rounded-xl bg-espresso text-cream text-sm font-medium tracking-wider uppercase hover:bg-walnut-light transition-colors"
+          >
+            {t('pay_try_again') || 'Try Again'}
+          </button>
         </div>
+      )}
 
-        <div className="grid grid-cols-2 gap-4">
-          {/* Expiry */}
-          <div>
-            <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">{t('ch_expiry')}</label>
-            <div className="relative">
-              <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray-light" />
-              <input
-                type="text"
-                placeholder="MM / YY"
-                value={payment.expiry}
-                onChange={(e) => {
-                  let v = e.target.value.replace(/\D/g, '').slice(0, 4);
-                  if (v.length > 2) v = v.slice(0, 2) + ' / ' + v.slice(2);
-                  setPayment({ ...payment, expiry: v });
-                }}
-                className={`form-input pl-11 tracking-widest ${payErrors.expiry ? 'error' : ''}`}
-              />
-            </div>
-            {payErrors.expiry && <p className="text-red-500 text-xs mt-1.5 ml-1">{payErrors.expiry}</p>}
-          </div>
-          {/* CVV */}
-          <div>
-            <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">{t('ch_cvv')}</label>
-            <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray-light" />
-              <input
-                type="text"
-                placeholder="•••"
-                value={payment.cvv}
-                maxLength={4}
-                onChange={(e) => setPayment({ ...payment, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) })}
-                className={`form-input pl-11 tracking-widest ${payErrors.cvv ? 'error' : ''}`}
-              />
-            </div>
-            {payErrors.cvv && <p className="text-red-500 text-xs mt-1.5 ml-1">{payErrors.cvv}</p>}
-          </div>
+      {iframeToken && !paymentLoading && (
+        <div className="rounded-xl overflow-hidden border border-cream-dark/20 mb-8">
+          <iframe
+            src={`https://www.paytr.com/odeme/guvenli/${iframeToken}`}
+            id="paytriframe"
+            frameBorder="0"
+            scrolling="yes"
+            style={{ width: '100%', minHeight: '460px' }}
+            title="Secure Payment"
+          />
         </div>
-      </div>
+      )}
 
       {/* Security Note */}
       <div className="flex items-center gap-3 p-4 rounded-xl bg-cream-light border border-cream-dark/15 mb-8">
         <Lock className="w-4 h-4 text-warm-gray shrink-0" />
         <p className="text-xs text-warm-gray-dark">
-          {t('ch_security_note')}
+          {t('ch_security_note') || 'Your payment is processed securely via PayTR. We never see or store your card details.'}
         </p>
       </div>
 
-      <div className="flex gap-3">
-        <button
-          onClick={onBack}
-          className="px-6 py-4 rounded-xl border border-cream-dark/30 text-walnut text-sm font-medium tracking-wider uppercase hover:bg-cream transition-colors"
-        >
-          {t('ch_back')}
-        </button>
-        <button
-          onClick={onNext}
-          className="flex-1 py-4 rounded-xl bg-espresso text-cream font-medium text-sm tracking-wider uppercase hover:bg-walnut-light transition-colors flex items-center justify-center gap-2"
-        >
-          <Lock className="w-4 h-4" />
-          {t('ch_place_order')}
-        </button>
-      </div>
+      <button
+        onClick={onBack}
+        className="px-6 py-4 rounded-xl border border-cream-dark/30 text-walnut text-sm font-medium tracking-wider uppercase hover:bg-cream transition-colors"
+      >
+        {t('ch_back')}
+      </button>
     </div>
   );
 }
@@ -427,11 +377,10 @@ export default function CheckoutPage() {
   });
   const [errors, setErrors] = useState({});
 
-  // Payment form
-  const [payment, setPayment] = useState({
-    cardNumber: '', cardName: '', expiry: '', cvv: '',
-  });
-  const [payErrors, setPayErrors] = useState({});
+  // PayTR payment iframe state (replaces raw card form)
+  const [iframeToken, setIframeToken] = useState(null);
+  const [paymentLoading, setPaymentLoading] = useState(false);
+  const [paymentError, setPaymentError] = useState(null);
 
   const applyPromo = () => {
     const result = validateCoupon(promoCode.trim(), totalPrice);
@@ -459,19 +408,70 @@ export default function CheckoutPage() {
     return Object.keys(errs).length === 0;
   };
 
-  const validatePayment = () => {
-    const errs = {};
-    const rawCard = payment.cardNumber.replace(/\s/g, '');
-    if (!rawCard) errs.cardNumber = t('ch_required');
-    else if (rawCard.length < 16) errs.cardNumber = t('ch_invalid_card');
-    if (!payment.cardName.trim()) errs.cardName = t('ch_required');
-    const rawExpiry = payment.expiry.replace(/\s|\//g, '');
-    if (!rawExpiry) errs.expiry = t('ch_required');
-    else if (rawExpiry.length < 4) errs.expiry = t('ch_invalid');
-    if (!payment.cvv) errs.cvv = t('ch_required');
-    else if (payment.cvv.length < 3) errs.cvv = t('ch_invalid');
-    setPayErrors(errs);
-    return Object.keys(errs).length === 0;
+  // Initialize PayTR payment via backend API
+  const initializePayment = async () => {
+    setPaymentLoading(true);
+    setPaymentError(null);
+    setIframeToken(null);
+
+    try {
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(i => ({
+            productId: i.id,
+            quantity: i.quantity,
+          })),
+          shipping: form,
+          couponCode: appliedCoupon?.code || null,
+          idempotencyKey: `checkout_${Date.now()}_${Math.random().toString(36).slice(2)}`,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.data?.iframeToken) {
+        setIframeToken(data.data.iframeToken);
+        setOrderNumber(data.data.orderNumber);
+
+        // Also create order in local context for backwards compatibility
+        addOrder({
+          items: items.map(i => ({ id: i.id, name: i.name, price: i.price, discount: i.discount || 0, quantity: i.quantity, image: i.images?.[0] || i.image })),
+          customer: form,
+          subtotal: totalPrice,
+          discountAmount: data.data.discountAmount || 0,
+          couponCode: appliedCoupon?.code || null,
+          total: data.data.total || totalPrice,
+        });
+
+        if (appliedCoupon) applyCoupon(appliedCoupon.code);
+      } else {
+        setPaymentError(data.message || 'Failed to initialize payment. Please try again.');
+      }
+    } catch (err) {
+      // If the backend is not yet running, fall back to a demo confirmation
+      console.warn('Checkout API unavailable, using demo mode:', err.message);
+      const discountAmount = appliedCoupon ? calculateDiscount(appliedCoupon, totalPrice) : 0;
+      const finalTotal = totalPrice - discountAmount;
+
+      const order = addOrder({
+        items: items.map(i => ({ id: i.id, name: i.name, price: i.price, discount: i.discount || 0, quantity: i.quantity, image: i.images?.[0] || i.image })),
+        customer: form,
+        subtotal: totalPrice,
+        discountAmount,
+        couponCode: appliedCoupon?.code || null,
+        total: finalTotal,
+      });
+
+      if (appliedCoupon) applyCoupon(appliedCoupon.code);
+      setOrderNumber(order.id);
+      clearCart();
+      setStep(4);
+      addToast('Order placed successfully! (Demo mode)', 'success');
+    } finally {
+      setPaymentLoading(false);
+    }
   };
 
   const handleNext = (from) => {
@@ -482,28 +482,7 @@ export default function CheckoutPage() {
     } else if (from === 2) {
       if (validateShipping()) {
         setStep(3);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    } else if (from === 3) {
-      if (validatePayment()) {
-        const discountAmount = appliedCoupon ? calculateDiscount(appliedCoupon, totalPrice) : 0;
-        const finalTotal = totalPrice - discountAmount;
-
-        const order = addOrder({
-          items: items.map(i => ({ id: i.id, name: i.name, price: i.price, discount: i.discount || 0, quantity: i.quantity, image: i.images?.[0] || i.image })),
-          customer: form,
-          subtotal: totalPrice,
-          discountAmount,
-          couponCode: appliedCoupon?.code || null,
-          total: finalTotal,
-        });
-
-        if (appliedCoupon) applyCoupon(appliedCoupon.code);
-
-        setOrderNumber(order.id);
-        clearCart();
-        setStep(4);
-        addToast('Order placed successfully!', 'success');
+        initializePayment();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
     }
