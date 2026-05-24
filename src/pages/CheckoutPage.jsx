@@ -160,7 +160,7 @@ function ShippingStep({ form, setForm, errors, onNext, onBack }) {
     { key: 'firstName', label: t('ch_first_name'), placeholder: 'John', icon: User, half: true },
     { key: 'lastName', label: t('ch_last_name'), placeholder: 'Doe', icon: User, half: true },
     { key: 'email', label: t('ch_email_label'), placeholder: 'john@example.com', icon: Mail, type: 'email' },
-    { key: 'phone', label: t('ch_phone_label'), placeholder: '+1 234 567 890', icon: Phone, type: 'tel' },
+    { key: 'phone', label: t('ch_phone_label'), placeholder: '234 567 890', icon: Phone, type: 'tel' },
     { key: 'address', label: t('ch_address_label'), placeholder: '123 Main Street', icon: MapPin },
     { key: 'city', label: t('ch_city'), placeholder: 'Milan', icon: MapPin, half: true },
     { key: 'zip', label: t('ch_zip'), placeholder: '20121', icon: MapPin, half: true },
