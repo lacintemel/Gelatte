@@ -329,6 +329,10 @@ body {
   font-family: var(--font-body);
 }
 
+.form-input.pl-11 {
+  padding-left: 44px;
+}
+
 .form-input::placeholder {
   color: var(--color-warm-gray-light);
 }
