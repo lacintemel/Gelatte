@@ -14,7 +14,7 @@ import { useAuth } from '../context/AuthContext';
 const STEPS = [
   { id: 1, labelKey: 'ch_step_review', icon: ShoppingBag },
   { id: 2, labelKey: 'ch_step_shipping', icon: Truck },
-  { id: 3, labelKey: 'ch_step_payment', icon: CreditCard },
+  { id: 3, labelKey: 'ch_step_payment', icon: Lock },
   { id: 4, labelKey: 'ch_step_confirm', icon: Check },
 ];
 
