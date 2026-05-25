@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  ArrowLeft, ShoppingBag, CreditCard, Truck, Check, ChevronRight,
-  MapPin, Mail, Phone, User, Lock, Calendar, Package,
+  ArrowLeft, ShoppingBag, Truck, Check, ChevronRight,
+  MapPin, Mail, Phone, User, Lock, Package,
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
@@ -535,11 +535,11 @@ export default function CheckoutPage() {
 
         {step === 3 && (
           <PaymentStep
-            payment={payment}
-            setPayment={setPayment}
-            payErrors={payErrors}
-            onNext={() => handleNext(3)}
+            iframeToken={iframeToken}
+            paymentLoading={paymentLoading}
+            paymentError={paymentError}
             onBack={() => { setStep(2); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            onRetry={() => initializePayment()}
           />
         )}
 

@@ -26,6 +26,8 @@ dist-ssr
 # Environment variables (never commit real secrets)
 .env
 server/.env
+.env.example    
+
 
 # Server
 server/node_modules
