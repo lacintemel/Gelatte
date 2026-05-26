@@ -181,7 +181,7 @@ export default function CartDrawer() {
               <div className="pt-4 border-t border-cream-dark/15">
                 <label className="flex items-center gap-2 text-xs font-medium text-walnut tracking-wide uppercase mb-2">
                   <Tag className="w-3.5 h-3.5" />
-                  {t('cart_notes')}
+                  {t('cart_order_notes')}
                 </label>
                 <textarea
                   placeholder={t('cart_notes_placeholder')}
