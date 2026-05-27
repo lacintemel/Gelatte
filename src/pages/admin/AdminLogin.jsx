@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, Mail, Eye, EyeOff, Shield } from 'lucide-react';
+import { Lock, User, Eye, EyeOff, Shield } from 'lucide-react';
 
 export default function AdminLogin() {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
@@ -23,20 +23,23 @@ export default function AdminLogin() {
     setLoading(true);
     setError('');
 
-    // Simulate network delay
-    await new Promise((r) => setTimeout(r, 400));
+    try {
+      const result = await adminLogin(username, password);
 
-    const result = adminLogin(email, password);
-    setLoading(false);
-
-    if (result.success) {
-      navigate('/admin');
-    } else {
-      const errorMessages = {
-        auth_invalid_credentials: 'Invalid email or password',
-        auth_not_admin: 'This account does not have admin access',
-      };
-      setError(errorMessages[result.error] || 'Login failed');
+      if (result.success) {
+        navigate('/admin');
+      } else {
+        const errorMessages = {
+          auth_invalid_credentials: 'Geçersiz kullanıcı adı veya şifre',
+          auth_not_admin: 'Bu hesabın yönetici erişimi yok',
+          auth_account_disabled: 'Bu hesap devre dışı bırakılmıştır',
+        };
+        setError(errorMessages[result.error] || 'Giriş başarısız');
+      }
+    } catch {
+      setError('Bir hata oluştu. Lütfen tekrar deneyin.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,28 +54,28 @@ export default function AdminLogin() {
         </div>
 
         <h1 className="font-display text-2xl font-bold text-center text-espresso mb-1">
-          Admin Panel
+          Yönetim Paneli
         </h1>
         <p className="text-warm-gray text-center text-sm mb-8">
-          Sign in with your admin credentials
+          Yönetici bilgilerinizle giriş yapın
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email */}
+          {/* Username */}
           <div>
             <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">
-              Email
+              Kullanıcı Adı
             </label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray" />
               <input
-                type="email"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                type="text"
+                placeholder="Kullanıcı adınızı girin"
+                value={username}
+                onChange={(e) => { setUsername(e.target.value); setError(''); }}
                 className="w-full pl-11 pr-4 py-3 rounded-xl bg-champagne border border-cream-dark/25 text-espresso text-sm placeholder:text-warm-gray-light focus:outline-none focus:ring-2 focus:ring-gold/50 transition-all"
                 required
-                autoComplete="email"
+                autoComplete="username"
               />
             </div>
           </div>
@@ -80,7 +83,7 @@ export default function AdminLogin() {
           {/* Password */}
           <div>
             <label className="block text-xs font-medium text-walnut tracking-wide uppercase mb-2">
-              Password
+              Şifre
             </label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-warm-gray" />
@@ -120,19 +123,10 @@ export default function AdminLogin() {
             {loading ? (
               <div className="w-5 h-5 border-2 border-cream/30 border-t-cream rounded-full animate-spin" />
             ) : (
-              'Sign In'
+              'Giriş Yap'
             )}
           </button>
         </form>
-
-        {/* Credentials hint */}
-        <div className="mt-8 p-4 rounded-xl bg-cream-light border border-cream-dark/15">
-          <p className="text-[11px] text-warm-gray tracking-wide uppercase font-medium mb-2">Demo Credentials</p>
-          <div className="space-y-1 text-xs text-walnut-light">
-            <p><strong>Super Admin:</strong> admin@example.com / [REDACTED]</p>
-            <p><strong>Staff:</strong> staff@example.com / [REDACTED]</p>
-          </div>
-        </div>
       </div>
     </div>
   );
