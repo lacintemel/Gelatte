@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
 import { useCoupons } from '../../context/CouponContext';
+import { useAuth } from '../../context/AuthContext';
 import { Package, FolderTree, TrendingUp, AlertCircle, ShoppingCart, DollarSign, Ticket, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
@@ -82,6 +83,7 @@ export default function AdminDashboard() {
   const { orders, stats: orderStats } = useOrders();
   const { coupons } = useCoupons();
   const { t } = useLanguage();
+  const { isSuperAdmin, currentUser } = useAuth();
 
   const activeProducts = products.filter(p => p.status === 'active').length;
   const outOfStockProducts = products.filter(p => p.stock === 0).length;
@@ -112,19 +114,43 @@ export default function AdminDashboard() {
     return labels;
   }, []);
 
-  const stats = [
-    { label: 'Total Products', value: products.length, icon: Package, color: 'text-blue-500', bg: 'bg-blue-50' },
+  // Build stats based on role
+  const stats = [];
+
+  // Everyone sees products and orders
+  stats.push(
+    { label: 'Toplam Ürün', value: products.length, icon: Package, color: 'text-blue-500', bg: 'bg-blue-50' },
     { label: t('adm_orders_count'), value: orderStats.totalOrders, icon: ShoppingCart, color: 'text-purple-500', bg: 'bg-purple-50', link: '/admin/orders' },
-    { label: t('adm_revenue'), value: `₺${orderStats.totalRevenue.toFixed(0)}`, icon: DollarSign, color: 'text-green-500', bg: 'bg-green-50' },
-    { label: 'Out of Stock', value: outOfStockProducts, icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-50' },
-  ];
+  );
+
+  // Only superadmin sees revenue
+  if (isSuperAdmin) {
+    stats.push(
+      { label: t('adm_revenue'), value: `₺${orderStats.totalRevenue.toFixed(0)}`, icon: DollarSign, color: 'text-green-500', bg: 'bg-green-50' },
+    );
+  }
+
+  // Everyone sees out of stock
+  stats.push(
+    { label: 'Stok Tükenen', value: outOfStockProducts, icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-50' },
+  );
 
   return (
     <div>
-      <h1 className="font-display text-3xl font-bold text-espresso mb-8">Dashboard</h1>
+      <div className="mb-8">
+        <h1 className="font-display text-3xl font-bold text-espresso">Dashboard</h1>
+        <p className="text-warm-gray text-sm mt-1">
+          Hoş geldiniz, <span className="font-medium text-espresso">{currentUser?.username || currentUser?.name}</span>
+          {!isSuperAdmin && (
+            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wider uppercase bg-blue-100 text-blue-800">
+              Personel
+            </span>
+          )}
+        </p>
+      </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className={`grid grid-cols-1 md:grid-cols-2 ${isSuperAdmin ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-6 mb-8`}>
         {stats.map((stat, idx) => {
           const Wrapper = stat.link ? Link : 'div';
           const wrapperProps = stat.link ? { to: stat.link } : {};
@@ -142,25 +168,27 @@ export default function AdminDashboard() {
         })}
       </div>
 
-      {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        {/* Weekly Revenue Chart */}
-        <div className="bg-ivory rounded-2xl shadow-sm border border-cream-dark/25 p-6">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-display text-lg font-bold text-espresso">{t('adm_daily_sales')}</h2>
-            <span className="text-xs text-warm-gray px-3 py-1 bg-cream-light rounded-full">{t('adm_weekly')}</span>
+      {/* Charts Row - Only show revenue chart for superadmin */}
+      <div className={`grid grid-cols-1 ${isSuperAdmin ? 'lg:grid-cols-2' : ''} gap-6 mb-8`}>
+        {/* Weekly Revenue Chart - SuperAdmin only */}
+        {isSuperAdmin && (
+          <div className="bg-ivory rounded-2xl shadow-sm border border-cream-dark/25 p-6">
+            <div className="flex items-center justify-between mb-5">
+              <h2 className="font-display text-lg font-bold text-espresso">{t('adm_daily_sales')}</h2>
+              <span className="text-xs text-warm-gray px-3 py-1 bg-cream-light rounded-full">{t('adm_weekly')}</span>
+            </div>
+            <MiniBarChart data={weeklyRevenue} maxValue={Math.max(...weeklyRevenue, 1)} color="bg-gold" />
+            <div className="flex justify-between mt-2">
+              {dayLabels.map((d, i) => (
+                <span key={i} className="text-[10px] text-warm-gray flex-1 text-center">{d}</span>
+              ))}
+            </div>
+            <div className="mt-4 pt-4 border-t border-cream-dark/15 flex items-center justify-between">
+              <span className="text-sm text-warm-gray">{t('adm_weekly')} {t('adm_revenue')}</span>
+              <span className="font-display text-xl font-bold text-espresso">₺{weeklyRevenue.reduce((a, b) => a + b, 0).toFixed(2)}</span>
+            </div>
           </div>
-          <MiniBarChart data={weeklyRevenue} maxValue={Math.max(...weeklyRevenue, 1)} color="bg-gold" />
-          <div className="flex justify-between mt-2">
-            {dayLabels.map((d, i) => (
-              <span key={i} className="text-[10px] text-warm-gray flex-1 text-center">{d}</span>
-            ))}
-          </div>
-          <div className="mt-4 pt-4 border-t border-cream-dark/15 flex items-center justify-between">
-            <span className="text-sm text-warm-gray">{t('adm_weekly')} {t('adm_revenue')}</span>
-            <span className="font-display text-xl font-bold text-espresso">₺{weeklyRevenue.reduce((a, b) => a + b, 0).toFixed(2)}</span>
-          </div>
-        </div>
+        )}
 
         {/* Category Distribution */}
         <div className="bg-ivory rounded-2xl shadow-sm border border-cream-dark/25 p-6">
@@ -177,7 +205,7 @@ export default function AdminDashboard() {
         <div className="px-6 py-5 border-b border-cream-dark/25 flex justify-between items-center">
           <h2 className="font-display text-xl font-bold text-espresso">{t('adm_recent_orders')}</h2>
           <Link to="/admin/orders" className="text-sm font-medium text-gold hover:text-espresso transition-colors">
-            View All
+            Tümünü Gör
           </Link>
         </div>
         <div className="divide-y divide-cream-dark/25">
@@ -196,7 +224,10 @@ export default function AdminDashboard() {
                 }`}>
                   {t(`ord_${order.status}`)}
                 </span>
-                <p className="font-display font-semibold text-espresso">₺{(order.total || 0).toFixed(2)}</p>
+                {/* Only show order totals for superadmin */}
+                {isSuperAdmin && (
+                  <p className="font-display font-semibold text-espresso">₺{(order.total || 0).toFixed(2)}</p>
+                )}
               </div>
             </div>
           ))}
@@ -209,9 +240,9 @@ export default function AdminDashboard() {
       {/* Recent Products */}
       <div className="bg-ivory rounded-2xl shadow-sm border border-cream-dark/25 overflow-hidden">
         <div className="px-6 py-5 border-b border-cream-dark/25 flex justify-between items-center">
-          <h2 className="font-display text-xl font-bold text-espresso">Recent Products</h2>
+          <h2 className="font-display text-xl font-bold text-espresso">Son Ürünler</h2>
           <Link to="/admin/products" className="text-sm font-medium text-gold hover:text-espresso transition-colors">
-            View All
+            Tümünü Gör
           </Link>
         </div>
         <div className="divide-y divide-cream-dark/25">
@@ -229,13 +260,13 @@ export default function AdminDashboard() {
               <div className="text-right">
                 <p className="font-semibold text-espresso">₺{product.price.toFixed(2)}</p>
                 <p className={`text-xs mt-1 ${product.stock > 5 ? 'text-green-500' : product.stock > 0 ? 'text-orange-500' : 'text-red-500'}`}>
-                  {product.stock} in stock
+                  {product.stock} stok
                 </p>
               </div>
             </div>
           ))}
           {products.length === 0 && (
-            <div className="p-8 text-center text-warm-gray">No products found.</div>
+            <div className="p-8 text-center text-warm-gray">Ürün bulunamadı.</div>
           )}
         </div>
       </div>
