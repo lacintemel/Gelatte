@@ -3,10 +3,12 @@ import { useProducts } from '../../context/ProductContext';
 import { Plus, Search, Edit2, Trash2, Image as ImageIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function AdminProducts() {
   const { products, deleteProduct, categories } = useProducts();
   const { t } = useLanguage();
+  const { isSuperAdmin } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
 
@@ -30,13 +32,15 @@ export default function AdminProducts() {
     <div>
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <h1 className="font-display text-3xl font-bold text-espresso">Products</h1>
-        <Link 
-          to="/admin/products/new" 
-          className="bg-espresso text-cream px-5 py-2.5 rounded-xl font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-walnut-light transition-colors"
-        >
-          <Plus className="w-5 h-5" />
-          Add Product
-        </Link>
+        {isSuperAdmin && (
+          <Link 
+            to="/admin/products/new" 
+            className="bg-espresso text-cream px-5 py-2.5 rounded-xl font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-walnut-light transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Add Product
+          </Link>
+        )}
       </div>
 
       <div className="bg-ivory rounded-2xl shadow-sm border border-cream-dark/25 overflow-hidden">
@@ -130,13 +134,15 @@ export default function AdminProducts() {
                       >
                         <Edit2 className="w-4 h-4" />
                       </Link>
-                      <button 
-                        onClick={() => handleDelete(product.id)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-400 hover:text-red-600 hover:bg-red-100 transition-colors"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                      {isSuperAdmin && (
+                        <button 
+                          onClick={() => handleDelete(product.id)}
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-400 hover:text-red-600 hover:bg-red-100 transition-colors"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );

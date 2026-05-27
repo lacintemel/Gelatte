@@ -81,7 +81,6 @@ function StatusBadge({ isActive }) {
 /* ══════════════════════════════════════════════════ */
 export default function AdminStaffManagement() {
   const {
-    currentUser,
     isSuperAdmin,
     getStaffUsers,
     changeStaffPassword,
@@ -89,7 +88,6 @@ export default function AdminStaffManagement() {
     addStaffUser,
     getLoginHistory,
     getAuditLogs,
-    logAuditEvent,
   } = useAuth();
 
   // ── State ──
@@ -169,7 +167,7 @@ export default function AdminStaffManagement() {
         };
         showFeedback(errorMap[result.error] || result.error || 'Failed to create staff account.', 'error');
       }
-    } catch (err) {
+    } catch {
       showFeedback('An unexpected error occurred.', 'error');
     } finally {
       setLoading(false);
@@ -198,7 +196,7 @@ export default function AdminStaffManagement() {
         };
         showFeedback(errorMap[result.error] || result.error || 'Failed to change password.', 'error');
       }
-    } catch (err) {
+    } catch {
       showFeedback('An unexpected error occurred.', 'error');
     } finally {
       setLoading(false);

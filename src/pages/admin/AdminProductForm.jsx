@@ -6,12 +6,14 @@ import ImageUpload from '../../components/admin/ImageUpload';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { translations } from '../../data/translations';
+import { useAuth } from '../../context/AuthContext';
 
 export default function AdminProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { products, categories, addProduct, updateProduct } = useProducts();
   const { SUPPORTED_LANGS } = useLanguage();
+  const { isSuperAdmin } = useAuth();
   const [activeLang, setActiveLang] = useState('tr');
   
   const isEditing = Boolean(id);
@@ -211,7 +213,8 @@ export default function AdminProductForm() {
                 name="name"
                 value={formData.name[activeLang] || ''}
                 onChange={(e) => handleLangFieldChange(e, 'name')}
-                className="w-full px-4 py-2.5 rounded-xl bg-champagne border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50"
+                disabled={!isSuperAdmin}
+                className={`w-full px-4 py-2.5 rounded-xl border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50 ${!isSuperAdmin ? 'bg-cream-dark/20 text-warm-gray cursor-not-allowed' : 'bg-champagne'}`}
                 placeholder="e.g. Pistachio Gelato"
               />
               {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
@@ -225,8 +228,9 @@ export default function AdminProductForm() {
                 name="description"
                 value={formData.description[activeLang] || ''}
                 onChange={(e) => handleLangFieldChange(e, 'description')}
+                disabled={!isSuperAdmin}
                 rows="4"
-                className="w-full px-4 py-2.5 rounded-xl bg-champagne border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50 resize-none"
+                className={`w-full px-4 py-2.5 rounded-xl border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50 resize-none ${!isSuperAdmin ? 'bg-cream-dark/20 text-warm-gray cursor-not-allowed' : 'bg-champagne'}`}
                 placeholder="Product description..."
               />
             </div>
@@ -234,7 +238,18 @@ export default function AdminProductForm() {
 
           <div className="bg-ivory p-6 rounded-2xl shadow-sm border border-cream-dark/25 space-y-4">
             <h2 className="font-display text-xl font-semibold text-espresso border-b border-cream-dark/25 pb-4">Media</h2>
-            <ImageUpload images={images} setImages={setImages} />
+            {isSuperAdmin ? (
+              <ImageUpload images={images} setImages={setImages} />
+            ) : (
+              <div className="flex gap-4">
+                {images.map((img, idx) => (
+                  <div key={idx} className="w-24 h-24 rounded-lg bg-cream flex-shrink-0 flex items-center justify-center overflow-hidden border border-cream-dark/20">
+                    <img src={img} alt="Product" className="w-full h-full object-cover" />
+                  </div>
+                ))}
+                {images.length === 0 && <p className="text-sm text-warm-gray">No images available</p>}
+              </div>
+            )}
             {errors.images && <p className="text-red-500 text-xs mt-1">{errors.images}</p>}
           </div>
         </div>
@@ -309,7 +324,8 @@ export default function AdminProductForm() {
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl bg-champagne border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50"
+                disabled={!isSuperAdmin}
+                className={`w-full px-4 py-2.5 rounded-xl border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50 ${!isSuperAdmin ? 'bg-cream-dark/20 text-warm-gray cursor-not-allowed' : 'bg-champagne'}`}
               >
                 {categories.map(c => (
                   <option key={c.id} value={c.id}>{c.label || c.name}</option>
@@ -323,7 +339,8 @@ export default function AdminProductForm() {
                 name="badge"
                 value={formData.badge}
                 onChange={handleChange}
-                className="w-full px-4 py-2.5 rounded-xl bg-champagne border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50"
+                disabled={!isSuperAdmin}
+                className={`w-full px-4 py-2.5 rounded-xl border border-cream-dark/25 focus:outline-none focus:ring-2 focus:ring-gold/50 ${!isSuperAdmin ? 'bg-cream-dark/20 text-warm-gray cursor-not-allowed' : 'bg-champagne'}`}
               >
                 <option value="">None</option>
                 <option value="Signature">Signature</option>
@@ -340,10 +357,11 @@ export default function AdminProductForm() {
             {/* Show in Menu */}
             <button
               type="button"
+              disabled={!isSuperAdmin}
               onClick={() => setFormData(prev => ({ ...prev, showInMenu: !prev.showInMenu }))}
               className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
                 formData.showInMenu ? 'bg-mint/10 border-mint/30' : 'bg-cream-light border-cream-dark/20'
-              }`}
+              } ${!isSuperAdmin ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               <div className="text-left">
                 <p className="text-sm font-medium text-espresso">Show in Menu</p>
@@ -357,10 +375,11 @@ export default function AdminProductForm() {
             {/* Available for Online Order */}
             <button
               type="button"
+              disabled={!isSuperAdmin}
               onClick={() => setFormData(prev => ({ ...prev, availableForOnlineOrder: !prev.availableForOnlineOrder }))}
               className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
                 formData.availableForOnlineOrder ? 'bg-gold/10 border-gold/30' : 'bg-cream-light border-cream-dark/20'
-              }`}
+              } ${!isSuperAdmin ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               <div className="text-left">
                 <p className="text-sm font-medium text-espresso">Available for Online Order</p>

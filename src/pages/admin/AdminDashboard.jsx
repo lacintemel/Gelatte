@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
 import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
-import { useCoupons } from '../../context/CouponContext';
 import { useAuth } from '../../context/AuthContext';
-import { Package, FolderTree, TrendingUp, AlertCircle, ShoppingCart, DollarSign, Ticket, BarChart3 } from 'lucide-react';
+import { Package, AlertCircle, ShoppingCart, DollarSign, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 
@@ -37,30 +36,36 @@ function CategoryDonut({ categories, products }) {
 
   const total = data.reduce((s, d) => s + d.count, 0);
 
+  // Compute segments before render to avoid mutating a local variable inside the JSX .map() loop
+  const segments = [];
+  let currentOffset = 0;
+  for (let i = 0; i < data.length; i++) {
+    const d = data[i];
+    const pct = total > 0 ? (d.count / total) * 100 : 0;
+    segments.push({
+      ...d,
+      pct,
+      offset: currentOffset,
+    });
+    currentOffset += pct;
+  }
+
   return (
     <div className="flex items-center gap-6">
       <div className="relative w-24 h-24 shrink-0">
         <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-          {(() => {
-            let offset = 0;
-            return data.map((d, i) => {
-              const pct = total > 0 ? (d.count / total) * 100 : 0;
-              const el = (
-                <circle
-                  key={i}
-                  cx="18" cy="18" r="15.9"
-                  fill="none"
-                  stroke={d.color}
-                  strokeWidth="3.5"
-                  strokeDasharray={`${pct} ${100 - pct}`}
-                  strokeDashoffset={-offset}
-                  className="transition-all duration-700"
-                />
-              );
-              offset += pct;
-              return el;
-            });
-          })()}
+          {segments.map((seg, i) => (
+            <circle
+              key={i}
+              cx="18" cy="18" r="15.9"
+              fill="none"
+              stroke={seg.color}
+              strokeWidth="3.5"
+              strokeDasharray={`${seg.pct} ${100 - seg.pct}`}
+              strokeDashoffset={-seg.offset}
+              className="transition-all duration-700"
+            />
+          ))}
         </svg>
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="font-display text-lg font-bold text-espresso">{total}</span>
@@ -81,11 +86,9 @@ function CategoryDonut({ categories, products }) {
 export default function AdminDashboard() {
   const { products, categories } = useProducts();
   const { orders, stats: orderStats } = useOrders();
-  const { coupons } = useCoupons();
   const { t } = useLanguage();
   const { isSuperAdmin, currentUser } = useAuth();
 
-  const activeProducts = products.filter(p => p.status === 'active').length;
   const outOfStockProducts = products.filter(p => p.stock === 0).length;
 
   // Weekly revenue mock data from orders
