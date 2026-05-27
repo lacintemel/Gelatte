@@ -31,6 +31,8 @@ import AdminProductForm from './pages/admin/AdminProductForm';
 import AdminCategories from './pages/admin/AdminCategories';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminCoupons from './pages/admin/AdminCoupons';
+import AdminStaffManagement from './pages/admin/AdminStaffManagement';
+import AdminAuditLogs from './pages/admin/AdminAuditLogs';
 
 export default function App() {
   return (
@@ -70,9 +72,15 @@ export default function App() {
                                 <Route path="products" element={<AdminProducts />} />
                                 <Route path="products/new" element={<AdminProductForm />} />
                                 <Route path="products/:id" element={<AdminProductForm />} />
-                                <Route path="categories" element={<AdminCategories />} />
                                 <Route path="orders" element={<AdminOrders />} />
-                                <Route path="coupons" element={<AdminCoupons />} />
+
+                                {/* Super Admin Only Routes */}
+                                <Route element={<AdminProtectedRoute requiredRole="superadmin" />}>
+                                  <Route path="categories" element={<AdminCategories />} />
+                                  <Route path="coupons" element={<AdminCoupons />} />
+                                  <Route path="staff" element={<AdminStaffManagement />} />
+                                  <Route path="audit-logs" element={<AdminAuditLogs />} />
+                                </Route>
                               </Route>
                             </Route>
 
