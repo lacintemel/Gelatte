@@ -91,13 +91,6 @@ The Vite dev server proxies `/api` requests to the Express backend automatically
 
 Visit [http://localhost:5173](http://localhost:5173)
 
-## Test Accounts
-
-| Role | Email | Password |
-|---|---|---|
-| Super Admin | admin@example.com | [REDACTED] |
-| Staff | staff@example.com | [REDACTED] |
-| Customer | demo@example.com | [REDACTED] |
 
 ## Environment Variables
 
