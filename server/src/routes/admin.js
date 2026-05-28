@@ -5,6 +5,7 @@ import { authenticate } from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/admin.js';
 import { validate } from '../middleware/validate.js';
 import { logger } from '../utils/logger.js';
+import bcrypt from 'bcryptjs';
 
 const router = Router();
 
@@ -203,6 +204,136 @@ router.get('/dashboard', async (req, res) => {
   } catch (err) {
     logger.error('Admin dashboard error:', err);
     res.status(500).json({ success: false, error: 'Dashboard verileri yüklenemedi' });
+  }
+});
+
+// ── User / Staff Management ────────────────
+
+const createUserSchema = z.object({
+  email: z.string().email('Geçerli bir e-posta girin'),
+  name: z.string().min(1, 'İsim gerekli'),
+  password: z.string().min(6, 'Şifre en az 6 karakter olmalı'),
+  role: z.enum(['admin', 'customer', 'superadmin']).default('admin'),
+  phone: z.string().optional(),
+});
+
+const updateUserSchema = z.object({
+  name: z.string().min(1).optional(),
+  email: z.string().email().optional(),
+  password: z.string().min(6).optional(),
+  role: z.enum(['admin', 'customer', 'superadmin']).optional(),
+  phone: z.string().optional(),
+});
+
+// GET /api/admin/users — List all users/staff
+router.get('/users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        phone: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json({ success: true, data: users });
+  } catch (err) {
+    logger.error('Error fetching users:', err);
+    res.status(500).json({ success: false, error: 'Kullanıcılar yüklenemedi' });
+  }
+});
+
+// POST /api/admin/users — Create a new user (Staff/Admin)
+router.post('/users', validate(createUserSchema), async (req, res) => {
+  try {
+    const { email, name, password, role, phone } = req.body;
+
+    // Only superadmins can create other superadmins
+    if (role === 'superadmin' && req.user.role !== 'superadmin') {
+      return res.status(403).json({ success: false, error: 'Superadmin oluşturma yetkiniz yok' });
+    }
+
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      return res.status(400).json({ success: false, error: 'Bu e-posta adresi zaten kullanılıyor' });
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12);
+    const user = await prisma.user.create({
+      data: { email, name, passwordHash, role, phone },
+      select: { id: true, email: true, name: true, role: true, createdAt: true },
+    });
+
+    res.json({ success: true, data: user });
+  } catch (err) {
+    logger.error('Error creating user:', err);
+    res.status(500).json({ success: false, error: 'Kullanıcı oluşturulamadı' });
+  }
+});
+
+// PUT /api/admin/users/:id — Update a user
+router.put('/users/:id', validate(updateUserSchema), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    // Only superadmin can modify superadmins
+    const targetUser = await prisma.user.findUnique({ where: { id } });
+    if (!targetUser) return res.status(404).json({ success: false, error: 'Kullanıcı bulunamadı' });
+
+    if (targetUser.role === 'superadmin' && req.user.role !== 'superadmin') {
+      return res.status(403).json({ success: false, error: 'Superadmin yetkilerini değiştiremezsiniz' });
+    }
+
+    // Only superadmin can promote someone to superadmin
+    if (updates.role === 'superadmin' && req.user.role !== 'superadmin') {
+      return res.status(403).json({ success: false, error: 'Superadmin yetkisi veremezsiniz' });
+    }
+
+    const data = { ...updates };
+    if (data.password) {
+      data.passwordHash = await bcrypt.hash(data.password, 12);
+      delete data.password;
+    }
+
+    const user = await prisma.user.update({
+      where: { id },
+      data,
+      select: { id: true, email: true, name: true, role: true },
+    });
+
+    res.json({ success: true, data: user });
+  } catch (err) {
+    logger.error('Error updating user:', err);
+    res.status(500).json({ success: false, error: 'Kullanıcı güncellenemedi' });
+  }
+});
+
+// DELETE /api/admin/users/:id — Delete a user
+router.delete('/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const targetUser = await prisma.user.findUnique({ where: { id } });
+    if (!targetUser) return res.status(404).json({ success: false, error: 'Kullanıcı bulunamadı' });
+
+    if (targetUser.role === 'superadmin' && req.user.role !== 'superadmin') {
+      return res.status(403).json({ success: false, error: 'Superadmin silemezsiniz' });
+    }
+
+    // Prevent deleting oneself
+    if (id === req.user.id) {
+      return res.status(400).json({ success: false, error: 'Kendi hesabınızı silemezsiniz' });
+    }
+
+    await prisma.user.delete({ where: { id } });
+    res.json({ success: true });
+  } catch (err) {
+    logger.error('Error deleting user:', err);
+    res.status(500).json({ success: false, error: 'Kullanıcı silinemedi' });
   }
 });
 
