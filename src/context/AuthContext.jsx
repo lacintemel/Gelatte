@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { api } from '../lib/api';
 
 const AuthContext = createContext();
 const USERS_KEY = 'gelatte_users';
@@ -206,25 +207,35 @@ export function AuthProvider({ children }) {
         setUsers(defaults);
         localStorage.setItem(USERS_KEY, JSON.stringify(defaults));
       }
-      setInitialized(true);
     }
     initUsers();
   }, []);
 
-  // Resolve current user from session
+  // ── Initialization (API call to /me) ──
   useEffect(() => {
-    if (!initialized) return;
-    if (session) {
-      const user = users.find((u) => u.id === session.userId);
-      setCurrentUser(user || null);
-      if (!user) {
-        localStorage.removeItem(SESSION_KEY);
-        setSession(null);
+    async function initAuth() {
+      const token = localStorage.getItem('gelatte_token');
+      if (token) {
+        try {
+          const response = await api.getMe();
+          if (response.success) {
+            setCurrentUser(response.data);
+            setSession({ token, userId: response.data.id, role: response.data.role });
+          } else {
+            localStorage.removeItem('gelatte_token');
+            setSession(null);
+            setCurrentUser(null);
+          }
+        } catch (err) {
+          localStorage.removeItem('gelatte_token');
+          setSession(null);
+          setCurrentUser(null);
+        }
       }
-    } else {
-      setCurrentUser(null);
+      setInitialized(true);
     }
-  }, [session, users, initialized]);
+    initAuth();
+  }, []);
 
   // Persist users
   useEffect(() => {
@@ -353,119 +364,84 @@ export function AuthProvider({ children }) {
     setLoginHistory((prev) => [entry, ...prev].slice(0, 500));
   }, []);
 
-  // ── Login (supports both email and username) ──
+  // ── Login ──
   const login = useCallback(async (identifier, password) => {
-    const user = users.find(
-      (u) =>
-        u.email?.toLowerCase() === identifier.toLowerCase() ||
-        u.username?.toLowerCase() === identifier.toLowerCase()
-    );
+    try {
+      const response = await api.login(identifier, password);
+      if (response.success) {
+        const { token, user } = response.data;
+        localStorage.setItem('gelatte_token', token);
+        
+        const newSession = {
+          userId: user.id,
+          role: user.role,
+          token,
+          createdAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        };
+        
+        setSession(newSession);
+        setCurrentUser(user);
+        
+        logLoginAttempt(user.email, true, user.role);
+        logDetailedAuditEvent({
+          actionType: 'user.login',
+          module: 'auth',
+          description: `${user.email} (${user.role}) giriş yaptı`,
+          newValue: { email: user.email, role: user.role },
+          userId: user.id,
+          userRole: user.role,
+        });
 
-    if (!user) {
+        const isAdminRole = user.role === 'superadmin' || user.role === 'admin';
+        return { success: true, user, isAdmin: isAdminRole };
+      }
+      return { success: false, error: 'auth_invalid_credentials' };
+    } catch (err) {
       logLoginAttempt(identifier, false);
-      return { success: false, error: 'auth_invalid_credentials' };
+      return { success: false, error: err.data?.error || 'auth_error' };
     }
+  }, [logLoginAttempt, logDetailedAuditEvent]);
 
-    // Check if account is active
-    if (user.isActive === false) {
-      logLoginAttempt(user.username, false, user.role);
-      return { success: false, error: 'auth_account_disabled' };
-    }
-
-    const inputHash = await hashPassword(password);
-    if (user.passwordHash !== inputHash) {
-      logLoginAttempt(user.username, false, user.role);
-      return { success: false, error: 'auth_invalid_credentials' };
-    }
-
-    const isAdminRole = user.role === 'superadmin' || user.role === 'admin';
-    const expiresAt = new Date(
-      Date.now() + (isAdminRole ? 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000)
-    ).toISOString();
-
-    const newSession = {
-      userId: user.id,
-      role: user.role,
-      token: `tk_${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}`,
-      createdAt: new Date().toISOString(),
-      expiresAt,
-    };
-
-    localStorage.setItem(SESSION_KEY, JSON.stringify(newSession));
-    setSession(newSession);
-
-    logLoginAttempt(user.username, true, user.role);
-    logDetailedAuditEvent({
-      actionType: 'user.login',
-      module: 'auth',
-      description: `${user.username} (${user.role}) giriş yaptı`,
-      newValue: { username: user.username, role: user.role },
-      userId: user.id,
-      username: user.username,
-      userRole: user.role,
-    });
-
-    return { success: true, user, isAdmin: isAdminRole };
-  }, [users, logLoginAttempt, logDetailedAuditEvent]);
-
-  // ── Admin Login (convenience) ──
+  // ── Admin Login ──
   const adminLogin = useCallback(async (identifier, password) => {
     const result = await login(identifier, password);
     if (!result.success) return result;
     if (result.user.role !== 'superadmin' && result.user.role !== 'admin') {
-      localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem('gelatte_token');
       setSession(null);
+      setCurrentUser(null);
       return { success: false, error: 'auth_not_admin' };
     }
     return result;
   }, [login]);
 
-  // ── Register (customers only) ──
+  // ── Register ──
   const register = useCallback(async (userData) => {
-    const { email, password, name, phone } = userData;
-    if (!email || !password || !name)
-      return { success: false, error: 'auth_missing_fields' };
-
-    if (users.find((u) => u.email?.toLowerCase() === email.toLowerCase()))
-      return { success: false, error: 'auth_email_exists' };
-
-    if (password.length < 6)
-      return { success: false, error: 'auth_weak_password' };
-
-    const pwHash = await hashPassword(password);
-
-    const newUser = {
-      id: `usr_${Date.now().toString(36)}`,
-      email: email.toLowerCase(),
-      username: email.toLowerCase().split('@')[0],
-      name,
-      phone: phone || '',
-      passwordHash: pwHash,
-      role: 'customer',
-      isActive: true,
-      address: '',
-      city: '',
-      zip: '',
-      deliveryPreference: 'delivery',
-      createdAt: new Date().toISOString(),
-    };
-
-    const updatedUsers = [...users, newUser];
-    setUsers(updatedUsers);
-
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
-    const newSession = {
-      userId: newUser.id,
-      role: 'customer',
-      token: `tk_${Date.now().toString(36)}_${Math.random().toString(36).slice(2)}`,
-      createdAt: new Date().toISOString(),
-      expiresAt,
-    };
-    localStorage.setItem(SESSION_KEY, JSON.stringify(newSession));
-    setSession(newSession);
-
-    return { success: true, user: newUser };
-  }, [users]);
+    try {
+      const response = await api.register(userData);
+      if (response.success) {
+        const { token, user } = response.data;
+        localStorage.setItem('gelatte_token', token);
+        
+        const newSession = {
+          userId: user.id,
+          role: user.role,
+          token,
+          createdAt: new Date().toISOString(),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        };
+        
+        setSession(newSession);
+        setCurrentUser(user);
+        
+        return { success: true, user };
+      }
+      return { success: false, error: 'auth_error' };
+    } catch (err) {
+      return { success: false, error: err.data?.error || 'auth_error' };
+    }
+  }, []);
 
   // ── Logout ──
   const logout = useCallback(() => {
@@ -473,10 +449,11 @@ export function AuthProvider({ children }) {
       logDetailedAuditEvent({
         actionType: 'user.logout',
         module: 'auth',
-        description: `${currentUser.username} çıkış yaptı`,
-        newValue: { username: currentUser.username },
+        description: `${currentUser.email} çıkış yaptı`,
+        newValue: { email: currentUser.email },
       });
     }
+    localStorage.removeItem('gelatte_token');
     localStorage.removeItem(SESSION_KEY);
     setSession(null);
     setCurrentUser(null);
