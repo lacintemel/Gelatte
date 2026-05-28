@@ -80,23 +80,36 @@ function StatusBadge({ isActive }) {
 /* ─── Main Component ─── */
 /* ══════════════════════════════════════════════════ */
 export default function AdminStaffManagement() {
-  const {
-    isSuperAdmin,
-    getStaffUsers,
-    changeStaffPassword,
-    toggleStaffStatus,
-    addStaffUser,
-    getLoginHistory,
-    getAuditLogs,
-  } = useAuth();
+  const { isSuperAdmin } = useAuth();
 
   // ── State ──
   const [feedback, setFeedback] = useState({ message: '', type: '' });
   const [loading, setLoading] = useState(false);
+  const [staffUsers, setStaffUsers] = useState([]);
+
+  // Fetch users from API
+  const loadUsers = useCallback(async () => {
+    if (!isSuperAdmin) return;
+    try {
+      setLoading(true);
+      const res = await api.admin.getUsers();
+      if (res.success) {
+        setStaffUsers(res.data);
+      }
+    } catch (err) {
+      console.error('Failed to load users:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [isSuperAdmin]);
+
+  React.useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   // Create Staff Modal
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [createForm, setCreateForm] = useState({ username: '', name: '', email: '', password: '', phone: '' });
+  const [createForm, setCreateForm] = useState({ username: '', name: '', email: '', password: '', phone: '', role: 'admin' });
   const [showCreatePassword, setShowCreatePassword] = useState(false);
 
   // Change Password Modal
@@ -112,17 +125,8 @@ export default function AdminStaffManagement() {
   const [auditModal, setAuditModal] = useState({ open: false, staffId: null, staffName: '' });
 
   // ── Derived data ──
-  const staffUsers = useMemo(() => getStaffUsers(), [getStaffUsers]);
-
-  const loginHistoryData = useMemo(() => {
-    if (!historyModal.staffId) return [];
-    return getLoginHistory(historyModal.staffId);
-  }, [historyModal.staffId, getLoginHistory]);
-
-  const auditLogData = useMemo(() => {
-    if (!auditModal.staffId) return [];
-    return getAuditLogs(auditModal.staffId);
-  }, [auditModal.staffId, getAuditLogs]);
+  const loginHistoryData = []; // To be implemented in backend if needed
+  const auditLogData = []; // To be implemented in backend if needed
 
   // ── Helpers ──
   const showFeedback = useCallback((message, type = 'success') => {
@@ -154,18 +158,15 @@ export default function AdminStaffManagement() {
     e.preventDefault();
     setLoading(true);
     try {
-      const result = await addStaffUser(createForm);
+      const result = await api.admin.createUser(createForm);
       if (result.success) {
-        showFeedback(`Staff account "${createForm.username}" created successfully.`);
+        showFeedback(`Staff account "${createForm.name}" created successfully.`);
         setShowCreateModal(false);
-        setCreateForm({ username: '', name: '', email: '', password: '', phone: '' });
+        setCreateForm({ username: '', name: '', email: '', password: '', phone: '', role: 'admin' });
         setShowCreatePassword(false);
+        loadUsers();
       } else {
-        const errorMap = {
-          auth_email_exists: 'A user with that username or email already exists.',
-          auth_weak_password: 'Password must be at least 6 characters.',
-        };
-        showFeedback(errorMap[result.error] || result.error || 'Failed to create staff account.', 'error');
+        showFeedback(result.error || 'Failed to create staff account.', 'error');
       }
     } catch {
       showFeedback('An unexpected error occurred.', 'error');
@@ -183,7 +184,7 @@ export default function AdminStaffManagement() {
     }
     setLoading(true);
     try {
-      const result = await changeStaffPassword(passwordModal.staffId, newPassword);
+      const result = await api.admin.updateUser(passwordModal.staffId, { password: newPassword });
       if (result.success) {
         showFeedback(`Password changed successfully for "${passwordModal.staffName}".`);
         setPasswordModal({ open: false, staffId: null, staffName: '' });
@@ -191,10 +192,7 @@ export default function AdminStaffManagement() {
         setConfirmPassword('');
         setShowNewPassword(false);
       } else {
-        const errorMap = {
-          auth_weak_password: 'Password must be at least 6 characters.',
-        };
-        showFeedback(errorMap[result.error] || result.error || 'Failed to change password.', 'error');
+        showFeedback(result.error || 'Failed to change password.', 'error');
       }
     } catch {
       showFeedback('An unexpected error occurred.', 'error');
@@ -203,16 +201,20 @@ export default function AdminStaffManagement() {
     }
   };
 
-  // Toggle Status
-  const handleToggleStatus = (staff) => {
-    const action = staff.isActive ? 'deactivate' : 'activate';
-    if (!window.confirm(`Are you sure you want to ${action} the account "${staff.username}"?`)) return;
+  // Delete User (instead of toggle status)
+  const handleDeleteUser = async (staff) => {
+    if (!window.confirm(`Are you sure you want to completely DELETE the account "${staff.name}"? This cannot be undone.`)) return;
 
-    const result = toggleStaffStatus(staff.id);
-    if (result.success) {
-      showFeedback(`Account "${staff.username}" has been ${result.isActive ? 'activated' : 'deactivated'}.`);
-    } else {
-      showFeedback(result.error || 'Failed to toggle status.', 'error');
+    try {
+      const result = await api.admin.deleteUser(staff.id);
+      if (result.success) {
+        showFeedback(`Account "${staff.name}" has been deleted.`);
+        loadUsers();
+      } else {
+        showFeedback(result.error || 'Failed to delete user.', 'error');
+      }
+    } catch {
+      showFeedback('An unexpected error occurred.', 'error');
     }
   };
 
@@ -276,7 +278,7 @@ export default function AdminStaffManagement() {
             <thead>
               <tr className="bg-champagne/50 text-warm-gray text-xs uppercase tracking-wider">
                 <th className="p-4 font-medium">User</th>
-                <th className="p-4 font-medium">Email</th>
+                <th className="p-4 font-medium">Phone</th>
                 <th className="p-4 font-medium">Role</th>
                 <th className="p-4 font-medium">Status</th>
                 <th className="p-4 font-medium">Created</th>
@@ -290,11 +292,11 @@ export default function AdminStaffManagement() {
                   <td className="p-4">
                     <div>
                       <p className="font-medium text-espresso">{staff.name}</p>
-                      <p className="text-xs text-warm-gray">@{staff.username}</p>
+                      <p className="text-xs text-warm-gray">{staff.email}</p>
                     </div>
                   </td>
                   {/* Email */}
-                  <td className="p-4 text-sm text-warm-gray-dark">{staff.email}</td>
+                  <td className="p-4 text-sm text-warm-gray-dark">{staff.phone || '—'}</td>
                   {/* Role */}
                   <td className="p-4"><RoleBadge role={staff.role} /></td>
                   {/* Status */}
@@ -307,7 +309,7 @@ export default function AdminStaffManagement() {
                       {/* Change Password */}
                       <button
                         onClick={() => {
-                          setPasswordModal({ open: true, staffId: staff.id, staffName: staff.username });
+                          setPasswordModal({ open: true, staffId: staff.id, staffName: staff.name });
                           setNewPassword('');
                           setConfirmPassword('');
                           setShowNewPassword(false);
@@ -319,25 +321,21 @@ export default function AdminStaffManagement() {
                         <span className="hidden lg:inline">Password</span>
                       </button>
 
-                      {/* Toggle Status — don't show for superadmin accounts */}
+                      {/* Delete User — don't show for superadmin accounts */}
                       {staff.role !== 'superadmin' && (
                         <button
-                          onClick={() => handleToggleStatus(staff)}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                            staff.isActive
-                              ? 'bg-red-50 text-red-600 hover:bg-red-100'
-                              : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
-                          }`}
-                          title={staff.isActive ? 'Deactivate' : 'Activate'}
+                          onClick={() => handleDeleteUser(staff)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-red-50 text-red-600 hover:bg-red-100"
+                          title="Delete User"
                         >
                           <Power className="w-3.5 h-3.5" />
-                          <span className="hidden lg:inline">{staff.isActive ? 'Deactivate' : 'Activate'}</span>
+                          <span className="hidden lg:inline">Delete</span>
                         </button>
                       )}
 
                       {/* Login History */}
                       <button
-                        onClick={() => setHistoryModal({ open: true, staffId: staff.id, staffName: staff.username })}
+                        onClick={() => setHistoryModal({ open: true, staffId: staff.id, staffName: staff.name })}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-champagne text-warm-gray-dark text-xs font-medium hover:bg-cream-dark/30 hover:text-espresso transition-colors"
                         title="Login History"
                       >
@@ -347,7 +345,7 @@ export default function AdminStaffManagement() {
 
                       {/* Audit Logs */}
                       <button
-                        onClick={() => setAuditModal({ open: true, staffId: staff.id, staffName: staff.username })}
+                        onClick={() => setAuditModal({ open: true, staffId: staff.id, staffName: staff.name })}
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-champagne text-warm-gray-dark text-xs font-medium hover:bg-cream-dark/30 hover:text-espresso transition-colors"
                         title="Audit Logs"
                       >
