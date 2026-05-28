@@ -9,6 +9,7 @@ import { ReviewProvider } from './context/ReviewContext';
 import { OrderProvider } from './context/OrderContext';
 import { CouponProvider } from './context/CouponContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { FinancialProvider } from './context/FinancialContext';
 
 import ScrollToTop from './components/ScrollToTop';
 import LandingPage from './pages/LandingPage';
@@ -33,6 +34,7 @@ import AdminOrders from './pages/admin/AdminOrders';
 import AdminCoupons from './pages/admin/AdminCoupons';
 import AdminStaffManagement from './pages/admin/AdminStaffManagement';
 import AdminAuditLogs from './pages/admin/AdminAuditLogs';
+import AdminFinancialHistory from './pages/admin/AdminFinancialHistory';
 
 export default function App() {
   return (
@@ -46,6 +48,7 @@ export default function App() {
                   <ReviewProvider>
                     <OrderProvider>
                       <CouponProvider>
+                        <FinancialProvider>
                         <BrowserRouter>
                           <ScrollToTop />
                           <Routes>
@@ -80,6 +83,7 @@ export default function App() {
                                   <Route path="coupons" element={<AdminCoupons />} />
                                   <Route path="staff" element={<AdminStaffManagement />} />
                                   <Route path="audit-logs" element={<AdminAuditLogs />} />
+                                  <Route path="financials" element={<AdminFinancialHistory />} />
                                 </Route>
                               </Route>
                             </Route>
@@ -88,6 +92,7 @@ export default function App() {
                             <Route path="*" element={<Navigate to="/" replace />} />
                           </Routes>
                         </BrowserRouter>
+                        </FinancialProvider>
                       </CouponProvider>
                     </OrderProvider>
                   </ReviewProvider>

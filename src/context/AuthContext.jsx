@@ -101,10 +101,40 @@ function loadSession() {
 function loadAuditLog() {
   try {
     const data = localStorage.getItem(AUDIT_LOG_KEY);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    const logs = JSON.parse(data);
+    // Migrate old format entries to new format
+    return logs.map(entry => {
+      if (entry.actionType) return entry; // Already migrated
+      return {
+        ...entry,
+        actionType: entry.action || 'unknown',
+        userRole: entry.userRole || null,
+        module: entry.module || deriveModuleFromAction(entry.action),
+        recordId: entry.recordId || null,
+        oldValue: entry.oldValue || null,
+        newValue: entry.newValue || null,
+        ipAddress: entry.ipAddress || null,
+        userAgent: entry.userAgent || null,
+        description: entry.description || null,
+      };
+    });
   } catch {
     return [];
   }
+}
+
+// Helper to derive module from legacy action strings
+function deriveModuleFromAction(action) {
+  if (!action) return 'system';
+  if (action.startsWith('user.')) return 'auth';
+  if (action.startsWith('staff.')) return 'staff';
+  if (action.startsWith('order.')) return 'orders';
+  if (action.startsWith('product.')) return 'products';
+  if (action.startsWith('coupon.')) return 'coupons';
+  if (action.startsWith('finance.')) return 'finance';
+  if (action.startsWith('category.')) return 'categories';
+  return 'system';
 }
 
 function loadLoginHistory() {
@@ -115,6 +145,23 @@ function loadLoginHistory() {
     return [];
   }
 }
+
+// ── Client-side IP detection cache ──
+let _cachedIP = null;
+async function getClientIP() {
+  if (_cachedIP) return _cachedIP;
+  try {
+    const resp = await fetch('https://api.ipify.org?format=json', { signal: AbortSignal.timeout(3000) });
+    const data = await resp.json();
+    _cachedIP = data.ip || 'unknown';
+    return _cachedIP;
+  } catch {
+    return 'client-local';
+  }
+}
+
+// Fire-and-forget IP fetch on module load
+getClientIP();
 
 export function AuthProvider({ children }) {
   const [users, setUsers] = useState([]);
@@ -196,20 +243,102 @@ export function AuthProvider({ children }) {
     localStorage.setItem(LOGIN_HISTORY_KEY, JSON.stringify(loginHistory));
   }, [loginHistory]);
 
-  // ── Audit Logging ──
-  const logAuditEvent = useCallback((action, details = {}, userId = null) => {
+  // ══════════════════════════════════════════
+  // ── Enhanced Audit Logging System ──
+  // ══════════════════════════════════════════
+
+  /**
+   * Log a detailed audit event with full tracking fields.
+   * @param {Object} params
+   * @param {string} params.actionType - e.g. 'order.status_changed', 'product.updated'
+   * @param {string} params.module - 'orders'|'products'|'coupons'|'staff'|'auth'|'finance'|'categories'
+   * @param {string|null} params.recordId - ID of the affected record
+   * @param {*} params.oldValue - Previous value (will be JSON-stringified)
+   * @param {*} params.newValue - New value (will be JSON-stringified)
+   * @param {string|null} params.description - Human-readable description
+   * @param {string|null} params.userId - Override user ID (defaults to current user)
+   * @param {string|null} params.username - Override username
+   * @param {string|null} params.userRole - Override user role
+   */
+  const logDetailedAuditEvent = useCallback((params) => {
+    const {
+      actionType,
+      module,
+      recordId = null,
+      oldValue = null,
+      newValue = null,
+      description = null,
+      userId = null,
+      username = null,
+      userRole = null,
+    } = params;
+
+    const resolvedUserId = userId || currentUser?.id || 'system';
+    const resolvedUsername = username || (userId ? users.find(u => u.id === userId)?.username : null) || currentUser?.username || 'system';
+    const resolvedRole = userRole || currentUser?.role || 'system';
+
     const event = {
       id: `audit_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-      userId: userId || currentUser?.id || 'system',
-      username: userId
-        ? users.find(u => u.id === userId)?.username || 'unknown'
-        : currentUser?.username || 'system',
-      action,
-      details: typeof details === 'string' ? details : JSON.stringify(details),
+      userId: resolvedUserId,
+      username: resolvedUsername,
+      userRole: resolvedRole,
+      actionType,
+      module: module || deriveModuleFromAction(actionType),
+      recordId,
+      oldValue: oldValue != null ? (typeof oldValue === 'string' ? oldValue : JSON.stringify(oldValue)) : null,
+      newValue: newValue != null ? (typeof newValue === 'string' ? newValue : JSON.stringify(newValue)) : null,
+      ipAddress: _cachedIP || 'pending',
+      userAgent: navigator.userAgent,
+      description,
       timestamp: new Date().toISOString(),
     };
-    setAuditLog((prev) => [event, ...prev].slice(0, 1000)); // Keep last 1000 events
+
+    setAuditLog((prev) => [event, ...prev].slice(0, 5000)); // Keep last 5000 events
   }, [currentUser, users]);
+
+  // Legacy-compatible wrapper (keeps old call sites working)
+  const logAuditEvent = useCallback((action, details = {}, userId = null) => {
+    logDetailedAuditEvent({
+      actionType: action,
+      module: deriveModuleFromAction(action),
+      description: typeof details === 'string' ? details : null,
+      oldValue: null,
+      newValue: typeof details === 'object' ? details : null,
+      userId,
+    });
+  }, [logDetailedAuditEvent]);
+
+  // ── Audit Log Filter Helpers ──
+  const getAuditLogsByModule = useCallback((module) => {
+    if (!currentUser || currentUser.role !== 'superadmin') return [];
+    return auditLog.filter(l => l.module === module);
+  }, [currentUser, auditLog]);
+
+  const getAuditLogsByUser = useCallback((userId) => {
+    if (!currentUser || currentUser.role !== 'superadmin') return [];
+    return auditLog.filter(l => l.userId === userId);
+  }, [currentUser, auditLog]);
+
+  const getAuditLogsByDateRange = useCallback((from, to) => {
+    if (!currentUser || currentUser.role !== 'superadmin') return [];
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+    toDate.setHours(23, 59, 59, 999); // Include the full "to" day
+    return auditLog.filter(l => {
+      const d = new Date(l.timestamp);
+      return d >= fromDate && d <= toDate;
+    });
+  }, [currentUser, auditLog]);
+
+  const getAuditLogsByActionType = useCallback((actionType) => {
+    if (!currentUser || currentUser.role !== 'superadmin') return [];
+    return auditLog.filter(l => l.actionType === actionType);
+  }, [currentUser, auditLog]);
+
+  const getAuditLogsByRecordId = useCallback((recordId) => {
+    if (!currentUser || currentUser.role !== 'superadmin') return [];
+    return auditLog.filter(l => l.recordId === recordId);
+  }, [currentUser, auditLog]);
 
   // ── Login History ──
   const logLoginAttempt = useCallback((username, success, role = null) => {
@@ -266,10 +395,18 @@ export function AuthProvider({ children }) {
     setSession(newSession);
 
     logLoginAttempt(user.username, true, user.role);
-    logAuditEvent('user.login', { username: user.username, role: user.role }, user.id);
+    logDetailedAuditEvent({
+      actionType: 'user.login',
+      module: 'auth',
+      description: `${user.username} (${user.role}) giriş yaptı`,
+      newValue: { username: user.username, role: user.role },
+      userId: user.id,
+      username: user.username,
+      userRole: user.role,
+    });
 
     return { success: true, user, isAdmin: isAdminRole };
-  }, [users, logLoginAttempt, logAuditEvent]);
+  }, [users, logLoginAttempt, logDetailedAuditEvent]);
 
   // ── Admin Login (convenience) ──
   const adminLogin = useCallback(async (identifier, password) => {
@@ -333,12 +470,17 @@ export function AuthProvider({ children }) {
   // ── Logout ──
   const logout = useCallback(() => {
     if (currentUser) {
-      logAuditEvent('user.logout', { username: currentUser.username });
+      logDetailedAuditEvent({
+        actionType: 'user.logout',
+        module: 'auth',
+        description: `${currentUser.username} çıkış yaptı`,
+        newValue: { username: currentUser.username },
+      });
     }
     localStorage.removeItem(SESSION_KEY);
     setSession(null);
     setCurrentUser(null);
-  }, [currentUser, logAuditEvent]);
+  }, [currentUser, logDetailedAuditEvent]);
 
   // ── Update Profile ──
   const updateProfile = useCallback((updates) => {
@@ -349,9 +491,15 @@ export function AuthProvider({ children }) {
       u.id === currentUser.id ? { ...u, ...safeUpdates } : u
     );
     setUsers(updatedUsers);
-    logAuditEvent('user.profile_updated', { fields: Object.keys(safeUpdates) });
+    logDetailedAuditEvent({
+      actionType: 'user.profile_updated',
+      module: 'auth',
+      recordId: currentUser.id,
+      description: `Profil güncellendi: ${Object.keys(safeUpdates).join(', ')}`,
+      newValue: { fields: Object.keys(safeUpdates) },
+    });
     return true;
-  }, [currentUser, users, logAuditEvent]);
+  }, [currentUser, users, logDetailedAuditEvent]);
 
   // ── Change own Password ──
   const changePassword = useCallback(async (oldPassword, newPassword) => {
@@ -370,9 +518,14 @@ export function AuthProvider({ children }) {
         : u
     );
     setUsers(updatedUsers);
-    logAuditEvent('user.password_changed', { target: currentUser.username });
+    logDetailedAuditEvent({
+      actionType: 'user.password_changed',
+      module: 'auth',
+      recordId: currentUser.id,
+      description: `${currentUser.username} şifresini değiştirdi`,
+    });
     return { success: true };
-  }, [currentUser, users, logAuditEvent]);
+  }, [currentUser, users, logDetailedAuditEvent]);
 
   // ══════════════════════════════════════════
   // ── Super Admin: Staff Management ──
@@ -411,12 +564,15 @@ export function AuthProvider({ children }) {
     };
 
     setUsers((prev) => [...prev, newUser]);
-    logAuditEvent('staff.created', {
-      targetUsername: newUser.username,
-      targetId: newUser.id,
+    logDetailedAuditEvent({
+      actionType: 'staff.created',
+      module: 'staff',
+      recordId: newUser.id,
+      description: `Yeni personel hesabı oluşturuldu: ${newUser.username}`,
+      newValue: { username: newUser.username, email: newUser.email, role: 'admin' },
     });
     return { success: true, user: newUser };
-  }, [currentUser, users, logAuditEvent]);
+  }, [currentUser, users, logDetailedAuditEvent]);
 
   // Change a staff user's password (superadmin only)
   const changeStaffPassword = useCallback(async (staffId, newPassword) => {
@@ -436,12 +592,15 @@ export function AuthProvider({ children }) {
       u.id === staffId ? { ...u, passwordHash: newHash } : u
     );
     setUsers(updatedUsers);
-    logAuditEvent('staff.password_changed', {
-      targetUsername: staffUser.username,
-      targetId: staffId,
+    logDetailedAuditEvent({
+      actionType: 'staff.password_changed',
+      module: 'staff',
+      recordId: staffId,
+      description: `${staffUser.username} hesabının şifresi değiştirildi`,
+      newValue: { targetUsername: staffUser.username },
     });
     return { success: true };
-  }, [currentUser, users, logAuditEvent]);
+  }, [currentUser, users, logDetailedAuditEvent]);
 
   // Toggle staff account active/inactive (superadmin only)
   const toggleStaffStatus = useCallback((staffId) => {
@@ -465,12 +624,16 @@ export function AuthProvider({ children }) {
       setSession(null);
     }
 
-    logAuditEvent(newStatus ? 'staff.activated' : 'staff.deactivated', {
-      targetUsername: staffUser.username,
-      targetId: staffId,
+    logDetailedAuditEvent({
+      actionType: newStatus ? 'staff.activated' : 'staff.deactivated',
+      module: 'staff',
+      recordId: staffId,
+      description: `${staffUser.username} hesabı ${newStatus ? 'aktif' : 'deaktif'} edildi`,
+      oldValue: { isActive: !newStatus },
+      newValue: { isActive: newStatus },
     });
     return { success: true, isActive: newStatus };
-  }, [currentUser, users, session, logAuditEvent]);
+  }, [currentUser, users, session, logDetailedAuditEvent]);
 
   // Get staff users (superadmin only)
   const getStaffUsers = useCallback(() => {
@@ -531,7 +694,14 @@ export function AuthProvider({ children }) {
         getStaffUsers,
         getLoginHistory,
         getAuditLogs,
+        // Enhanced audit system
         logAuditEvent,
+        logDetailedAuditEvent,
+        getAuditLogsByModule,
+        getAuditLogsByUser,
+        getAuditLogsByDateRange,
+        getAuditLogsByActionType,
+        getAuditLogsByRecordId,
         // Reference
         users: currentUser?.role === 'superadmin'
           ? users.map(({ passwordHash, ...rest }) => rest)
