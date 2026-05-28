@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { 
   LayoutDashboard, Package, FolderTree, LogOut, Menu, X, ArrowLeft, 
-  ShoppingCart, Ticket, Users, ScrollText, Shield, User
+  ShoppingCart, Ticket, Users, ScrollText, Shield, User, TrendingUp
 } from 'lucide-react';
 
 export default function AdminLayout() {
@@ -24,6 +24,7 @@ export default function AdminLayout() {
     { name: 'Siparişler', path: '/admin/orders', icon: ShoppingCart, roles: ['superadmin', 'admin'] },
     { name: 'Kategoriler', path: '/admin/categories', icon: FolderTree, roles: ['superadmin'] },
     { name: 'Kuponlar', path: '/admin/coupons', icon: Ticket, roles: ['superadmin'] },
+    { name: 'Finansal Geçmiş', path: '/admin/financials', icon: TrendingUp, roles: ['superadmin'] },
     { name: 'Personel Yönetimi', path: '/admin/staff', icon: Users, roles: ['superadmin'] },
     { name: 'İşlem Kayıtları', path: '/admin/audit-logs', icon: ScrollText, roles: ['superadmin'] },
   ];

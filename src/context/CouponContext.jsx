@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { useAuth } from './AuthContext';
 
 const CouponContext = createContext(null);
 const STORAGE_KEY = 'gelatte_coupons';
@@ -43,6 +44,7 @@ function getDefaultCoupons() {
 
 export function CouponProvider({ children }) {
   const [coupons, setCoupons] = useState(loadCoupons);
+  const { logDetailedAuditEvent } = useAuth();
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(coupons));
@@ -55,17 +57,50 @@ export function CouponProvider({ children }) {
       currentUses: 0,
     };
     setCoupons((prev) => [...prev, newCoupon]);
-  }, []);
+
+    if (logDetailedAuditEvent) {
+      logDetailedAuditEvent({
+        actionType: 'coupon.created',
+        module: 'coupons',
+        recordId: newCoupon.id,
+        description: `Yeni kupon oluşturuldu: ${coupon.code}`,
+        newValue: { code: coupon.code, type: coupon.type, discount: coupon.discount },
+      });
+    }
+  }, [logDetailedAuditEvent]);
 
   const updateCoupon = useCallback((id, updates) => {
+    const oldCoupon = coupons.find(c => c.id === id);
     setCoupons((prev) =>
       prev.map((c) => (c.id === id ? { ...c, ...updates } : c))
     );
-  }, []);
+
+    if (logDetailedAuditEvent && oldCoupon) {
+      logDetailedAuditEvent({
+        actionType: 'coupon.updated',
+        module: 'coupons',
+        recordId: id,
+        description: `Kupon güncellendi: ${oldCoupon.code}`,
+        oldValue: { active: oldCoupon.active, discount: oldCoupon.discount, code: oldCoupon.code },
+        newValue: updates,
+      });
+    }
+  }, [coupons, logDetailedAuditEvent]);
 
   const deleteCoupon = useCallback((id) => {
+    const deletedCoupon = coupons.find(c => c.id === id);
     setCoupons((prev) => prev.filter((c) => c.id !== id));
-  }, []);
+
+    if (logDetailedAuditEvent && deletedCoupon) {
+      logDetailedAuditEvent({
+        actionType: 'coupon.deleted',
+        module: 'coupons',
+        recordId: id,
+        description: `Kupon silindi: ${deletedCoupon.code}`,
+        oldValue: { code: deletedCoupon.code, type: deletedCoupon.type, discount: deletedCoupon.discount },
+      });
+    }
+  }, [coupons, logDetailedAuditEvent]);
 
   const validateCoupon = useCallback(
     (code, orderTotal) => {
