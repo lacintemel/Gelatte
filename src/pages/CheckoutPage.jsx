@@ -10,6 +10,7 @@ import { useLanguage } from '../context/LanguageContext';
 import { useOrders } from '../context/OrderContext';
 import { useCoupons } from '../context/CouponContext';
 import { useAuth } from '../context/AuthContext';
+import { api } from '../lib/api';
 
 const STEPS = [
   { id: 1, labelKey: 'ch_step_review', icon: ShoppingBag },
@@ -382,15 +383,19 @@ export default function CheckoutPage() {
   const [paymentLoading, setPaymentLoading] = useState(false);
   const [paymentError, setPaymentError] = useState(null);
 
-  const applyPromo = () => {
-    const result = validateCoupon(promoCode.trim(), totalPrice);
-    if (result.valid) {
-      setPromoApplied(true);
-      setAppliedCoupon(result.coupon);
-      const disc = calculateDiscount(result.coupon, totalPrice);
-      addToast(`Promo code applied! ₺${disc.toFixed(2)} discount`, 'success');
-    } else {
-      addToast(t(result.error), 'warning');
+  const applyPromo = async () => {
+    try {
+      const result = await validateCoupon(promoCode.trim(), totalPrice);
+      if (result.valid) {
+        setPromoApplied(true);
+        setAppliedCoupon(result.coupon);
+        const disc = calculateDiscount(result.coupon, totalPrice);
+        addToast(`Promo code applied! ₺${disc.toFixed(2)} discount`, 'success');
+      } else {
+        addToast(t(result.error || 'cp_invalid'), 'warning');
+      }
+    } catch (err) {
+      addToast(t('cp_invalid'), 'warning');
     }
   };
 
@@ -415,60 +420,28 @@ export default function CheckoutPage() {
     setIframeToken(null);
 
     try {
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          items: items.map(i => ({
-            productId: i.id,
-            quantity: i.quantity,
-          })),
-          shipping: form,
-          couponCode: appliedCoupon?.code || null,
-          idempotencyKey: `checkout_${Date.now()}_${Math.random().toString(36).slice(2)}`,
-        }),
+      const response = await api.checkout({
+        items: items.map(i => ({
+          productId: i.id,
+          quantity: i.quantity,
+        })),
+        shipping: form,
+        couponCode: appliedCoupon?.code || null,
+        idempotencyKey: `checkout_${Date.now()}_${Math.random().toString(36).slice(2)}`,
       });
 
-      const data = await response.json();
-
-      if (data.success && data.data?.iframeToken) {
-        setIframeToken(data.data.iframeToken);
-        setOrderNumber(data.data.orderNumber);
-
-        // Also create order in local context for backwards compatibility
-        addOrder({
-          items: items.map(i => ({ id: i.id, name: i.name, price: i.price, discount: i.discount || 0, quantity: i.quantity, image: i.images?.[0] || i.image })),
-          customer: form,
-          subtotal: totalPrice,
-          discountAmount: data.data.discountAmount || 0,
-          couponCode: appliedCoupon?.code || null,
-          total: data.data.total || totalPrice,
-        });
+      if (response.success && response.data?.iframeToken) {
+        setIframeToken(response.data.iframeToken);
+        setOrderNumber(response.data.orderNumber);
 
         if (appliedCoupon) applyCoupon(appliedCoupon.code);
+        // We do NOT clear cart yet. Cart is cleared when order succeeds (callback/webhook) or after success redirect.
       } else {
-        setPaymentError(data.message || 'Failed to initialize payment. Please try again.');
+        setPaymentError('Failed to initialize payment. Please try again.');
       }
     } catch (err) {
-      // If the backend is not yet running, fall back to a demo confirmation
-      console.warn('Checkout API unavailable, using demo mode:', err.message);
-      const discountAmount = appliedCoupon ? calculateDiscount(appliedCoupon, totalPrice) : 0;
-      const finalTotal = totalPrice - discountAmount;
-
-      const order = addOrder({
-        items: items.map(i => ({ id: i.id, name: i.name, price: i.price, discount: i.discount || 0, quantity: i.quantity, image: i.images?.[0] || i.image })),
-        customer: form,
-        subtotal: totalPrice,
-        discountAmount,
-        couponCode: appliedCoupon?.code || null,
-        total: finalTotal,
-      });
-
-      if (appliedCoupon) applyCoupon(appliedCoupon.code);
-      setOrderNumber(order.id);
-      clearCart();
-      setStep(4);
-      addToast('Order placed successfully! (Demo mode)', 'success');
+      console.error('Checkout API error:', err);
+      setPaymentError(err.data?.error || err.message || 'Ödeme başlatılamadı. Lütfen tekrar deneyin.');
     } finally {
       setPaymentLoading(false);
     }
