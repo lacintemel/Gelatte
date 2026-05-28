@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import { translations } from '../../data/translations';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 export default function AdminProductForm() {
   const { id } = useParams();
@@ -132,9 +133,14 @@ export default function AdminProductForm() {
     return Object.keys(newErrors).length === 0;
   };
 
+  const { showToast } = useToast();
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate()) {
+      showToast('error', 'Lütfen ürün fotoğrafı ve gerekli tüm alanları doldurun!');
+      return;
+    }
 
     const productData = {
       name: formData.name,
