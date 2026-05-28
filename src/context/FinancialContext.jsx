@@ -1,66 +1,68 @@
 import { createContext, useContext, useState, useCallback, useEffect, useMemo } from 'react';
+import { api } from '../lib/api';
+import { useAuth } from './AuthContext';
 
 const FinancialContext = createContext(null);
-const STORAGE_KEY = 'gelatte_financial_records';
-
-function loadRecords() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  } catch {
-    return [];
-  }
-}
 
 export function FinancialProvider({ children }) {
-  const [records, setRecords] = useState(loadRecords);
+  const [records, setRecords] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { isAdmin } = useAuth();
+
+  const loadRecords = useCallback(async () => {
+    if (!isAdmin) return;
+    try {
+      setLoading(true);
+      // Fetch up to 1000 latest orders for financial aggregation
+      const res = await api.admin.getOrders({ limit: 1000 });
+      if (res.success) {
+        const mappedRecords = res.data.orders.map((order) => {
+          const now = new Date().toISOString();
+          return {
+            id: `fin_${order.id}`,
+            orderId: order.id,
+            orderNumber: order.orderNumber,
+            customerId: order.user?.email || order.customerEmail || 'guest',
+            customerName: order.user?.name || order.customerFirstName || 'Misafir',
+            totalAmount: order.total || 0,
+            subtotal: order.subtotal || 0,
+            discountAmount: order.discount || 0,
+            taxAmount: order.tax || 0,
+            shippingFee: order.shipping || 0,
+            costAmount: 0, 
+            profitAmount: order.total || 0, 
+            paymentMethod: order.payment?.provider || 'online',
+            orderStatus: order.status,
+            isCancelled: order.status === 'cancelled',
+            cancelledAt: order.status === 'cancelled' ? (order.updatedAt || now) : null,
+            isRefunded: order.status === 'refunded',
+            refundAmount: order.status === 'refunded' ? order.total : 0,
+            refundedAt: order.status === 'refunded' ? (order.updatedAt || now) : null,
+            isCompleted: order.status === 'completed',
+            completedAt: order.status === 'completed' ? (order.updatedAt || now) : null,
+            items: order.items || [],
+            couponCode: order.couponCode || null,
+            createdAt: order.createdAt || now,
+            updatedAt: order.updatedAt || now,
+          };
+        });
+        setRecords(mappedRecords);
+      }
+    } catch (err) {
+      console.error('Failed to load financial records:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
-  }, [records]);
+    loadRecords();
+  }, [loadRecords]);
 
-  /**
-   * Create or update a financial record for an order.
-   */
   const upsertFinancialRecord = useCallback((order) => {
-    setRecords(prev => {
-      const existing = prev.find(r => r.orderId === order.id);
-      const now = new Date().toISOString();
-
-      const record = {
-        id: existing?.id || `fin_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
-        orderId: order.id,
-        orderNumber: order.id,
-        customerId: order.customer?.email || order.customer?.name || 'guest',
-        customerName: order.customer?.name || order.customer?.firstName || 'Misafir',
-        totalAmount: order.total || 0,
-        subtotal: order.subtotal || order.total || 0,
-        discountAmount: order.discountAmount || order.couponDiscount || 0,
-        taxAmount: order.taxAmount || 0,
-        shippingFee: order.shippingFee || 0,
-        costAmount: 0, // Extensible: add product costs when available
-        profitAmount: order.total || 0, // Revenue = profit when cost is 0
-        paymentMethod: order.paymentMethod || 'online',
-        orderStatus: order.status,
-        isCancelled: order.status === 'cancelled',
-        cancelledAt: order.status === 'cancelled' ? (order.cancelledAt || now) : (existing?.cancelledAt || null),
-        isRefunded: order.status === 'refunded',
-        refundAmount: order.status === 'refunded' ? (order.refundAmount || order.total || 0) : (existing?.refundAmount || 0),
-        refundedAt: order.status === 'refunded' ? (order.refundedAt || now) : (existing?.refundedAt || null),
-        isCompleted: order.status === 'completed',
-        completedAt: order.status === 'completed' ? (order.completedAt || now) : (existing?.completedAt || null),
-        items: order.items || [],
-        couponCode: order.couponCode || null,
-        createdAt: existing?.createdAt || order.createdAt || now,
-        updatedAt: now,
-      };
-
-      if (existing) {
-        return prev.map(r => r.orderId === order.id ? record : r);
-      }
-      return [record, ...prev];
-    });
-  }, []);
+    // Upsert is handled by reloading from the backend, but we can do it optimistically if needed.
+    loadRecords();
+  }, [loadRecords]);
 
   /**
    * Get net revenue for a financial record (handles cancellations/refunds).
