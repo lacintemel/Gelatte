@@ -132,6 +132,14 @@ export const api = {
   validateCoupon: (code, orderTotal) =>
     request('/coupons/validate', { method: 'POST', body: { code, orderTotal } }),
 
+  // ── Reviews ──
+  reviews: {
+    getProductReviews: (productId) =>
+      request(`/reviews/product/${productId}`),
+    createReview: (productId, rating, comment) =>
+      request(`/reviews`, { method: 'POST', body: { productId, rating, comment } }),
+  },
+
   // ── Admin ──
   admin: {
     getDashboard: () =>
@@ -156,12 +164,20 @@ export const api = {
 
     createCategory: (data) =>
       request('/categories', { method: 'POST', body: data }),
-
     updateCategory: (id, data) =>
       request(`/categories/${id}`, { method: 'PUT', body: data }),
-
     deleteCategory: (id) =>
       request(`/categories/${id}`, { method: 'DELETE' }),
+
+    // Admin Users
+    getUsers: () => request('/admin/users'),
+    createUser: (data) => request('/admin/users', { method: 'POST', body: data }),
+    updateUser: (id, data) => request(`/admin/users/${id}`, { method: 'PUT', body: data }),
+    deleteUser: (id) => request(`/admin/users/${id}`, { method: 'DELETE' }),
+
+    // Admin Reviews
+    getAllReviews: () => request('/reviews/admin/all'),
+    deleteReview: (id) => request(`/reviews/${id}`, { method: 'DELETE' }),
 
     getCoupons: () =>
       request('/admin/coupons'),
