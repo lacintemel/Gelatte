@@ -3,7 +3,7 @@
 // Wrapper for making authenticated requests to the backend.
 // ═══════════════════════════════════════════
 
-const API_BASE = '/api';
+const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api';
 
 function getToken() {
   try {
@@ -22,6 +22,13 @@ async function request(endpoint, options = {}) {
   const headers = {
     ...extraHeaders,
   };
+
+  let guestId = localStorage.getItem('gelatte_guest_id');
+  if (!guestId) {
+    guestId = 'gst_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    localStorage.setItem('gelatte_guest_id', guestId);
+  }
+  headers['x-guest-id'] = guestId;
 
   const token = getToken();
   if (token) {
