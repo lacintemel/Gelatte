@@ -20,7 +20,7 @@ const registerSchema = z.object({
 });
 
 const loginSchema = z.object({
-  email: z.string().email('Geçerli bir e-posta adresi girin'),
+  email: z.string().min(1, 'E-posta veya kullanıcı adı gerekli'),
   password: z.string().min(1, 'Şifre gerekli'),
 });
 
@@ -85,16 +85,20 @@ router.post('/register', validate(registerSchema), async (req, res) => {
 // POST /login
 router.post('/login', validate(loginSchema), async (req, res) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+
+    if (!email.includes('@')) {
+      email = `${email}@gelatte.com`;
+    }
 
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(401).json({ success: false, error: 'E-posta veya şifre hatalı' });
+      return res.status(401).json({ success: false, error: 'E-posta, kullanıcı adı veya şifre hatalı' });
     }
 
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
-      return res.status(401).json({ success: false, error: 'E-posta veya şifre hatalı' });
+      return res.status(401).json({ success: false, error: 'E-posta, kullanıcı adı veya şifre hatalı' });
     }
 
     const token = generateToken(user);
