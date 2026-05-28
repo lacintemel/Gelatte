@@ -1,41 +1,47 @@
-import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
+import { api } from '../lib/api';
 
 const ReviewContext = createContext(null);
-const STORAGE_KEY = 'gelatte_reviews';
-
-function loadReviews() {
-  try {
-    const data = localStorage.getItem(STORAGE_KEY);
-    return data ? JSON.parse(data) : {};
-  } catch {
-    return {};
-  }
-}
 
 export function ReviewProvider({ children }) {
   // reviews: { [productId]: [{ id, name, rating, comment, date }] }
-  const [reviews, setReviews] = useState(loadReviews);
+  const [reviews, setReviews] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
-  }, [reviews]);
-
-  const addReview = useCallback((productId, review) => {
-    setReviews((prev) => {
-      const productReviews = prev[productId] || [];
-      return {
-        ...prev,
-        [productId]: [
-          {
-            id: `rv_${Date.now()}`,
-            ...review,
-            date: new Date().toISOString(),
-          },
-          ...productReviews,
-        ],
-      };
-    });
+  const fetchReviews = useCallback(async (productId) => {
+    try {
+      setLoading(true);
+      const res = await api.reviews.getProductReviews(productId);
+      if (res.success) {
+        // Map backend Review model to frontend shape
+        const mapped = res.data.map((r) => ({
+          id: r.id,
+          name: r.user?.name || 'Misafir',
+          rating: r.rating,
+          comment: r.comment,
+          date: r.createdAt,
+        }));
+        setReviews((prev) => ({ ...prev, [productId]: mapped }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch reviews', err);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  const addReview = useCallback(async (productId, reviewData) => {
+    try {
+      const res = await api.reviews.createReview(productId, reviewData.rating, reviewData.comment);
+      if (res.success) {
+        await fetchReviews(productId); // Refresh
+        return { success: true };
+      }
+      return { success: false, error: res.error || 'Failed to add review' };
+    } catch (err) {
+      return { success: false, error: 'Failed to add review' };
+    }
+  }, [fetchReviews]);
 
   const getReviews = useCallback(
     (productId) => reviews[productId] || [],
@@ -60,10 +66,12 @@ export function ReviewProvider({ children }) {
   return (
     <ReviewContext.Provider
       value={{
+        fetchReviews,
         addReview,
         getReviews,
         getAverageRating,
         getReviewCount,
+        loading,
       }}
     >
       {children}
