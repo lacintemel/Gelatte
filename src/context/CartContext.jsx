@@ -1,41 +1,115 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import { api } from '../lib/api';
+import { useAuth } from './AuthContext';
 
 const CartContext = createContext(null);
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { currentUser } = useAuth(); // Re-fetch cart when user logs in/out
 
-  const addItem = useCallback((product) => {
+  const fetchCart = useCallback(async () => {
+    try {
+      const response = await api.getCart();
+      if (response.success && response.data?.items) {
+        // Map backend CartItem structure to frontend format
+        const mappedItems = response.data.items.map(cartItem => {
+          const product = cartItem.product || {};
+          let parsedName = product.name;
+          try { parsedName = JSON.parse(product.name); } catch {}
+
+          return {
+            ...product,
+            name: parsedName,
+            cartItemId: cartItem.id, // Save backend cart item ID
+            id: product.id,          // Keep frontend expected product ID
+            quantity: cartItem.quantity,
+            image: product.images?.[0]?.url || '',
+          };
+        });
+        setItems(mappedItems);
+      } else {
+        setItems([]);
+      }
+    } catch (err) {
+      console.error('Failed to fetch cart:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart, currentUser]);
+
+  const addItem = useCallback(async (product) => {
+    // Optimistic update for UI responsiveness
     setItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
       if (existing) {
         return prev.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
       return [...prev, { ...product, quantity: 1 }];
     });
     setIsDrawerOpen(true);
-  }, []);
 
-  const removeItem = useCallback((id) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  }, []);
-
-  const updateQuantity = useCallback((id, quantity) => {
-    if (quantity <= 0) {
-      setItems((prev) => prev.filter((item) => item.id !== id));
-      return;
+    try {
+      await api.addToCart(product.id, 1);
+      fetchCart(); // Ensure synced with backend cartItemId
+    } catch (err) {
+      console.error('Failed to add item to backend cart:', err);
+      fetchCart(); // Revert on failure
     }
-    setItems((prev) =>
-      prev.map((item) => (item.id === id ? { ...item, quantity } : item))
-    );
-  }, []);
+  }, [fetchCart]);
 
-  const clearCart = useCallback(() => setItems([]), []);
+  const removeItem = useCallback(async (productId) => {
+    const item = items.find(i => i.id === productId);
+    if (!item) return;
+
+    // Optimistic
+    setItems((prev) => prev.filter((i) => i.id !== productId));
+
+    try {
+      if (item.cartItemId) {
+        await api.removeCartItem(item.cartItemId);
+      }
+    } catch (err) {
+      console.error('Failed to remove item from backend cart:', err);
+      fetchCart(); // Revert
+    }
+  }, [items, fetchCart]);
+
+  const updateQuantity = useCallback(async (productId, quantity) => {
+    const item = items.find(i => i.id === productId);
+    if (!item) return;
+
+    if (quantity <= 0) {
+      return removeItem(productId);
+    }
+
+    // Optimistic
+    setItems((prev) => prev.map((i) => (i.id === productId ? { ...i, quantity } : i)));
+
+    try {
+      if (item.cartItemId) {
+        await api.updateCartItem(item.cartItemId, quantity);
+      }
+    } catch (err) {
+      console.error('Failed to update backend cart item quantity:', err);
+      fetchCart(); // Revert
+    }
+  }, [items, removeItem, fetchCart]);
+
+  const clearCart = useCallback(async () => {
+    setItems([]); // Optimistic
+    try {
+      await api.clearCart();
+    } catch (err) {
+      console.error('Failed to clear backend cart:', err);
+      fetchCart(); // Revert
+    }
+  }, [fetchCart]);
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce(
