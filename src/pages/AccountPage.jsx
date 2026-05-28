@@ -122,13 +122,22 @@ export default function AccountPage() {
                         <span className="font-display text-lg font-bold text-espresso">₺{(order.total || 0).toFixed(2)}</span>
                       </div>
                     </div>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-2 mb-4">
                       {order.items?.map((item, i) => (
                         <div key={i} className="px-3 py-1.5 rounded-lg bg-cream-light text-xs text-walnut-light border border-cream-dark/10">
-                          {t(item.name)} × {item.quantity}
+                          {typeof item.name === 'object' ? (item.name.tr || item.name.en) : (t(item.name) || item.name)} × {item.quantity}
                         </div>
                       ))}
                     </div>
+                    {order.trackingNumber && (
+                      <div className="pt-3 border-t border-cream-dark/10 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Package className="w-4 h-4 text-walnut" />
+                          <span className="text-sm font-medium text-walnut">{order.shippingCompany || 'Kargo'}:</span>
+                        </div>
+                        <span className="text-sm font-bold text-espresso tracking-wide bg-champagne px-3 py-1 rounded-lg border border-cream-dark/20">{order.trackingNumber}</span>
+                      </div>
+                    )}
                   </div>
                 );
               }) : (

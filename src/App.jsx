@@ -10,6 +10,7 @@ import { OrderProvider } from './context/OrderContext';
 import { CouponProvider } from './context/CouponContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { FinancialProvider } from './context/FinancialContext';
+import { CMSProvider } from './context/CMSContext';
 
 import ScrollToTop from './components/ScrollToTop';
 import LandingPage from './pages/LandingPage';
@@ -49,49 +50,52 @@ export default function App() {
                     <OrderProvider>
                       <CouponProvider>
                         <FinancialProvider>
-                        <BrowserRouter>
-                          <ScrollToTop />
-                          <Routes>
-                            {/* Public Routes */}
-                            <Route path="/" element={<LandingPage />} />
-                            <Route path="/shop" element={<ShopPage />} />
-                            <Route path="/shop/product/:id" element={<ProductDetailPage />} />
-                            <Route path="/checkout" element={<CheckoutPage />} />
-                            <Route path="/payment/success" element={<PaymentSuccessPage />} />
-                            <Route path="/payment/fail" element={<PaymentFailPage />} />
+                          <CMSProvider>
+                            <BrowserRouter>
+                              <ScrollToTop />
+                              <Routes>
+                                {/* Public Routes */}
+                                <Route path="/" element={<LandingPage />} />
+                                <Route path="/shop" element={<ShopPage />} />
+                                <Route path="/shop/product/:id" element={<ProductDetailPage />} />
+                                <Route path="/checkout" element={<CheckoutPage />} />
+                                <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                                <Route path="/payment/fail" element={<PaymentFailPage />} />
 
-                            {/* Customer Auth */}
-                            <Route path="/login" element={<LoginPage />} />
-                            <Route path="/register" element={<RegisterPage />} />
-                            <Route path="/account" element={<AccountPage />} />
+                                {/* Customer Auth */}
+                                <Route path="/login" element={<LoginPage />} />
+                                <Route path="/register" element={<RegisterPage />} />
+                                <Route path="/account" element={<AccountPage />} />
 
-                            {/* Admin Login */}
-                            <Route path="/admin/login" element={<AdminLogin />} />
+                                {/* Admin Login */}
+                                <Route path="/admin/login" element={<AdminLogin />} />
 
-                            {/* Protected Admin Routes */}
-                            <Route path="/admin" element={<AdminProtectedRoute />}>
-                              <Route element={<AdminLayout />}>
-                                <Route index element={<AdminDashboard />} />
-                                <Route path="products" element={<AdminProducts />} />
-                                <Route path="products/new" element={<AdminProductForm />} />
-                                <Route path="products/:id" element={<AdminProductForm />} />
-                                <Route path="orders" element={<AdminOrders />} />
+                                {/* Protected Admin Routes */}
+                                <Route path="/admin" element={<AdminProtectedRoute />}>
+                                  <Route element={<AdminLayout />}>
+                                    <Route index element={<AdminDashboard />} />
+                                    <Route path="products" element={<AdminProducts />} />
+                                    <Route path="products/new" element={<AdminProductForm />} />
+                                    <Route path="products/:id" element={<AdminProductForm />} />
+                                    <Route path="orders" element={<AdminOrders />} />
 
-                                {/* Super Admin Only Routes */}
-                                <Route element={<AdminProtectedRoute requiredRole="superadmin" />}>
-                                  <Route path="categories" element={<AdminCategories />} />
-                                  <Route path="coupons" element={<AdminCoupons />} />
-                                  <Route path="staff" element={<AdminStaffManagement />} />
-                                  <Route path="audit-logs" element={<AdminAuditLogs />} />
-                                  <Route path="financials" element={<AdminFinancialHistory />} />
+                                    {/* Super Admin Only Routes */}
+                                    <Route element={<AdminProtectedRoute requiredRole="superadmin" />}>
+                                      <Route path="categories" element={<AdminCategories />} />
+                                      <Route path="coupons" element={<AdminCoupons />} />
+                                      <Route path="cms" element={<AdminCMS />} />
+                                      <Route path="staff" element={<AdminStaffManagement />} />
+                                      <Route path="audit-logs" element={<AdminAuditLogs />} />
+                                      <Route path="financials" element={<AdminFinancialHistory />} />
+                                    </Route>
+                                  </Route>
                                 </Route>
-                              </Route>
-                            </Route>
 
-                            {/* Catch-all — redirect unknown routes to home */}
-                            <Route path="*" element={<Navigate to="/" replace />} />
-                          </Routes>
-                        </BrowserRouter>
+                                {/* Catch-all — redirect unknown routes to home */}
+                                <Route path="*" element={<Navigate to="/" replace />} />
+                              </Routes>
+                            </BrowserRouter>
+                          </CMSProvider>
                         </FinancialProvider>
                       </CouponProvider>
                     </OrderProvider>
