@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { SHOP_PRODUCTS as INITIAL_PRODUCTS, SHOP_CATEGORIES as INITIAL_CATEGORIES } from '../data/shopProducts';
+import { api } from '../lib/api';
 import { useAuth } from './AuthContext';
 
 const ProductContext = createContext();
@@ -8,142 +8,140 @@ export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const { logDetailedAuditEvent, currentUser } = useAuth();
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const storedProducts = localStorage.getItem('gelatte_products');
-    const storedCategories = localStorage.getItem('gelatte_categories');
+  const fetchProducts = useCallback(async () => {
+    try {
+      const [prodRes, catRes] = await Promise.all([
+        api.getProducts({ limit: 100 }), // Get all for store
+        api.getCategories(),
+      ]);
 
-    if (storedProducts) {
-      // Migrate existing products to add new flags if missing
-      const parsed = JSON.parse(storedProducts);
-      const migrated = parsed.map(p => ({
-        ...p,
-        showInMenu: p.showInMenu !== undefined ? p.showInMenu : true,
-        availableForOnlineOrder: p.availableForOnlineOrder !== undefined ? p.availableForOnlineOrder : true,
-      }));
-      setProducts(migrated);
-    } else {
-      // Map initial products to include new fields like stock, discount, status, availability
-      const initialized = INITIAL_PRODUCTS.map(p => ({
-        ...p,
-        stock: 10,
-        discount: 0,
-        status: 'active',
-        showInMenu: true,
-        availableForOnlineOrder: true,
-        images: [p.image] // Support multiple images
-      }));
-      setProducts(initialized);
-      localStorage.setItem('gelatte_products', JSON.stringify(initialized));
-    }
+      if (catRes.success) {
+        setCategories(catRes.data);
+      }
 
-    if (storedCategories) {
-      setCategories(JSON.parse(storedCategories));
-    } else {
-      setCategories(INITIAL_CATEGORIES);
-      localStorage.setItem('gelatte_categories', JSON.stringify(INITIAL_CATEGORIES));
+      if (prodRes.success) {
+        const parsedProducts = prodRes.data.products.map(p => {
+          let nameObj = p.name;
+          let descObj = p.description;
+          try { nameObj = JSON.parse(p.name); } catch {}
+          try { descObj = JSON.parse(p.description); } catch {}
+          
+          return {
+            ...p,
+            name: nameObj,
+            description: descObj,
+            image: p.images?.[0]?.url || '',
+            images: p.images?.map(i => i.url) || [],
+            category: p.categoryId,
+          };
+        });
+        setProducts(parsedProducts);
+      }
+    } catch (err) {
+      console.error('Failed to fetch store data:', err);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  const saveProducts = (newProducts) => {
-    setProducts(newProducts);
-    localStorage.setItem('gelatte_products', JSON.stringify(newProducts));
-  };
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
-  const saveCategories = (newCategories) => {
-    setCategories(newCategories);
-    localStorage.setItem('gelatte_categories', JSON.stringify(newCategories));
-  };
+  // --- Products CRUD with API ---
+  const addProduct = useCallback(async (product) => {
+    try {
+      const payload = {
+        name: JSON.stringify(product.name),
+        description: JSON.stringify(product.description),
+        price: product.price,
+        discount: product.discount || 0,
+        stock: product.stock || 0,
+        categoryId: product.category,
+        badge: product.badge || null,
+        status: product.status || 'active',
+        showInMenu: product.showInMenu !== false,
+        availableForOnlineOrder: product.availableForOnlineOrder !== false,
+        images: product.images ? product.images.map(img => ({ url: img })) : [],
+      };
 
-  // --- Products CRUD with audit logging ---
-  const addProduct = useCallback((product) => {
-    const newProduct = { ...product, id: `prod_${Date.now()}` };
-    const newProducts = [newProduct, ...products];
-    saveProducts(newProducts);
-
-    if (logDetailedAuditEvent) {
-      logDetailedAuditEvent({
-        actionType: 'product.created',
-        module: 'products',
-        recordId: newProduct.id,
-        description: `Yeni ürün oluşturuldu: ${typeof product.name === 'object' ? (product.name.tr || product.name.en || '') : product.name}`,
-        newValue: { id: newProduct.id, name: product.name, price: product.price, stock: product.stock },
-      });
-    }
-
-    return newProduct;
-  }, [products, logDetailedAuditEvent]);
-
-  const updateProduct = useCallback((id, updatedData) => {
-    const oldProduct = products.find(p => p.id === id);
-    const newProducts = products.map(p => p.id === id ? { ...p, ...updatedData } : p);
-    saveProducts(newProducts);
-
-    // Log detailed changes for tracked fields
-    if (logDetailedAuditEvent && oldProduct) {
-      const trackedFields = ['price', 'discount', 'stock', 'status', 'name'];
-      const changes = {};
-      const oldValues = {};
-
-      for (const field of trackedFields) {
-        if (updatedData[field] !== undefined && JSON.stringify(updatedData[field]) !== JSON.stringify(oldProduct[field])) {
-          changes[field] = updatedData[field];
-          oldValues[field] = oldProduct[field];
-        }
-      }
-
-      if (Object.keys(changes).length > 0) {
-        // Log specific action types for price and stock changes
-        if (changes.price !== undefined || changes.discount !== undefined) {
+      const response = await api.admin.createProduct(payload);
+      if (response.success) {
+        await fetchProducts(); // Refresh list
+        
+        if (logDetailedAuditEvent) {
           logDetailedAuditEvent({
-            actionType: 'product.price_changed',
+            actionType: 'product.created',
             module: 'products',
-            recordId: id,
-            description: `Ürün fiyatı güncellendi: ${typeof oldProduct.name === 'object' ? (oldProduct.name.tr || oldProduct.name.en || id) : oldProduct.name}`,
-            oldValue: { price: oldProduct.price, discount: oldProduct.discount },
-            newValue: { price: updatedData.price ?? oldProduct.price, discount: updatedData.discount ?? oldProduct.discount },
+            recordId: response.data.id,
+            description: `Yeni ürün oluşturuldu`,
           });
         }
+        return response.data;
+      }
+    } catch (err) {
+      console.error('Add product error:', err);
+      throw err;
+    }
+  }, [fetchProducts, logDetailedAuditEvent]);
 
-        if (changes.stock !== undefined) {
+  const updateProduct = useCallback(async (id, updatedData) => {
+    try {
+      const payload = {};
+      if (updatedData.name) payload.name = JSON.stringify(updatedData.name);
+      if (updatedData.description) payload.description = JSON.stringify(updatedData.description);
+      if (updatedData.price !== undefined) payload.price = updatedData.price;
+      if (updatedData.discount !== undefined) payload.discount = updatedData.discount;
+      if (updatedData.stock !== undefined) payload.stock = updatedData.stock;
+      if (updatedData.category) payload.categoryId = updatedData.category;
+      if (updatedData.badge !== undefined) payload.badge = updatedData.badge;
+      if (updatedData.status) payload.status = updatedData.status;
+      if (updatedData.showInMenu !== undefined) payload.showInMenu = updatedData.showInMenu;
+      if (updatedData.availableForOnlineOrder !== undefined) payload.availableForOnlineOrder = updatedData.availableForOnlineOrder;
+      
+      if (updatedData.images) {
+        payload.images = updatedData.images.map(img => ({ url: img }));
+      }
+
+      const response = await api.admin.updateProduct(id, payload);
+      if (response.success) {
+        await fetchProducts();
+        
+        if (logDetailedAuditEvent) {
           logDetailedAuditEvent({
-            actionType: 'product.stock_changed',
+            actionType: 'product.updated',
             module: 'products',
             recordId: id,
-            description: `Ürün stok güncellendi: ${typeof oldProduct.name === 'object' ? (oldProduct.name.tr || oldProduct.name.en || id) : oldProduct.name}`,
-            oldValue: { stock: oldProduct.stock },
-            newValue: { stock: updatedData.stock },
+            description: `Ürün güncellendi`,
           });
         }
-
-        // General product update log
-        logDetailedAuditEvent({
-          actionType: 'product.updated',
-          module: 'products',
-          recordId: id,
-          description: `Ürün güncellendi: ${Object.keys(changes).join(', ')}`,
-          oldValue: oldValues,
-          newValue: changes,
-        });
       }
+    } catch (err) {
+      console.error('Update product error:', err);
+      throw err;
     }
-  }, [products, logDetailedAuditEvent]);
+  }, [fetchProducts, logDetailedAuditEvent]);
 
-  const deleteProduct = useCallback((id) => {
-    const deletedProduct = products.find(p => p.id === id);
-    const newProducts = products.filter(p => p.id !== id);
-    saveProducts(newProducts);
-
-    if (logDetailedAuditEvent && deletedProduct) {
-      logDetailedAuditEvent({
-        actionType: 'product.deleted',
-        module: 'products',
-        recordId: id,
-        description: `Ürün silindi: ${typeof deletedProduct.name === 'object' ? (deletedProduct.name.tr || deletedProduct.name.en || id) : deletedProduct.name}`,
-        oldValue: { id, name: deletedProduct.name, price: deletedProduct.price },
-      });
+  const deleteProduct = useCallback(async (id) => {
+    try {
+      const response = await api.admin.deleteProduct(id);
+      if (response.success) {
+        await fetchProducts();
+        if (logDetailedAuditEvent) {
+          logDetailedAuditEvent({
+            actionType: 'product.deleted',
+            module: 'products',
+            recordId: id,
+            description: `Ürün silindi`,
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Delete product error:', err);
     }
-  }, [products, logDetailedAuditEvent]);
+  }, [fetchProducts, logDetailedAuditEvent]);
 
   // ══════════════════════════════════════════
   // ── Stock Management Methods ──
