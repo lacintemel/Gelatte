@@ -146,6 +146,7 @@ export const CONTACT = {
     facebook: "https://facebook.com/gelatte",
     twitter: "https://twitter.com/gelatte",
     tiktok: "https://tiktok.com/@gelatte",
+    whatsapp: "https://wa.me/902422282333",
   },
   mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3190.2319036730594!2d30.7022204!3d36.8924043!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14c3906ea16a3a7f%3A0x6b876fc1566436!2sElmal%C4%B1%2C%20%C5%9Earampol%20Cd.%20No%3A1%2C%2007400%20Muratpa%C5%9Fa%2FAntalya!5e0!3m2!1sen!2str!4v1700000000000",
 };
