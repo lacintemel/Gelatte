@@ -31,17 +31,34 @@ const allowedOrigins = new Set([
   ...(env.isProduction ? [] : devOrigins),
 ]);
 
+function normalizeOrigin(origin) {
+  return origin?.trim().replace(/\/+$/, '');
+}
+
+function isVercelOrigin(origin) {
+  try {
+    const { hostname } = new URL(origin);
+    return hostname === 'vercel.app' || hostname.endsWith('.vercel.app');
+  } catch {
+    return false;
+  }
+}
+
 // ── Global Middleware ──
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || allowedOrigins.has(origin.replace(/\/+$/, ''))) {
+    const normalizedOrigin = normalizeOrigin(origin);
+
+    if (!normalizedOrigin || allowedOrigins.has(normalizedOrigin) || isVercelOrigin(normalizedOrigin)) {
       callback(null, true);
       return;
     }
 
-    callback(new Error(`CORS blocked origin: ${origin}`));
+    logger.warn(`CORS blocked origin: ${origin}`);
+    callback(null, false);
   },
   credentials: true,
+  optionsSuccessStatus: 204,
 }));
 
 // Parse JSON for most routes
