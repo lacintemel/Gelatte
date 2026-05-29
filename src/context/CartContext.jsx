@@ -4,6 +4,43 @@ import { useAuth } from './AuthContext';
 
 const CartContext = createContext(null);
 
+const toNumber = (value, fallback = 0) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+};
+
+function parseLocalizedJson(value) {
+  if (value && typeof value === 'object') return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function normalizeCartProduct(product, quantity = 1, cartItemId = null) {
+  const imageUrls = Array.isArray(product.images)
+    ? product.images
+        .map((image) => (typeof image === 'string' ? image : image?.url))
+        .filter(Boolean)
+    : [];
+
+  return {
+    ...product,
+    name: parseLocalizedJson(product.name),
+    description: parseLocalizedJson(product.description),
+    price: toNumber(product.price),
+    discount: toNumber(product.discount),
+    stock: toNumber(product.stock),
+    cartItemId,
+    id: product.id,
+    quantity: toNumber(quantity, 1),
+    image: imageUrls[0] || product.image || '',
+    images: imageUrls,
+    category: product.categoryId || product.category,
+  };
+}
+
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -16,17 +53,7 @@ export function CartProvider({ children }) {
         // Map backend CartItem structure to frontend format
         const mappedItems = response.data.items.map(cartItem => {
           const product = cartItem.product || {};
-          let parsedName = product.name;
-          try { parsedName = JSON.parse(product.name); } catch {}
-
-          return {
-            ...product,
-            name: parsedName,
-            cartItemId: cartItem.id, // Save backend cart item ID
-            id: product.id,          // Keep frontend expected product ID
-            quantity: cartItem.quantity,
-            image: product.images?.[0]?.url || '',
-          };
+          return normalizeCartProduct(product, cartItem.quantity, cartItem.id);
         });
         setItems(mappedItems);
       } else {
@@ -50,7 +77,7 @@ export function CartProvider({ children }) {
           item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-      return [...prev, { ...product, quantity: 1 }];
+      return [...prev, normalizeCartProduct(product)];
     });
     setIsDrawerOpen(true);
 

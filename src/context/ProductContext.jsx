@@ -4,6 +4,40 @@ import { useAuth } from './AuthContext';
 
 const ProductContext = createContext();
 
+const toNumber = (value, fallback = 0) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+};
+
+function parseLocalizedJson(value) {
+  if (value && typeof value === 'object') return value;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+}
+
+function normalizeProduct(product) {
+  const imageUrls = Array.isArray(product.images)
+    ? product.images
+        .map((image) => (typeof image === 'string' ? image : image?.url))
+        .filter(Boolean)
+    : [];
+
+  return {
+    ...product,
+    name: parseLocalizedJson(product.name),
+    description: parseLocalizedJson(product.description),
+    price: toNumber(product.price),
+    discount: toNumber(product.discount),
+    stock: toNumber(product.stock),
+    image: imageUrls[0] || product.image || '',
+    images: imageUrls,
+    category: product.categoryId || product.category,
+  };
+}
+
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -22,22 +56,8 @@ export function ProductProvider({ children }) {
       }
 
       if (prodRes.success) {
-        const parsedProducts = prodRes.data.products.map(p => {
-          let nameObj = p.name;
-          let descObj = p.description;
-          try { nameObj = JSON.parse(p.name); } catch { nameObj = p.name; }
-          try { descObj = JSON.parse(p.description); } catch { descObj = p.description; }
-          
-          return {
-            ...p,
-            name: nameObj,
-            description: descObj,
-            image: p.images?.[0]?.url || '',
-            images: p.images?.map(i => i.url) || [],
-            category: p.categoryId,
-          };
-        });
-        setProducts(parsedProducts);
+        const productList = prodRes.data?.products || prodRes.data || [];
+        setProducts(productList.map(normalizeProduct));
       }
     } catch (err) {
       console.error('Failed to fetch store data:', err);

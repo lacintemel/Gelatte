@@ -5,6 +5,27 @@ import { useAuth } from './AuthContext';
 const OrderContext = createContext(null);
 const ORDER_STATUSES = ['pending_payment', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled', 'refunded'];
 
+const toNumber = (value, fallback = 0) => {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+};
+
+function normalizeOrder(order) {
+  return {
+    ...order,
+    total: toNumber(order.total),
+    subtotal: toNumber(order.subtotal),
+    discount: toNumber(order.discount),
+    deliveryFee: toNumber(order.deliveryFee),
+    items: (order.items || []).map((item) => ({
+      ...item,
+      price: toNumber(item.price),
+      discount: toNumber(item.discount),
+      quantity: toNumber(item.quantity, 1),
+    })),
+  };
+}
+
 export function OrderProvider({ children }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,7 +48,8 @@ export function OrderProvider({ children }) {
       }
 
       if (response.success) {
-        setOrders(response.data?.orders || response.data || []);
+        const orderList = response.data?.orders || response.data || [];
+        setOrders(orderList.map(normalizeOrder));
       }
     } catch (err) {
       console.error('Failed to fetch orders:', err);
@@ -46,7 +68,7 @@ export function OrderProvider({ children }) {
       const response = await api.admin.updateOrderStatus(orderId, newStatus);
       if (response.success) {
         await fetchOrders();
-        return { success: true, order: response.data };
+        return { success: true, order: normalizeOrder(response.data) };
       }
       return { success: false, error: response.error };
     } catch (err) {
