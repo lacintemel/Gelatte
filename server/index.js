@@ -25,12 +25,22 @@ import cmsRoutes from './src/routes/cms.js';
 import uploadRoutes from './src/routes/upload.js';
 
 const app = express();
+const devOrigins = ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174', 'http://127.0.0.1:5173'];
+const allowedOrigins = new Set([
+  ...env.CORS_ORIGINS,
+  ...(env.isProduction ? [] : devOrigins),
+]);
 
 // ── Global Middleware ──
 app.use(cors({
-  origin: env.NODE_ENV === 'production' 
-    ? env.APP_URL 
-    : [env.APP_URL, 'http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174'],
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.has(origin.replace(/\/+$/, ''))) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`CORS blocked origin: ${origin}`));
+  },
   credentials: true,
 }));
 
@@ -82,6 +92,7 @@ app.listen(PORT, () => {
   logger.info(`🚀 Gelatte API server running on port ${PORT}`);
   logger.info(`📍 Environment: ${env.NODE_ENV}`);
   logger.info(`🔗 Frontend URL: ${env.APP_URL}`);
+  logger.info(`🔐 CORS origins: ${Array.from(allowedOrigins).join(', ')}`);
   logger.info(`💳 PayTR test mode: ${env.PAYTR_TEST_MODE === '1' ? 'ON' : 'OFF'}`);
 });
 

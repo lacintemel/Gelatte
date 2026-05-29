@@ -156,3 +156,13 @@ View the full schema: [server/prisma/schema.prisma](server/prisma/schema.prisma)
 5. Set `PAYTR_CALLBACK_URL` to your production HTTPS URL
 6. Run `npx prisma migrate deploy`
 7. Build the frontend: `npm run build`
+
+### Vercel frontend + Railway backend
+
+Set these environment variables in the deployment dashboards:
+
+- Vercel: `VITE_API_URL=https://your-railway-backend.up.railway.app`
+- Railway: `APP_URL=https://your-vercel-site.vercel.app`
+- Railway: `CORS_ORIGINS=https://your-vercel-site.vercel.app,https://your-custom-domain.com`
+
+Do not include `/api` in `VITE_API_URL`; the frontend adds it automatically. A trailing slash is okay.

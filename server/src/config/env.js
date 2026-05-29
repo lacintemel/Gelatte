@@ -7,7 +7,6 @@ const requiredVars = [
   'JWT_SECRET',
   'JWT_EXPIRES_IN',
   'APP_URL',
-  'API_URL',
 ];
 
 const paytrVars = [
@@ -52,7 +51,11 @@ export const env = {
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN,
 
   APP_URL: process.env.APP_URL,
-  API_URL: process.env.API_URL,
+  API_URL: process.env.API_URL || '',
+  CORS_ORIGINS: (process.env.CORS_ORIGINS || process.env.APP_URL || '')
+    .split(',')
+    .map((origin) => origin.trim().replace(/\/+$/, ''))
+    .filter(Boolean),
 
   PAYTR_MERCHANT_ID: process.env.PAYTR_MERCHANT_ID || '',
   PAYTR_MERCHANT_KEY: process.env.PAYTR_MERCHANT_KEY || '',

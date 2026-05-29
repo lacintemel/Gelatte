@@ -3,7 +3,14 @@
 // Wrapper for making authenticated requests to the backend.
 // ═══════════════════════════════════════════
 
-const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001') + '/api';
+function getApiBase() {
+  const configuredUrl = (import.meta.env.VITE_API_URL || '').replace(/\/+$/, '');
+
+  if (!configuredUrl) return '/api';
+  return configuredUrl.endsWith('/api') ? configuredUrl : `${configuredUrl}/api`;
+}
+
+const API_BASE = getApiBase();
 
 function getToken() {
   try {
