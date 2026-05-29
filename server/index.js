@@ -26,14 +26,36 @@ import uploadRoutes from './src/routes/upload.js';
 
 const app = express();
 const devOrigins = ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174', 'http://127.0.0.1:5173'];
-const allowedOrigins = new Set([
-  ...env.CORS_ORIGINS,
-  ...(env.isProduction ? [] : devOrigins),
-]);
 
 function normalizeOrigin(origin) {
   return origin?.trim().replace(/\/+$/, '');
 }
+
+function getOriginVariants(origin) {
+  const normalizedOrigin = normalizeOrigin(origin);
+  if (!normalizedOrigin) return [];
+
+  try {
+    const url = new URL(normalizedOrigin);
+    const variants = [normalizedOrigin];
+
+    if (url.hostname.startsWith('www.')) {
+      url.hostname = url.hostname.slice(4);
+      variants.push(url.toString().replace(/\/+$/, ''));
+    } else {
+      url.hostname = `www.${url.hostname}`;
+      variants.push(url.toString().replace(/\/+$/, ''));
+    }
+
+    return variants;
+  } catch {
+    return [normalizedOrigin];
+  }
+}
+
+const allowedOrigins = new Set([
+  ...[...env.CORS_ORIGINS, ...(env.isProduction ? [] : devOrigins)].flatMap(getOriginVariants),
+]);
 
 function isVercelOrigin(origin) {
   try {
