@@ -26,7 +26,9 @@ const app = express();
 
 // ── Global Middleware ──
 app.use(cors({
-  origin: env.APP_URL,
+  origin: env.NODE_ENV === 'production' 
+    ? env.APP_URL 
+    : [env.APP_URL, 'http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174'],
   credentials: true,
 }));
 
