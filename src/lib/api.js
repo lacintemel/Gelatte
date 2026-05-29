@@ -69,6 +69,33 @@ async function request(endpoint, options = {}) {
   return data;
 }
 
+const uploadImage = (file) => {
+  const formData = new FormData();
+  formData.append('image', file);
+  return request('/upload', { method: 'POST', body: formData });
+};
+
+const normalizeSettings = (settings) =>
+  settings.map(({ key, value }) => ({
+    key,
+    value: String(value ?? ''),
+  }));
+
+const cmsApi = {
+  getPublicSettings: () => request('/cms'),
+  getSettings: () => request('/cms'),
+  saveSetting: (key, value) =>
+    request('/cms', { method: 'POST', body: { key, value: String(value ?? '') } }),
+  saveSettingsBulk: (settings) =>
+    request('/cms/bulk', { method: 'POST', body: { settings: normalizeSettings(settings) } }),
+  updateSettings: (data) => {
+    const settings = Array.isArray(data)
+      ? data
+      : Object.entries(data).map(([key, value]) => ({ key, value }));
+    return request('/cms/bulk', { method: 'POST', body: { settings: normalizeSettings(settings) } });
+  },
+};
+
 export const api = {
   // ── Auth ──
   login: (email, password) =>
@@ -136,6 +163,10 @@ export const api = {
   validateCoupon: (code, orderTotal) =>
     request('/coupons/validate', { method: 'POST', body: { code, orderTotal } }),
 
+  uploadImage,
+
+  cms: cmsApi,
+
   // ── Reviews ──
   reviews: {
     getProductReviews: (productId) =>
@@ -195,16 +226,8 @@ export const api = {
     deleteCoupon: (id) =>
       request(`/coupons/${id}`, { method: 'DELETE' }),
 
-    uploadImage: (file) => {
-      const formData = new FormData();
-      formData.append('image', file);
-      return request('/upload', { method: 'POST', body: formData });
-    },
+    uploadImage,
 
-    cms: {
-      getPublicSettings: () => request('/cms/public'),
-      getSettings: () => request('/cms'),
-      updateSettings: (data) => request('/cms', { method: 'PUT', body: data }),
-    },
+    cms: cmsApi,
   },
 };

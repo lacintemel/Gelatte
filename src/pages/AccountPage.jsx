@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useOrders } from '../context/OrderContext';
@@ -27,7 +27,7 @@ export default function AccountPage() {
   const [profileForm, setProfileForm] = useState(null);
   const [pwForm, setPwForm] = useState({ oldPassword: '', newPassword: '', confirmPassword: '' });
 
-  if (!isAuthenticated) { navigate('/login', { replace: true }); return null; }
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
 
   // Customer's orders
   const myOrders = orders.filter(o => o.customer?.email?.toLowerCase() === currentUser?.email?.toLowerCase())

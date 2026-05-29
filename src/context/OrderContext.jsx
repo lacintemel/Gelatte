@@ -1,13 +1,14 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { api } from '../lib/api';
 import { useAuth } from './AuthContext';
 
 const OrderContext = createContext(null);
+const ORDER_STATUSES = ['pending_payment', 'confirmed', 'preparing', 'ready', 'completed', 'cancelled', 'refunded'];
 
 export function OrderProvider({ children }) {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { currentUser, isSuperAdmin } = useAuth();
+  const { currentUser } = useAuth();
 
   const fetchOrders = useCallback(async () => {
     if (!currentUser) {
@@ -26,10 +27,11 @@ export function OrderProvider({ children }) {
       }
 
       if (response.success) {
-        setOrders(response.data.orders || response.data);
+        setOrders(response.data?.orders || response.data || []);
       }
     } catch (err) {
       console.error('Failed to fetch orders:', err);
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -39,7 +41,7 @@ export function OrderProvider({ children }) {
     fetchOrders();
   }, [fetchOrders]);
 
-  const updateOrderStatus = useCallback(async (orderId, newStatus, meta = {}) => {
+  const updateOrderStatus = useCallback(async (orderId, newStatus) => {
     try {
       const response = await api.admin.updateOrderStatus(orderId, newStatus);
       if (response.success) {
@@ -55,16 +57,43 @@ export function OrderProvider({ children }) {
 
   // Remove local addOrder as it's now handled by Checkout component hitting API directly
   // Keep it as a dummy method to prevent crashes if it's called somewhere else
-  const addOrder = useCallback((orderData) => {
+  const addOrder = useCallback(() => {
     console.warn('addOrder called locally, but should be handled via API checkout.');
     return { id: 'dummy' };
   }, []);
+
+  const stats = useMemo(() => {
+    const activeOrders = orders.filter((order) => order.status !== 'cancelled');
+    const revenueOrders = orders.filter((order) =>
+      ['confirmed', 'preparing', 'ready', 'completed'].includes(order.status)
+    );
+
+    return {
+      totalOrders: activeOrders.length,
+      totalRevenue: revenueOrders.reduce((sum, order) => sum + Number(order.total || 0), 0),
+      newOrdersToday: orders.filter((order) => {
+        const created = new Date(order.createdAt);
+        const today = new Date();
+        return (
+          created.getFullYear() === today.getFullYear() &&
+          created.getMonth() === today.getMonth() &&
+          created.getDate() === today.getDate()
+        );
+      }).length,
+      ordersByStatus: orders.reduce((acc, order) => {
+        acc[order.status] = (acc[order.status] || 0) + 1;
+        return acc;
+      }, {}),
+    };
+  }, [orders]);
 
   return (
     <OrderContext.Provider
       value={{
         orders,
+        stats,
         loading,
+        ORDER_STATUSES,
         addOrder,
         updateOrderStatus,
         refreshOrders: fetchOrders,

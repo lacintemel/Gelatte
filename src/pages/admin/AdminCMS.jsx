@@ -57,7 +57,7 @@ export default function AdminCMS() {
       } else {
         showFeedback(res.error || 'Kaydedilirken hata oluştu.', 'error');
       }
-    } catch (err) {
+    } catch {
       showFeedback('Beklenmeyen bir hata oluştu.', 'error');
     } finally {
       setSaving(false);
@@ -77,7 +77,7 @@ export default function AdminCMS() {
       } else {
         showFeedback(res.error || 'Resim yüklenemedi.', 'error');
       }
-    } catch (err) {
+    } catch {
       showFeedback('Resim yüklenirken hata oluştu.', 'error');
     } finally {
       setUploadingImage(false);

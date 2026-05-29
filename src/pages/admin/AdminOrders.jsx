@@ -85,8 +85,8 @@ export default function AdminOrders() {
   /**
    * Execute the actual status change with audit logging and financial tracking.
    */
-  const executeStatusChange = (orderId, newStatus, oldStatus, order, extraMeta = {}) => {
-    const result = updateOrderStatus(orderId, newStatus, {
+  const executeStatusChange = async (orderId, newStatus, oldStatus, order, extraMeta = {}) => {
+    const result = await updateOrderStatus(orderId, newStatus, {
       performedBy: currentUser?.username || 'system',
       performedByRole: currentUser?.role || 'system',
       ...extraMeta,

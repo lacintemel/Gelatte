@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../context/ToastContext';
@@ -17,7 +17,7 @@ export default function RegisterPage() {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
-  if (isAuthenticated) { navigate('/account', { replace: true }); return null; }
+  if (isAuthenticated) return <Navigate to="/account" replace />;
 
   const update = (key, val) => { setForm(f => ({ ...f, [key]: val })); setError(''); };
 

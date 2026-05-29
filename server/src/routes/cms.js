@@ -26,8 +26,8 @@ router.get('/', async (req, res) => {
     
     res.json({ success: true, data: formatted });
   } catch (err) {
-    logger.error('Error fetching CMS settings:', err);
-    res.status(500).json({ success: false, error: 'İçerikler yüklenemedi' });
+    logger.warn('CMS settings unavailable; using empty public settings:', err.message);
+    res.json({ success: true, data: {} });
   }
 });
 

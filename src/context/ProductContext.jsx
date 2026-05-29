@@ -7,7 +7,7 @@ const ProductContext = createContext();
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const { logDetailedAuditEvent, currentUser } = useAuth();
+  const { logDetailedAuditEvent } = useAuth();
   const [loading, setLoading] = useState(true);
 
   const fetchProducts = useCallback(async () => {
@@ -25,8 +25,8 @@ export function ProductProvider({ children }) {
         const parsedProducts = prodRes.data.products.map(p => {
           let nameObj = p.name;
           let descObj = p.description;
-          try { nameObj = JSON.parse(p.name); } catch {}
-          try { descObj = JSON.parse(p.description); } catch {}
+          try { nameObj = JSON.parse(p.name); } catch { nameObj = p.name; }
+          try { descObj = JSON.parse(p.description); } catch { descObj = p.description; }
           
           return {
             ...p,
@@ -49,6 +49,14 @@ export function ProductProvider({ children }) {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  const saveProducts = useCallback((nextProducts) => {
+    setProducts(nextProducts);
+  }, []);
+
+  const saveCategories = useCallback((nextCategories) => {
+    setCategories(nextCategories);
+  }, []);
 
   // --- Products CRUD with API ---
   const addProduct = useCallback(async (product) => {
@@ -171,7 +179,7 @@ export function ProductProvider({ children }) {
     );
     saveProducts(newProducts);
     return { success: true, newStock };
-  }, [products]);
+  }, [products, saveProducts]);
 
   /**
    * Restore stock for a single product.
@@ -187,7 +195,7 @@ export function ProductProvider({ children }) {
     );
     saveProducts(newProducts);
     return { success: true, newStock };
-  }, [products]);
+  }, [products, saveProducts]);
 
   /**
    * Atomically deduct stock for multiple products (all-or-nothing).
@@ -251,7 +259,7 @@ export function ProductProvider({ children }) {
     // Atomic write
     saveProducts(newProducts);
     return { success: true, details };
-  }, [products]);
+  }, [products, saveProducts]);
 
   /**
    * Atomically restore stock for multiple products.
@@ -288,7 +296,7 @@ export function ProductProvider({ children }) {
 
     saveProducts(newProducts);
     return { success: true, details };
-  }, [products]);
+  }, [products, saveProducts]);
 
   // --- Categories CRUD ---
   const addCategory = useCallback((category) => {
@@ -305,7 +313,7 @@ export function ProductProvider({ children }) {
         newValue: { id: newCategory.id, label: category.label },
       });
     }
-  }, [categories, logDetailedAuditEvent]);
+  }, [categories, saveCategories, logDetailedAuditEvent]);
 
   const updateCategory = useCallback((id, updatedData) => {
     const oldCategory = categories.find(c => c.id === id);
@@ -322,7 +330,7 @@ export function ProductProvider({ children }) {
         newValue: { label: updatedData.label },
       });
     }
-  }, [categories, logDetailedAuditEvent]);
+  }, [categories, saveCategories, logDetailedAuditEvent]);
 
   const deleteCategory = useCallback((id) => {
     const deletedCategory = categories.find(c => c.id === id);
@@ -338,12 +346,13 @@ export function ProductProvider({ children }) {
         oldValue: { id, label: deletedCategory.label },
       });
     }
-  }, [categories, logDetailedAuditEvent]);
+  }, [categories, saveCategories, logDetailedAuditEvent]);
 
   return (
     <ProductContext.Provider value={{
       products,
       categories,
+      loading,
       addProduct,
       updateProduct,
       deleteProduct,
