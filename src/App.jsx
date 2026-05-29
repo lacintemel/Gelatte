@@ -36,6 +36,7 @@ import AdminCoupons from './pages/admin/AdminCoupons';
 import AdminStaffManagement from './pages/admin/AdminStaffManagement';
 import AdminAuditLogs from './pages/admin/AdminAuditLogs';
 import AdminFinancialHistory from './pages/admin/AdminFinancialHistory';
+import AdminCMS from './pages/admin/AdminCMS';
 
 export default function App() {
   return (
