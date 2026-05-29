@@ -184,15 +184,27 @@ export const api = {
     deleteReview: (id) => request(`/reviews/${id}`, { method: 'DELETE' }),
 
     getCoupons: () =>
-      request('/admin/coupons'),
+      request('/coupons'),
 
     createCoupon: (data) =>
-      request('/admin/coupons', { method: 'POST', body: data }),
+      request('/coupons', { method: 'POST', body: data }),
 
     updateCoupon: (id, data) =>
-      request(`/admin/coupons/${id}`, { method: 'PUT', body: data }),
+      request(`/coupons/${id}`, { method: 'PUT', body: data }),
 
     deleteCoupon: (id) =>
-      request(`/admin/coupons/${id}`, { method: 'DELETE' }),
+      request(`/coupons/${id}`, { method: 'DELETE' }),
+
+    uploadImage: (file) => {
+      const formData = new FormData();
+      formData.append('image', file);
+      return request('/upload', { method: 'POST', body: formData });
+    },
+
+    cms: {
+      getPublicSettings: () => request('/cms/public'),
+      getSettings: () => request('/cms'),
+      updateSettings: (data) => request('/cms', { method: 'PUT', body: data }),
+    },
   },
 };
