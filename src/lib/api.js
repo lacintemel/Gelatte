@@ -7,6 +7,10 @@ const API_BASE = (import.meta.env.VITE_API_URL || 'http://localhost:3001') + '/a
 
 function getToken() {
   try {
+    const token = localStorage.getItem('gelatte_token');
+    if (token) return token;
+    
+    // Fallback for older sessions
     const session = localStorage.getItem('gelatte_session');
     if (!session) return null;
     const parsed = JSON.parse(session);
