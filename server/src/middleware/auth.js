@@ -31,7 +31,7 @@ export async function authenticate(req, res, next) {
       });
     }
 
-    req.user = user;
+    req.user = { ...user, userId: user.id };
     next();
   } catch (err) {
     if (err.name === 'JsonWebTokenError' || err.name === 'TokenExpiredError') {
@@ -64,7 +64,7 @@ export async function optionalAuth(req, res, next) {
     });
 
     if (user) {
-      req.user = user;
+      req.user = { ...user, userId: user.id };
     }
 
     next();
