@@ -19,6 +19,7 @@ export const tr = {
   cat_waffle: "Waffle", cat_waffle_desc: "Premium malzemeler ve özel soslarla Belçika waffle'ları",
   cat_baklava: "Baklava", cat_baklava_desc: "Modern bir dokunuşla geleneksel fıstıklı baklava",
   cat_desserts: "Tatlılar", cat_desserts_desc: "Seçkin damaklar için özel el yapımı tatlılar",
+  cat_explore_all: "Tüm Menüyü Keşfet",
   // Products
   prod_eyebrow: "Özel Koleksiyon", prod_title: "En İyi Lezzetlerimiz",
   prod_sub: "Her ürün, dünyanın en iyi üreticilerinden temin edilen premium malzemeler kullanılarak ustalarımız tarafından özenle hazırlanır.",
@@ -83,7 +84,7 @@ export const tr = {
   // Quick View
   qv_qty: "Adet", qv_add_to_cart: "Sepete Ekle", qv_view_details: "Tüm Detayları Gör",
   // Product Detail
-  pd_not_found: "Ürün Bulunamadı",
+  pd_not_found: "Ürün Bulunamadı", pd_qty: "Miktar",
   pd_not_found_desc: "Aradığınız ürün bulunamadı veya kaldırılmış.",
   pd_back_shop: "Mağazaya Dön", pd_reviews: "değerlendirme",
   pd_incl_tax: "KDV dahil", pd_add_to_cart: "Sepete Ekle", pd_added: "✓ Sepete Eklendi",
