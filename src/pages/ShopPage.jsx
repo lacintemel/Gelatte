@@ -156,7 +156,7 @@ function ProductCardGrid({ product, index, onQuickView }) {
       {/* Content */}
       <div className="p-4 md:p-5">
         <p className="text-[11px] font-medium tracking-widest uppercase text-warm-gray mb-1.5">
-          {product.category}
+          {(() => { const k = `shop_${product.category}`; const v = t(k); return v === k ? (product.categoryLabel || product.category) : v; })()}
         </p>
         <Link to={`/shop/product/${product.id}`} className="block group/title">
           <h3 className="font-display text-lg font-semibold text-espresso mb-1 group-hover/title:text-walnut-light transition-colors truncate">
@@ -262,7 +262,7 @@ function ProductCardList({ product, onQuickView }) {
       <div className="flex-1 p-4 md:p-5 flex flex-col justify-between">
         <div>
           <p className="text-[10px] font-medium tracking-widest uppercase text-warm-gray mb-1">
-            {product.category}
+            {(() => { const k = `shop_${product.category}`; const v = t(k); return v === k ? (product.categoryLabel || product.category) : v; })()}
           </p>
           <Link to={`/shop/product/${product.id}`}>
             <h3 className="font-display text-base md:text-lg font-semibold text-espresso mb-1 group-hover:text-walnut-light transition-colors">
@@ -415,6 +415,11 @@ export default function ShopPage() {
     const prices = products.map(p => p.price - (p.discount || 0));
     return [Math.floor(Math.min(...prices)), Math.ceil(Math.max(...prices))];
   }, [products]);
+
+  // Sync priceRange with priceBounds when products load
+  useEffect(() => {
+    setPriceRange(priceBounds);
+  }, [priceBounds]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -647,7 +652,7 @@ export default function ShopPage() {
                       max={priceRange[1]}
                       value={priceRange[0]}
                       onChange={(e) => setPriceRange([Number(e.target.value), priceRange[1]])}
-                      className="w-full pl-7 pr-2 py-2.5 rounded-lg bg-cream-light border border-cream-dark/25 text-espresso text-sm focus:outline-none focus:border-gold/50 transition-all"
+                      className="w-full pl-8 pr-2 py-2.5 rounded-lg bg-cream-light border border-cream-dark/25 text-espresso text-sm focus:outline-none focus:border-gold/50 transition-all"
                       placeholder={t('shop_filter_min')}
                     />
                   </div>
@@ -660,7 +665,7 @@ export default function ShopPage() {
                       max={priceBounds[1]}
                       value={priceRange[1]}
                       onChange={(e) => setPriceRange([priceRange[0], Number(e.target.value)])}
-                      className="w-full pl-7 pr-2 py-2.5 rounded-lg bg-cream-light border border-cream-dark/25 text-espresso text-sm focus:outline-none focus:border-gold/50 transition-all"
+                      className="w-full pl-8 pr-2 py-2.5 rounded-lg bg-cream-light border border-cream-dark/25 text-espresso text-sm focus:outline-none focus:border-gold/50 transition-all"
                       placeholder={t('shop_filter_max')}
                     />
                   </div>
@@ -893,16 +898,21 @@ export default function ShopPage() {
             <div>
               <h4 className="font-display text-sm font-semibold text-ivory uppercase tracking-wider mb-4">{t('nav_shop')}</h4>
               <ul className="space-y-2.5">
-                {SHOP_CATEGORIES.filter(c => c.id !== 'all').map((cat) => (
-                  <li key={cat.id}>
-                    <button
-                      onClick={() => { handleCategoryChange(cat.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                      className="text-sm text-cream/50 hover:text-gold transition-colors"
-                    >
-                      {t(`shop_${cat.id}`)}
-                    </button>
-                  </li>
-                ))}
+                {SHOP_CATEGORIES.filter(c => c.id !== 'all').map((cat) => {
+                  const transKey = `shop_${cat.slug || cat.id}`;
+                  const translated = t(transKey);
+                  const displayName = translated === transKey ? (cat.label || cat.name || cat.id) : translated;
+                  return (
+                    <li key={cat.id}>
+                      <button
+                        onClick={() => { handleCategoryChange(cat.id); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                        className="text-sm text-cream/50 hover:text-gold transition-colors"
+                      >
+                        {displayName}
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
