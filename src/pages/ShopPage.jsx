@@ -738,22 +738,28 @@ export default function ShopPage() {
 
         {/* Category Tabs */}
         <div className="flex gap-2 overflow-x-auto pb-4 mb-8 scrollbar-hide -mx-1 px-1">
-          {SHOP_CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => handleCategoryChange(cat.id)}
-              className={`
-                px-5 py-2.5 rounded-full text-sm font-medium tracking-wide whitespace-nowrap
-                transition-all duration-300 shrink-0
-                ${activeCategory === cat.id
-                  ? 'bg-espresso text-cream shadow-md'
-                  : 'bg-ivory text-walnut-light border border-cream-dark/25 hover:bg-cream hover:border-cream-dark/40'
-                }
-              `}
-            >
-              {t(`shop_${cat.id}`)}
-            </button>
-          ))}
+          {SHOP_CATEGORIES.map((cat) => {
+            const transKey = `shop_${cat.slug || cat.id}`;
+            const translated = t(transKey);
+            const displayName = translated === transKey ? (cat.label || cat.name || cat.id) : translated;
+            
+            return (
+              <button
+                key={cat.id}
+                onClick={() => handleCategoryChange(cat.id)}
+                className={`
+                  px-5 py-2.5 rounded-full text-sm font-medium tracking-wide whitespace-nowrap
+                  transition-all duration-300 shrink-0
+                  ${activeCategory === cat.id
+                    ? 'bg-espresso text-cream shadow-md'
+                    : 'bg-ivory text-walnut-light border border-cream-dark/25 hover:bg-cream hover:border-cream-dark/40'
+                  }
+                `}
+              >
+                {displayName}
+              </button>
+            );
+          })}
         </div>
 
         {/* Product Grid / List */}

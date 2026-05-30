@@ -53,18 +53,45 @@ export function CouponProvider({ children }) {
     return Math.min(coupon.discount, orderTotal);
   }, []);
 
-  // Admin methods - these would need backend implementation if they don't exist
+  // Admin methods
   const addCoupon = useCallback(async (coupon) => {
-    // Left for future backend implementation if needed
-  }, []);
+    try {
+      const response = await api.admin.createCoupon(coupon);
+      if (response.success) {
+        await fetchCoupons();
+        return response.data;
+      }
+    } catch (err) {
+      console.error('Add coupon error:', err);
+      throw err;
+    }
+  }, [fetchCoupons]);
 
   const updateCoupon = useCallback(async (id, updates) => {
-    // Left for future backend implementation if needed
-  }, []);
+    try {
+      const response = await api.admin.updateCoupon(id, updates);
+      if (response.success) {
+        await fetchCoupons();
+        return response.data;
+      }
+    } catch (err) {
+      console.error('Update coupon error:', err);
+      throw err;
+    }
+  }, [fetchCoupons]);
 
   const deleteCoupon = useCallback(async (id) => {
-    // Left for future backend implementation if needed
-  }, []);
+    try {
+      const response = await api.admin.deleteCoupon(id);
+      if (response.success) {
+        await fetchCoupons();
+        return true;
+      }
+    } catch (err) {
+      console.error('Delete coupon error:', err);
+      throw err;
+    }
+  }, [fetchCoupons]);
 
   const applyCoupon = useCallback((code) => {
     // The backend increments usage during checkout, no frontend state mutation needed

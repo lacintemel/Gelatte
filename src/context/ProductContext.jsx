@@ -319,54 +319,82 @@ export function ProductProvider({ children }) {
   }, [products, saveProducts]);
 
   // --- Categories CRUD ---
-  const addCategory = useCallback((category) => {
-    const newCategory = { ...category, id: category.id || `cat_${Date.now()}` };
-    const newCategories = [...categories, newCategory];
-    saveCategories(newCategories);
+  const addCategory = useCallback(async (category) => {
+    try {
+      const payload = {
+        slug: category.id,
+        label: category.label,
+        sortOrder: categories.length
+      };
+      const response = await api.admin.createCategory(payload);
+      if (response.success) {
+        await fetchProducts(); // Refresh list to get new categories
 
-    if (logDetailedAuditEvent) {
-      logDetailedAuditEvent({
-        actionType: 'category.created',
-        module: 'categories',
-        recordId: newCategory.id,
-        description: `Yeni kategori oluşturuldu: ${category.label || category.name || newCategory.id}`,
-        newValue: { id: newCategory.id, label: category.label },
-      });
+        if (logDetailedAuditEvent) {
+          logDetailedAuditEvent({
+            actionType: 'category.created',
+            module: 'categories',
+            recordId: response.data.id,
+            description: `Yeni kategori oluşturuldu: ${category.label}`,
+            newValue: { slug: category.id, label: category.label },
+          });
+        }
+        return response.data;
+      }
+    } catch (err) {
+      console.error('Add category error:', err);
+      throw err;
     }
-  }, [categories, saveCategories, logDetailedAuditEvent]);
+  }, [fetchProducts, categories, logDetailedAuditEvent]);
 
-  const updateCategory = useCallback((id, updatedData) => {
-    const oldCategory = categories.find(c => c.id === id);
-    const newCategories = categories.map(c => c.id === id ? { ...c, ...updatedData } : c);
-    saveCategories(newCategories);
+  const updateCategory = useCallback(async (id, updatedData) => {
+    try {
+      const oldCategory = categories.find(c => c.id === id);
+      const response = await api.admin.updateCategory(id, updatedData);
+      
+      if (response.success) {
+        await fetchProducts(); // Refresh list
 
-    if (logDetailedAuditEvent && oldCategory) {
-      logDetailedAuditEvent({
-        actionType: 'category.updated',
-        module: 'categories',
-        recordId: id,
-        description: `Kategori güncellendi: ${oldCategory.label || id}`,
-        oldValue: { label: oldCategory.label },
-        newValue: { label: updatedData.label },
-      });
+        if (logDetailedAuditEvent && oldCategory) {
+          logDetailedAuditEvent({
+            actionType: 'category.updated',
+            module: 'categories',
+            recordId: id,
+            description: `Kategori güncellendi: ${oldCategory.label || id}`,
+            oldValue: { label: oldCategory.label },
+            newValue: { label: updatedData.label },
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Update category error:', err);
+      throw err;
     }
-  }, [categories, saveCategories, logDetailedAuditEvent]);
+  }, [categories, fetchProducts, logDetailedAuditEvent]);
 
-  const deleteCategory = useCallback((id) => {
-    const deletedCategory = categories.find(c => c.id === id);
-    const newCategories = categories.filter(c => c.id !== id);
-    saveCategories(newCategories);
+  const deleteCategory = useCallback(async (id) => {
+    try {
+      const deletedCategory = categories.find(c => c.id === id);
+      const response = await api.admin.deleteCategory(id);
+      
+      if (response.success) {
+        await fetchProducts();
 
-    if (logDetailedAuditEvent && deletedCategory) {
-      logDetailedAuditEvent({
-        actionType: 'category.deleted',
-        module: 'categories',
-        recordId: id,
-        description: `Kategori silindi: ${deletedCategory.label || id}`,
-        oldValue: { id, label: deletedCategory.label },
-      });
+        if (logDetailedAuditEvent && deletedCategory) {
+          logDetailedAuditEvent({
+            actionType: 'category.deleted',
+            module: 'categories',
+            recordId: id,
+            description: `Kategori silindi: ${deletedCategory.label || id}`,
+            oldValue: { id, label: deletedCategory.label },
+          });
+        }
+      }
+    } catch (err) {
+      console.error('Delete category error:', err);
+      throw err;
     }
-  }, [categories, saveCategories, logDetailedAuditEvent]);
+  }, [categories, fetchProducts, logDetailedAuditEvent]);
 
   return (
     <ProductContext.Provider value={{

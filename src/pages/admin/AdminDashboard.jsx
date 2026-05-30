@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
+import { api } from '../../lib/api';
 import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
 import { useAuth } from '../../context/AuthContext';
@@ -85,26 +86,34 @@ function CategoryDonut({ categories, products }) {
 
 export default function AdminDashboard() {
   const { products, categories } = useProducts();
-  const { orders, stats: orderStats } = useOrders();
+  const { orders } = useOrders(); // Just for recent orders
   const { t } = useLanguage();
   const { isSuperAdmin, currentUser } = useAuth();
+  const [dashboardData, setDashboardData] = React.useState({
+    totalOrders: 0,
+    totalRevenue: 0,
+    weeklyRevenue: Array(7).fill(0),
+    topProducts: [],
+    ordersByStatus: {}
+  });
+
+  React.useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const response = await api.admin.getDashboard();
+        if (response.success) {
+          setDashboardData(response.data);
+        }
+      } catch (err) {
+        console.error('Failed to fetch dashboard data', err);
+      }
+    };
+    fetchDashboard();
+  }, []);
 
   const outOfStockProducts = products.filter(p => p.stock === 0).length;
 
-  // Weekly revenue mock data from orders
-  const weeklyRevenue = useMemo(() => {
-    const days = Array(7).fill(0);
-    const now = new Date();
-    orders.forEach(o => {
-      if (o.status === 'cancelled') return;
-      const orderDate = new Date(o.createdAt);
-      const diffDays = Math.floor((now - orderDate) / (1000 * 60 * 60 * 24));
-      if (diffDays >= 0 && diffDays < 7) {
-        days[6 - diffDays] += o.total || 0;
-      }
-    });
-    return days;
-  }, [orders]);
+  const weeklyRevenue = dashboardData.weeklyRevenue;
 
   const dayLabels = useMemo(() => {
     const labels = [];
@@ -123,13 +132,13 @@ export default function AdminDashboard() {
   // Everyone sees products and orders
   stats.push(
     { label: 'Toplam Ürün', value: products.length, icon: Package, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { label: t('adm_orders_count'), value: orderStats.totalOrders, icon: ShoppingCart, color: 'text-purple-500', bg: 'bg-purple-50', link: '/admin/orders' },
+    { label: t('adm_orders_count'), value: dashboardData.totalOrders, icon: ShoppingCart, color: 'text-purple-500', bg: 'bg-purple-50', link: '/admin/orders' },
   );
 
   // Only superadmin sees revenue
   if (isSuperAdmin) {
     stats.push(
-      { label: t('adm_revenue'), value: `₺${orderStats.totalRevenue.toFixed(0)}`, icon: DollarSign, color: 'text-green-500', bg: 'bg-green-50' },
+      { label: t('adm_revenue'), value: `₺${dashboardData.totalRevenue.toFixed(0)}`, icon: DollarSign, color: 'text-green-500', bg: 'bg-green-50' },
     );
   }
 
