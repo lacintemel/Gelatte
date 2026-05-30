@@ -948,9 +948,9 @@ export default function ShopPage() {
             <p className="text-xs tracking-wide text-cream/30">
               © {new Date().getFullYear()} GELATTE. {t('foot_rights')}
             </p>
-            <p className="text-xs tracking-wide text-gold-light">
+            <a href="https://www.lacintemel.com" target="_blank" rel="noopener noreferrer" className="text-xs tracking-wide text-gold-light hover:text-gold transition-colors">
               {t('foot_created_by')}
-            </p>
+            </a>
             <div className="flex gap-6">
               {[
                 { key: 'shop_privacy' },

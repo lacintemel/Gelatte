@@ -343,9 +343,9 @@ export default function ProductDetailPage() {
             <p className="text-xs tracking-wide">
               © {new Date().getFullYear()} GELATTE. {t('foot_rights')}
             </p>
-            <p className="text-xs tracking-wide text-gold-light mt-1">
+            <a href="https://www.lacintemel.com" target="_blank" rel="noopener noreferrer" className="text-xs tracking-wide text-gold-light mt-1 block hover:text-gold transition-colors">
               {t('foot_created_by')}
-            </p>
+            </a>
           </div>
         </div>
       </footer>
