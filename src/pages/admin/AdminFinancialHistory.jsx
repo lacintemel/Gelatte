@@ -44,13 +44,13 @@ function getToday() {
    ───────────────────────────────────────────── */
 function SummaryCard({ icon: Icon, label, value, iconColor = 'text-green-500', iconBg = 'bg-green-50', trend, trendUp }) {
   return (
-    <div className="bg-ivory rounded-2xl shadow-sm border border-cream-dark/25 p-6 flex items-center gap-4 hover:shadow-md transition-all">
-      <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
-        <Icon className={`w-7 h-7 ${iconColor}`} />
+    <div className="bg-ivory rounded-2xl shadow-sm border border-cream-dark/25 p-5 flex items-center gap-3 hover:shadow-md transition-all">
+      <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
+        <Icon className={`w-6 h-6 ${iconColor}`} />
       </div>
-      <div className="min-w-0">
-        <p className="text-sm text-warm-gray mb-1 truncate">{label}</p>
-        <h3 className="font-display text-2xl font-bold text-espresso truncate">{value}</h3>
+      <div>
+        <p className="text-xs text-warm-gray mb-1">{label}</p>
+        <h3 className="font-display text-lg font-bold text-espresso">{value}</h3>
         {trend !== undefined && (
           <div className={`flex items-center gap-1 mt-1 text-xs font-medium ${trendUp ? 'text-green-600' : 'text-red-500'}`}>
             {trendUp ? <ArrowUpRight className="w-3.5 h-3.5" /> : <ArrowDownRight className="w-3.5 h-3.5" />}
@@ -238,7 +238,7 @@ export default function AdminFinancialHistory() {
       {/* ══════════════════════════════════════════
           1. Summary Cards
           ══════════════════════════════════════════ */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
         <SummaryCard
           icon={DollarSign}
           label="Toplam Gelir"
