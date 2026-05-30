@@ -25,6 +25,11 @@ function normalizeProduct(product) {
         .filter(Boolean)
     : [];
 
+  // Extract category slug from the included category relation object
+  // Backend sends: { category: { id, slug, label, ... }, categoryId: "cuid..." }
+  const categorySlug = product.category?.slug || product.categoryId || product.category || '';
+  const categoryLabel = product.category?.label || '';
+
   return {
     ...product,
     name: parseLocalizedJson(product.name),
@@ -34,7 +39,8 @@ function normalizeProduct(product) {
     stock: toNumber(product.stock),
     image: imageUrls[0] || product.image || '',
     images: imageUrls,
-    category: product.categoryId || product.category,
+    category: categorySlug,
+    categoryLabel: categoryLabel,
   };
 }
 
@@ -52,7 +58,14 @@ export function ProductProvider({ children }) {
       ]);
 
       if (catRes.success) {
-        setCategories(catRes.data);
+        // Normalize: use slug as the 'id' for filtering (matches product.category which is also slug)
+        const dbCategories = (catRes.data || []).map(cat => ({
+          ...cat,
+          id: cat.slug || cat.id,
+          label: cat.label || cat.slug || cat.id,
+        }));
+        // Prepend 'all' pseudo-category
+        setCategories([{ id: 'all', slug: 'all', label: 'All' }, ...dbCategories]);
       }
 
       if (prodRes.success) {
