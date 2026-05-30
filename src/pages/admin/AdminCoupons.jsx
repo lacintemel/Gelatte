@@ -91,7 +91,7 @@ export default function AdminCoupons() {
                 </div>
                 <div className="p-2 rounded-lg bg-cream-light">
                   <p className="text-[10px] text-warm-gray uppercase tracking-wider">{t('cp_valid_to')}</p>
-                  <p className="text-sm font-semibold text-espresso">{coupon.validTo}</p>
+                  <p className="text-sm font-semibold text-espresso">{coupon.validTo ? new Date(coupon.validTo).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '—'}</p>
                 </div>
               </div>
             </div>
