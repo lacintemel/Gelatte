@@ -2,15 +2,15 @@ import { CATEGORIES, EXTERNAL_MENU_URL } from '../constants';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import SectionHeading from './SectionHeading';
 import { useLanguage } from '../context/LanguageContext';
+import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 function CategoryCard({ category, index, t }) {
   const [ref, isVisible] = useScrollReveal(0.1);
 
   return (
-    <a
-      href={EXTERNAL_MENU_URL}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      to="/shop"
       ref={ref}
       className={`
         group relative overflow-hidden rounded-2xl cursor-pointer
@@ -46,7 +46,7 @@ function CategoryCard({ category, index, t }) {
 
       {/* Corner accent */}
       <div className="absolute top-4 right-4 w-8 h-8 border-t border-r border-mint/40 rounded-tr-lg opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-    </a>
+    </Link>
   );
 }
 
@@ -62,10 +62,25 @@ export default function Categories() {
           subtitle={t('cat_sub')}
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-12">
           {CATEGORIES.map((cat, i) => (
             <CategoryCard key={cat.title} category={cat} index={i} t={t} />
           ))}
+        </div>
+
+        <div className="flex justify-center">
+          <Link
+            to="/shop"
+            className="
+              group inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full
+              bg-espresso text-ivory font-medium text-sm tracking-wider uppercase
+              hover:bg-walnut-light shadow-lg hover:shadow-xl
+              transition-all duration-300
+            "
+          >
+            {t('cat_explore_all')}
+            <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </Link>
         </div>
       </div>
     </section>

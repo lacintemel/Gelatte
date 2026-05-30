@@ -111,7 +111,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-cream/10 text-xs text-cream/40 uppercase tracking-widest text-center md:text-left">
           <p>&copy; {new Date().getFullYear()} GELATTE. {t('foot_rights')}</p>
-          <p className="text-gold-light font-medium tracking-[0.2em]">{t('foot_created_by')}</p>
+          <a href="https://www.lacintemel.com" target="_blank" rel="noopener noreferrer" className="text-gold-light font-medium tracking-[0.2em] hover:text-gold transition-colors">{t('foot_created_by')}</a>
           
           <button
             onClick={scrollToTop}
