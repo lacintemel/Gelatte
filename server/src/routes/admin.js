@@ -150,6 +150,7 @@ router.get('/dashboard', async (req, res) => {
       newOrdersToday,
       topProducts,
       ordersByStatus,
+      last7DaysOrders
     ] = await Promise.all([
       // Total orders (excluding cancelled)
       prisma.order.count({
@@ -182,7 +183,33 @@ router.get('/dashboard', async (req, res) => {
         by: ['status'],
         _count: { id: true },
       }),
+
+      // Last 7 days orders for weekly revenue
+      prisma.order.findMany({
+        where: {
+          createdAt: {
+            gte: new Date(new Date().setDate(new Date().getDate() - 7))
+          },
+          status: { in: ['confirmed', 'preparing', 'ready', 'completed'] }
+        },
+        select: {
+          total: true,
+          createdAt: true
+        }
+      })
     ]);
+
+    // Calculate weekly revenue array
+    const weeklyRevenue = Array(7).fill(0);
+    const now = new Date();
+    now.setHours(23, 59, 59, 999);
+    
+    last7DaysOrders.forEach(o => {
+      const diffDays = Math.floor((now - o.createdAt) / (1000 * 60 * 60 * 24));
+      if (diffDays >= 0 && diffDays < 7) {
+        weeklyRevenue[6 - diffDays] += Number(o.total || 0);
+      }
+    });
 
     res.json({
       success: true,
@@ -199,6 +226,7 @@ router.get('/dashboard', async (req, res) => {
           acc[curr.status] = curr._count.id;
           return acc;
         }, {}),
+        weeklyRevenue,
       },
     });
   } catch (err) {
