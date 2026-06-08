@@ -46,25 +46,180 @@ body {
 
 /* ── Dark Mode Theme ── */
 [data-theme="dark"] {
-  --color-cream: #22252A;
-  --color-cream-light: #2A2E34;
-  --color-cream-dark: #3A3F47;
-  --color-champagne: #1C1E23;
-  --color-beige: #32373F;
-  --color-beige-warm: #3D434C;
-  --color-ivory: #15171A;
-  --color-walnut: #E5E7EB;
-  --color-walnut-light: #F3F4F6;
-  --color-espresso: #FFFFFF;
-  --color-espresso-light: #D1D5DB;
-  --color-warm-gray: #9CA3AF;
-  --color-warm-gray-light: #6B7280;
-  --color-warm-gray-dark: #D1D5DB;
+  /* ── Backgrounds & Surfaces ── */
+  --color-ivory: #0F1117;
+  --color-champagne: #141720;
+  --color-cream: #1A1D27;
+  --color-cream-light: #1E2230;
+  --color-cream-dark: #2A2F3D;
+  --color-beige: #2E3447;
+  --color-beige-warm: #3A4155;
+
+  /* ── Text Colors ── */
+  --color-espresso: #E8ECF4;
+  --color-espresso-light: #C7CDD9;
+  --color-walnut: #D1D7E3;
+  --color-walnut-light: #BCC3D4;
+  --color-warm-gray: #8B93A6;
+  --color-warm-gray-light: #6B7388;
+  --color-warm-gray-dark: #BCC3D4;
+
+  /* ── Accent: Mint (Success) ── */
+  --color-mint: #5AB87F;
+  --color-mint-light: #3D7A57;
+  --color-mint-dark: #6FCF97;
+  --color-mint-subtle: #1A2E23;
+
+  /* ── Accent: Gold (Brand) ── */
+  --color-gold: #D4A84B;
+  --color-gold-light: #E2C47E;
+  --color-gold-dark: #C49B3F;
 }
 
-[data-theme="dark"] img {
-  filter: drop-shadow(0 4px 12px rgba(255, 255, 255, 0.05));
+/* ── Dark Mode Glass ── */
+[data-theme="dark"] .glass {
+  background: rgba(26, 29, 39, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(42, 47, 61, 0.6);
 }
+
+[data-theme="dark"] .glass-dark {
+  background: rgba(15, 17, 23, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ── Dark Mode Image Filter ── */
+[data-theme="dark"] img {
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.25));
+}
+
+/* ── Dark Mode Selection ── */
+[data-theme="dark"] ::selection {
+  background-color: var(--color-mint-light);
+  color: var(--color-espresso);
+}
+
+/* ── Dark Mode Scrollbar ── */
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--color-champagne);
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--color-beige);
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-beige-warm);
+}
+
+/* ── Dark Mode Form Inputs ── */
+[data-theme="dark"] .form-input {
+  border-color: var(--color-cream-dark);
+  background: var(--color-champagne);
+  color: var(--color-espresso);
+}
+[data-theme="dark"] .form-input::placeholder {
+  color: var(--color-warm-gray-light);
+}
+[data-theme="dark"] .form-input:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgba(212, 168, 75, 0.15);
+}
+[data-theme="dark"] .form-input.error {
+  border-color: #f87171;
+  box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12);
+}
+
+/* ── Dark Mode Step Indicators ── */
+[data-theme="dark"] .step-circle {
+  border-color: var(--color-cream-dark);
+  background: var(--color-champagne);
+}
+[data-theme="dark"] .step-circle.active {
+  border-color: var(--color-gold);
+  color: var(--color-champagne);
+  background: var(--color-gold);
+  box-shadow: 0 0 0 4px rgba(212, 168, 75, 0.2);
+}
+[data-theme="dark"] .step-circle.completed {
+  border-color: var(--color-mint);
+  color: var(--color-champagne);
+  background: var(--color-mint);
+}
+
+/* ── Dark Mode Semantic Status Colors ── */
+/* Success */
+[data-theme="dark"] .status-success {
+  background-color: rgba(90, 184, 127, 0.12);
+  color: #6FCF97;
+  border-color: rgba(90, 184, 127, 0.25);
+}
+/* Warning / Pending */
+[data-theme="dark"] .status-warning {
+  background-color: rgba(212, 168, 75, 0.12);
+  color: #E2C47E;
+  border-color: rgba(212, 168, 75, 0.25);
+}
+/* Error / Danger */
+[data-theme="dark"] .status-error {
+  background-color: rgba(248, 113, 113, 0.12);
+  color: #FCA5A5;
+  border-color: rgba(248, 113, 113, 0.25);
+}
+/* Info */
+[data-theme="dark"] .status-info {
+  background-color: rgba(96, 165, 250, 0.12);
+  color: #93C5FD;
+  border-color: rgba(96, 165, 250, 0.25);
+}
+/* Neutral */
+[data-theme="dark"] .status-neutral {
+  background-color: rgba(139, 147, 166, 0.12);
+  color: #BCC3D4;
+  border-color: rgba(139, 147, 166, 0.25);
+}
+/* Purple */
+[data-theme="dark"] .status-purple {
+  background-color: rgba(167, 139, 250, 0.12);
+  color: #C4B5FD;
+  border-color: rgba(167, 139, 250, 0.25);
+}
+/* Emerald */
+[data-theme="dark"] .status-emerald {
+  background-color: rgba(52, 211, 153, 0.12);
+  color: #6EE7B7;
+  border-color: rgba(52, 211, 153, 0.25);
+}
+/* Orange */
+[data-theme="dark"] .status-orange {
+  background-color: rgba(251, 146, 60, 0.12);
+  color: #FDBA74;
+  border-color: rgba(251, 146, 60, 0.25);
+}
+/* Indigo */
+[data-theme="dark"] .status-indigo {
+  background-color: rgba(99, 102, 241, 0.12);
+  color: #A5B4FC;
+  border-color: rgba(99, 102, 241, 0.25);
+}
+/* Lime */
+[data-theme="dark"] .status-lime {
+  background-color: rgba(163, 230, 53, 0.12);
+  color: #BEF264;
+  border-color: rgba(163, 230, 53, 0.25);
+}
+
+/* Light mode semantic status defaults */
+.status-success { background-color: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+.status-warning { background-color: #fffbeb; color: #92400e; border-color: #fde68a; }
+.status-error { background-color: #fef2f2; color: #dc2626; border-color: #fecaca; }
+.status-info { background-color: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+.status-neutral { background-color: #f9fafb; color: #4b5563; border-color: #e5e7eb; }
+.status-purple { background-color: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
+.status-emerald { background-color: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+.status-orange { background-color: #fff7ed; color: #c2410c; border-color: #fed7aa; }
+.status-indigo { background-color: #eef2ff; color: #4338ca; border-color: #c7d2fe; }
+.status-lime { background-color: #f7fee7; color: #4d7c0f; border-color: #d9f99d; }
 
 /* ── Custom Scrollbar ── */
 ::-webkit-scrollbar {
