@@ -32,15 +32,15 @@ export default function AdminLayout() {
   const filteredNavItems = navItems.filter(item => item.roles.includes(currentUser?.role));
 
   const roleBadge = isSuperAdmin
-    ? { label: 'Super Admin', bg: 'bg-amber-100', text: 'text-amber-800', icon: Shield }
-    : { label: 'Personel', bg: 'bg-blue-100', text: 'text-blue-800', icon: User };
+    ? { label: 'Super Admin', bg: 'status-warning', icon: Shield }
+    : { label: 'Personel', bg: 'status-info', icon: User };
 
   return (
     <div className="min-h-screen bg-champagne flex">
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 bg-espresso/50 z-40 md:hidden" 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden" 
           onClick={() => setIsMobileMenuOpen(false)} 
         />
       )}
@@ -71,7 +71,7 @@ export default function AdminLayout() {
                 <p className="text-sm font-medium text-espresso truncate">
                   {currentUser?.username || currentUser?.name}
                 </p>
-                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wider uppercase ${roleBadge.bg} ${roleBadge.text}`}>
+                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wider uppercase ${roleBadge.bg}`}>
                   {roleBadge.label}
                 </span>
               </div>
@@ -110,7 +110,7 @@ export default function AdminLayout() {
             </Link>
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-all"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-cream transition-all"
             >
               <LogOut className="w-5 h-5" />
               Çıkış Yap
