@@ -30,7 +30,7 @@ export default function Navbar() {
       className={`
         fixed top-0 left-0 right-0 z-50 transition-all duration-500
         ${scrolled
-          ? 'glass shadow-[0_4px_30px_rgba(62,39,35,0.08)] py-3'
+          ? 'glass shadow-[0_4px_30px_rgba(0,0,0,0.12)] py-3'
           : 'bg-transparent py-5'
         }
       `}
@@ -168,7 +168,7 @@ export default function Navbar() {
       >
         {/* Backdrop */}
         <div
-          className="absolute inset-0 bg-espresso/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={() => setMobileOpen(false)}
         />
 
