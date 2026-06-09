@@ -12,8 +12,8 @@ function TestimonialCard({ testimonial, index }) {
       ref={ref}
       className={`
         relative bg-ivory rounded-2xl p-8 md:p-10
-        shadow-[0_2px_20px_rgba(62,39,35,0.05)]
-        hover:shadow-[0_8px_40px_rgba(62,39,35,0.1)]
+        shadow-[0_2px_20px_rgba(0,0,0,0.08)]
+        hover:shadow-[0_8px_40px_rgba(0,0,0,0.16)]
         transition-all duration-500 hover:-translate-y-1
         border border-cream-dark/20
         ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}

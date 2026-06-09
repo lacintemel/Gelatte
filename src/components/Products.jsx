@@ -20,8 +20,8 @@ function ProductCard({ product, index, t }) {
       ref={ref}
       className={`
         group relative bg-ivory rounded-2xl overflow-hidden
-        shadow-[0_2px_20px_rgba(62,39,35,0.06)]
-        hover:shadow-[0_8px_40px_rgba(62,39,35,0.12)]
+        shadow-[0_2px_20px_rgba(0,0,0,0.08)]
+        hover:shadow-[0_8px_40px_rgba(0,0,0,0.16)]
         transition-all duration-500 hover:-translate-y-1
         ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}
       `}
