@@ -67,7 +67,7 @@ export default function AdminCategories() {
                     placeholder="e.g. ice-cream"
                     value={newCatData.id}
                     onChange={(e) => setNewCatData({ ...newCatData, id: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-cream-dark/25 focus:outline-none focus:border-gold/50"
+                    className="w-full px-3 py-2 rounded-lg bg-ivory border border-cream-dark/25 focus:outline-none focus:border-gold/50"
                   />
                 </td>
                 <td className="p-4">
@@ -76,19 +76,19 @@ export default function AdminCategories() {
                     placeholder="e.g. Ice Cream"
                     value={newCatData.label}
                     onChange={(e) => setNewCatData({ ...newCatData, label: e.target.value })}
-                    className="w-full px-3 py-2 rounded-lg bg-white border border-cream-dark/25 focus:outline-none focus:border-gold/50"
+                    className="w-full px-3 py-2 rounded-lg bg-ivory border border-cream-dark/25 focus:outline-none focus:border-gold/50"
                   />
                 </td>
                 <td className="p-4 text-right space-x-2">
                   <button 
                     onClick={handleAdd}
-                    className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+                    className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-cream text-green-600 hover:bg-cream-light transition-colors"
                   >
                     <Check className="w-4 h-4" />
                   </button>
                   <button 
                     onClick={() => setIsAdding(false)}
-                    className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-cream text-red-500 hover:bg-cream-light transition-colors"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -107,7 +107,7 @@ export default function AdminCategories() {
                       type="text"
                       value={editCatData.label}
                       onChange={(e) => setEditCatData({ label: e.target.value })}
-                      className="w-full px-3 py-2 rounded-lg bg-white border border-cream-dark/25 focus:outline-none focus:border-gold/50"
+                      className="w-full px-3 py-2 rounded-lg bg-ivory border border-cream-dark/25 focus:outline-none focus:border-gold/50"
                       autoFocus
                     />
                   ) : (
@@ -119,13 +119,13 @@ export default function AdminCategories() {
                     <>
                       <button 
                         onClick={() => handleUpdate(category.id)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 transition-colors"
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-cream text-green-600 hover:bg-cream-light transition-colors"
                       >
                         <Check className="w-4 h-4" />
                       </button>
                       <button 
                         onClick={() => setEditingId(null)}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+                              className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-cream text-red-500 hover:bg-cream-light transition-colors"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -144,7 +144,7 @@ export default function AdminCategories() {
                       {category.id !== 'all' && (
                         <button 
                           onClick={() => handleDelete(category.id)}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-400 hover:text-red-600 hover:bg-red-100 transition-colors"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-cream text-red-400 hover:text-red-600 hover:bg-cream-light transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

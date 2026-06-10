@@ -37,7 +37,7 @@ export default function QuickViewModal({ product, onClose }) {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-[80] bg-espresso/50 backdrop-blur-sm animate-modal-overlay"
+        className="fixed inset-0 z-[80] bg-black/50 backdrop-blur-sm animate-modal-overlay"
         onClick={onClose}
       />
 
@@ -143,7 +143,7 @@ export default function QuickViewModal({ product, onClose }) {
                   className={`
                     w-14 h-14 rounded-xl flex items-center justify-center border transition-all duration-300
                     ${wishlisted
-                      ? 'bg-red-50 border-red-200 text-red-500'
+                      ? 'bg-cream border-cream-dark/30 text-red-500'
                       : 'bg-cream-light border-cream-dark/30 text-warm-gray hover:text-red-400 hover:border-red-200'}
                   `}
                   aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}

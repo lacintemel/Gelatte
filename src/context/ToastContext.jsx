@@ -12,9 +12,9 @@ const TOAST_ICONS = {
 };
 
 const TOAST_COLORS = {
-  success: 'bg-mint/15 border-mint text-espresso',
+  success: 'bg-mint-subtle border-mint text-espresso',
   info: 'bg-gold/10 border-gold text-espresso',
-  warning: 'bg-red-50 border-red-400 text-red-800',
+  warning: 'status-error border',
 };
 
 const ICON_COLORS = {

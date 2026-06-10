@@ -74,7 +74,7 @@ export default function AdminCoupons() {
                   <button onClick={() => toggleActive(coupon)} className="w-8 h-8 rounded-lg flex items-center justify-center text-warm-gray hover:text-espresso hover:bg-cream transition-all">
                     {coupon.active ? <ToggleRight className="w-5 h-5 text-mint" /> : <ToggleLeft className="w-5 h-5" />}
                   </button>
-                  <button onClick={() => handleDelete(coupon.id, coupon.code)} className="w-8 h-8 rounded-lg flex items-center justify-center text-warm-gray hover:text-red-500 hover:bg-red-50 transition-all">
+                  <button onClick={() => handleDelete(coupon.id, coupon.code)} className="w-8 h-8 rounded-lg flex items-center justify-center text-warm-gray hover:text-red-500 hover:bg-cream transition-all">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -109,7 +109,7 @@ export default function AdminCoupons() {
       {/* Add Coupon Modal */}
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-espresso/40 backdrop-blur-sm animate-modal-overlay" onClick={() => setShowForm(false)} />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-modal-overlay" onClick={() => setShowForm(false)} />
           <div className="relative bg-ivory rounded-2xl shadow-2xl w-full max-w-md p-6 md:p-8 animate-modal-content">
             <button onClick={() => setShowForm(false)} className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center hover:bg-cream transition-colors">
               <X className="w-4 h-4 text-walnut" />
