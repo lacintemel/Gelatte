@@ -23,13 +23,13 @@ export default function PaymentSuccessPage() {
           <svg viewBox="0 0 100 100" className="w-full h-full">
             <circle
               cx="50" cy="50" r="45" fill="none"
-              stroke="#A8C5B8" strokeWidth="3"
-              className="animate-circle-grow"
+              stroke="currentColor" strokeWidth="3"
+              className="text-mint animate-circle-grow"
             />
             <path
               d="M30 52 L44 66 L70 38" fill="none"
-              stroke="#2C1810" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"
-              className="animate-check-draw"
+              stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"
+              className="text-espresso animate-check-draw"
             />
           </svg>
         </div>

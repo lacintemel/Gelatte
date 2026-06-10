@@ -74,7 +74,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {error && <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{error}</div>}
+            {error && <div className="px-4 py-3 rounded-xl status-error border text-sm">{error}</div>}
 
             <button type="submit" disabled={loading}
               className="w-full py-3.5 bg-espresso text-cream rounded-xl font-medium tracking-wider uppercase hover:bg-walnut-light disabled:opacity-50 transition-all flex items-center justify-center gap-2">

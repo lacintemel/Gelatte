@@ -11,7 +11,7 @@ export default function PaymentFailPage() {
     <div className="min-h-screen bg-champagne flex items-center justify-center px-5">
       <div className="max-w-md w-full text-center animate-fade-in-up">
         {/* Error icon */}
-        <div className="w-20 h-20 rounded-full bg-red-50 mx-auto flex items-center justify-center mb-6">
+        <div className="w-20 h-20 rounded-full bg-cream mx-auto flex items-center justify-center mb-6">
           <XCircle className="w-10 h-10 text-red-400" />
         </div>
 

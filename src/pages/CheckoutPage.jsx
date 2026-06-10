@@ -249,7 +249,7 @@ function PaymentStep({ iframeToken, paymentLoading, paymentError, onBack, onRetr
       )}
 
       {paymentError && (
-        <div className="p-6 rounded-xl bg-red-50 border border-red-200 mb-8 text-center">
+        <div className="p-6 rounded-xl status-error border mb-8 text-center">
           <p className="text-red-700 text-sm mb-4">{paymentError}</p>
           <button
             onClick={onRetry}
@@ -302,13 +302,13 @@ function ConfirmationStep({ orderNumber }) {
         <svg viewBox="0 0 100 100" className="w-full h-full">
           <circle
             cx="50" cy="50" r="45" fill="none"
-            stroke="#A8C5B8" strokeWidth="3"
-            className="animate-circle-grow"
+            stroke="currentColor" strokeWidth="3"
+            className="text-mint animate-circle-grow"
           />
           <path
             d="M30 52 L44 66 L70 38" fill="none"
-            stroke="#2C1810" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"
-            className="animate-check-draw"
+            stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"
+            className="text-espresso animate-check-draw"
           />
         </svg>
       </div>
