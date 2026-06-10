@@ -112,9 +112,9 @@ export default function AdminProducts() {
                     </td>
                     <td className="p-4">
                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                        product.stock > 10 ? 'bg-green-100 text-green-700' :
-                        product.stock > 0 ? 'bg-orange-100 text-orange-700' :
-                        'bg-red-100 text-red-700'
+                        product.stock > 10 ? 'status-success' :
+                        product.stock > 0 ? 'status-orange' :
+                        'status-error'
                       }`}>
                         {product.stock}
                       </span>
@@ -137,7 +137,7 @@ export default function AdminProducts() {
                       {isSuperAdmin && (
                         <button 
                           onClick={() => handleDelete(product.id)}
-                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-red-50 text-red-400 hover:text-red-600 hover:bg-red-100 transition-colors"
+                          className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-cream text-red-400 hover:text-red-600 hover:bg-cream-light transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />

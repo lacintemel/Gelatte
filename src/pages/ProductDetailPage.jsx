@@ -35,8 +35,8 @@ function RelatedCard({ product }) {
   return (
     <div
       ref={ref}
-      className={`group bg-ivory rounded-2xl overflow-hidden shadow-[0_2px_16px_rgba(62,39,35,0.05)]
-        hover:shadow-[0_8px_32px_rgba(62,39,35,0.1)] transition-all duration-500 hover:-translate-y-1
+      className={`group bg-ivory rounded-2xl overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.08)]
+        hover:shadow-[0_8px_32px_rgba(0,0,0,0.16)] transition-all duration-500 hover:-translate-y-1
         border border-cream-dark/15 ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}`}
     >
       <Link to={`/shop/product/${product.id}`}>
@@ -168,7 +168,7 @@ export default function ProductDetailPage() {
       <section className="max-w-7xl mx-auto px-5 md:px-8 pb-16 md:pb-20">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
           {/* Image */}
-          <div className="relative rounded-2xl overflow-hidden bg-cream-light aspect-square shadow-[0_4px_30px_rgba(62,39,35,0.08)]">
+          <div className="relative rounded-2xl overflow-hidden bg-cream-light aspect-square shadow-[0_4px_30px_rgba(0,0,0,0.12)]">
             <img
               src={product.images?.[0] || product.image}
               alt={t(product.name)}
@@ -186,7 +186,7 @@ export default function ProductDetailPage() {
                 absolute top-5 right-5 w-12 h-12 rounded-full flex items-center justify-center
                 shadow-lg transition-all duration-300
                 ${wishlisted
-                  ? 'bg-red-50 text-red-500'
+                  ? 'bg-cream text-red-500'
                   : 'bg-ivory/90 backdrop-blur-sm text-warm-gray hover:text-red-400'}
               `}
               aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}

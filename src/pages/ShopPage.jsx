@@ -68,8 +68,8 @@ function ProductCardGrid({ product, index, onQuickView }) {
       ref={ref}
       className={`
         group bg-ivory rounded-2xl overflow-hidden
-        shadow-[0_2px_16px_rgba(62,39,35,0.05)]
-        hover:shadow-[0_8px_32px_rgba(62,39,35,0.1)]
+        shadow-[0_2px_16px_rgba(0,0,0,0.08)]
+        hover:shadow-[0_8px_32px_rgba(0,0,0,0.16)]
         transition-all duration-500 hover:-translate-y-1
         border border-cream-dark/15
         ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}
@@ -111,7 +111,7 @@ function ProductCardGrid({ product, index, onQuickView }) {
               className={`
                 w-9 h-9 rounded-full flex items-center justify-center shadow-md transition-all duration-300
                 ${wishlisted
-                  ? 'bg-red-50 text-red-500'
+                  ? 'bg-cream text-red-500'
                   : 'bg-ivory/90 backdrop-blur-sm text-warm-gray hover:text-red-400'}
               `}
               aria-label="Toggle wishlist"
@@ -232,8 +232,8 @@ function ProductCardList({ product, onQuickView }) {
       ref={ref}
       className={`
         group flex bg-ivory rounded-2xl overflow-hidden
-        shadow-[0_2px_16px_rgba(62,39,35,0.05)]
-        hover:shadow-[0_8px_32px_rgba(62,39,35,0.1)]
+        shadow-[0_2px_16px_rgba(0,0,0,0.08)]
+        hover:shadow-[0_8px_32px_rgba(0,0,0,0.16)]
         transition-all duration-500 border border-cream-dark/15
         ${isVisible ? 'animate-fade-in-up' : 'opacity-0'}
       `}
@@ -289,7 +289,7 @@ function ProductCardList({ product, onQuickView }) {
             <button
               onClick={handleWishlist}
               className={`w-9 h-9 rounded-full flex items-center justify-center border transition-all
-                ${wishlisted ? 'bg-red-50 border-red-200 text-red-500' : 'border-cream-dark/30 text-warm-gray hover:text-red-400'}`}
+                ${wishlisted ? 'bg-cream border-cream-dark/30 text-red-500' : 'border-cream-dark/30 text-warm-gray hover:text-red-400'}`}
               aria-label="Toggle wishlist"
             >
               <Heart className={`w-4 h-4 ${wishlisted ? 'fill-current' : ''}`} />

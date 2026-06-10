@@ -10,11 +10,11 @@ import CartDrawer from '../components/CartDrawer';
 
 const STATUS_ICONS = { new: Clock, preparing: ChefHat, ready: CheckCircle, completed: CheckCircle, cancelled: XCircle };
 const STATUS_COLORS = {
-  new: 'bg-amber-50 text-amber-700 border-amber-200',
-  preparing: 'bg-blue-50 text-blue-700 border-blue-200',
-  ready: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  completed: 'bg-green-50 text-green-700 border-green-200',
-  cancelled: 'bg-red-50 text-red-700 border-red-200',
+  new: 'status-warning border',
+  preparing: 'status-info border',
+  ready: 'status-emerald border',
+  completed: 'status-success border',
+  cancelled: 'status-error border',
 };
 
 export default function AccountPage() {
@@ -88,7 +88,7 @@ export default function AccountPage() {
               </div>
             </div>
             <button onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-200 text-red-500 text-sm font-medium hover:bg-red-50 transition-all">
+              className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-cream-dark/30 text-red-500 text-sm font-medium hover:bg-cream transition-all">
               <LogOut className="w-4 h-4" /> {t('auth_logout')}
             </button>
           </div>
