@@ -8,12 +8,12 @@ import { useLanguage } from '../../context/LanguageContext';
 import { useToast } from '../../context/ToastContext';
 
 const STATUS_COLORS = {
-  new: 'bg-amber-50 text-amber-700 border-amber-200',
-  preparing: 'bg-blue-50 text-blue-700 border-blue-200',
-  ready: 'bg-purple-50 text-purple-700 border-purple-200',
-  completed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  cancelled: 'bg-red-50 text-red-700 border-red-200',
-  refunded: 'bg-orange-50 text-orange-700 border-orange-200',
+  new: 'status-warning border',
+  preparing: 'status-info border',
+  ready: 'status-purple border',
+  completed: 'status-emerald border',
+  cancelled: 'status-error border',
+  refunded: 'status-orange border',
 };
 
 const STATUS_LABELS = {
@@ -284,12 +284,12 @@ export default function AdminOrders() {
                     <td className="px-5 py-4">
                       {order.stockDeducted ? (
                         <div className="flex items-center gap-1">
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium status-indigo border">
                             <Lock className="w-2.5 h-2.5" />
                             Düşürüldü
                           </span>
                           {order.stockRestored && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-lime-50 text-lime-700 border border-lime-200">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium status-lime border">
                               <RotateCcw className="w-2.5 h-2.5" />
                               Geri
                             </span>
@@ -306,7 +306,7 @@ export default function AdminOrders() {
                           onChange={(e) => handleStatusChange(order.id, e.target.value)}
                           className={`
                             pl-3 pr-8 py-1.5 rounded-full text-xs font-medium border appearance-none cursor-pointer
-                            ${STATUS_COLORS[order.status] || 'bg-gray-50 text-gray-700 border-gray-200'}
+                             ${STATUS_COLORS[order.status] || 'status-neutral border'}
                           `}
                         >
                           {ORDER_STATUSES.map((s) => (
@@ -342,10 +342,10 @@ export default function AdminOrders() {
       {/* ═══ Stock Deduction Confirmation Modal ═══ */}
       {stockConfirmOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-espresso/40 backdrop-blur-sm" onClick={() => { setStockConfirmOrder(null); setPendingStatusChange(null); }} />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => { setStockConfirmOrder(null); setPendingStatusChange(null); }} />
           <div className="relative bg-ivory rounded-2xl shadow-2xl w-full max-w-md p-6 md:p-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full status-info border flex items-center justify-center">
                 <Package className="w-5 h-5 text-blue-700" />
               </div>
               <div>
@@ -391,10 +391,10 @@ export default function AdminOrders() {
       {/* ═══ Stock Error Modal ═══ */}
       {stockError && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-espresso/40 backdrop-blur-sm" onClick={() => setStockError(null)} />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setStockError(null)} />
           <div className="relative bg-ivory rounded-2xl shadow-2xl w-full max-w-md p-6 md:p-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full status-error border flex items-center justify-center">
                 <AlertTriangle className="w-5 h-5 text-red-700" />
               </div>
               <div>
@@ -409,7 +409,7 @@ export default function AdminOrders() {
 
             <div className="space-y-2 mb-6">
               {stockError.errors.map((err, idx) => (
-                <div key={idx} className="p-3 rounded-lg bg-red-50 border border-red-200">
+                <div key={idx} className="p-3 rounded-lg status-error border">
                   <p className="text-sm font-medium text-red-800">{err.productName || err.productId}</p>
                   <p className="text-xs text-red-600 mt-1">
                     Mevcut stok: <strong>{err.available}</strong> — İstenen: <strong>{err.requested}</strong>
@@ -431,10 +431,10 @@ export default function AdminOrders() {
       {/* ═══ Cancel/Refund Confirmation Modal ═══ */}
       {cancelConfirmOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-espresso/40 backdrop-blur-sm" onClick={() => { setCancelConfirmOrder(null); setPendingStatusChange(null); }} />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => { setCancelConfirmOrder(null); setPendingStatusChange(null); }} />
           <div className="relative bg-ivory rounded-2xl shadow-2xl w-full max-w-md p-6 md:p-8">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full status-orange border flex items-center justify-center">
                 <RotateCcw className="w-5 h-5 text-orange-700" />
               </div>
               <div>
@@ -478,7 +478,7 @@ export default function AdminOrders() {
       {/* ═══ Order Detail Modal ═══ */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-espresso/40 backdrop-blur-sm" onClick={() => setSelectedOrder(null)} />
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setSelectedOrder(null)} />
           <div className="relative bg-ivory rounded-2xl shadow-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-6 md:p-8">
             <button onClick={() => setSelectedOrder(null)} className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center hover:bg-cream transition-colors">
               <X className="w-4 h-4 text-walnut" />
@@ -492,13 +492,13 @@ export default function AdminOrders() {
                 {STATUS_LABELS[selectedOrder.status] || selectedOrder.status}
               </span>
               {selectedOrder.stockDeducted && (
-                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium status-indigo border">
                   <Lock className="w-3 h-3" />
                   Stok Düşürüldü
                 </span>
               )}
               {selectedOrder.stockRestored && (
-                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-lime-50 text-lime-700 border border-lime-200">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium status-lime border">
                   <RotateCcw className="w-3 h-3" />
                   Stok Geri Eklendi
                 </span>
@@ -507,7 +507,7 @@ export default function AdminOrders() {
 
             {/* Stock Deduction Info */}
             {selectedOrder.stockDeducted && (
-              <div className="p-3 rounded-xl bg-indigo-50/50 border border-indigo-100 mb-4">
+              <div className="p-3 rounded-xl status-indigo border mb-4">
                 <p className="text-xs text-indigo-700">
                   <strong>Stok Düşüren:</strong> {selectedOrder.stockDeductedBy || '—'} ({selectedOrder.stockDeductedByRole || '—'})
                 </p>
@@ -560,7 +560,7 @@ export default function AdminOrders() {
                   {selectedOrder.statusHistory.map((entry, idx) => (
                     <div key={idx} className="flex items-center justify-between p-2 rounded-lg bg-cream-light/30 text-xs">
                       <div className="flex items-center gap-2">
-                        <span className={`inline-flex px-2 py-0.5 rounded-full font-medium border ${STATUS_COLORS[entry.status] || 'bg-gray-50 text-gray-600 border-gray-200'}`}>
+                        <span className={`inline-flex px-2 py-0.5 rounded-full font-medium border ${STATUS_COLORS[entry.status] || 'status-neutral border'}`}>
                           {STATUS_LABELS[entry.status] || entry.status}
                         </span>
                         {entry.from && (

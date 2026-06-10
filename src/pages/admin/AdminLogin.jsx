@@ -107,7 +107,7 @@ export default function AdminLogin() {
 
           {/* Error */}
           {error && (
-            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
+            <div className="flex items-center gap-2 px-4 py-3 rounded-xl status-error border text-sm">
               <Lock className="w-4 h-4 shrink-0" />
               {error}
             </div>

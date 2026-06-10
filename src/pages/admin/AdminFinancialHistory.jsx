@@ -244,42 +244,42 @@ export default function AdminFinancialHistory() {
           label="Toplam Gelir"
           value={formatCurrency(overallSummary.totalRevenue)}
           iconColor="text-green-500"
-          iconBg="bg-green-50"
+          iconBg="status-success"
         />
         <SummaryCard
           icon={TrendingUp}
           label="Net Kâr"
           value={formatCurrency(overallSummary.netRevenue)}
           iconColor="text-blue-500"
-          iconBg="bg-blue-50"
+          iconBg="status-info"
         />
         <SummaryCard
           icon={ArrowUpRight}
           label="Bugünkü Satış"
           value={formatCurrency(todaySales.totalRevenue)}
           iconColor="text-emerald-500"
-          iconBg="bg-emerald-50"
+          iconBg="status-emerald"
         />
         <SummaryCard
           icon={Calendar}
           label="Bu Ayın Satışı"
           value={formatCurrency(monthSales.totalRevenue)}
           iconColor="text-purple-500"
-          iconBg="bg-purple-50"
+          iconBg="status-purple"
         />
         <SummaryCard
           icon={RefreshCw}
           label="İadeler"
           value={formatCurrency(overallSummary.totalRefunds)}
           iconColor="text-red-500"
-          iconBg="bg-red-50"
+          iconBg="status-error"
         />
         <SummaryCard
           icon={ShoppingCart}
           label="Ort. Sipariş"
           value={formatCurrency(overallSummary.avgOrderValue)}
           iconColor="text-amber-500"
-          iconBg="bg-amber-50"
+          iconBg="status-warning"
         />
       </div>
 
@@ -531,17 +531,17 @@ export default function AdminFinancialHistory() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         {record.isCancelled && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium status-error border">
                             İptal
                           </span>
                         )}
                         {record.isRefunded && !record.isCancelled && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium status-warning border">
                             İade
                           </span>
                         )}
                         {record.isCancelled && record.isRefunded && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 ml-1">
+                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium status-warning border ml-1">
                             İade
                           </span>
                         )}
@@ -563,12 +563,12 @@ export default function AdminFinancialHistory() {
                     <span className="font-mono text-xs text-espresso font-medium">{record.orderNumber}</span>
                     <div className="flex gap-1.5">
                       {record.isCancelled && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-50 text-red-700 border border-red-200">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium status-error border">
                           İptal
                         </span>
                       )}
                       {record.isRefunded && (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium status-warning border">
                           İade
                         </span>
                       )}

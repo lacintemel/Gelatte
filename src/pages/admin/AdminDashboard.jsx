@@ -131,20 +131,20 @@ export default function AdminDashboard() {
 
   // Everyone sees products and orders
   stats.push(
-    { label: 'Toplam Ürün', value: products.length, icon: Package, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { label: t('adm_orders_count'), value: dashboardData.totalOrders, icon: ShoppingCart, color: 'text-purple-500', bg: 'bg-purple-50', link: '/admin/orders' },
+    { label: 'Toplam Ürün', value: products.length, icon: Package, color: 'text-blue-500', bg: 'status-info' },
+    { label: t('adm_orders_count'), value: dashboardData.totalOrders, icon: ShoppingCart, color: 'text-purple-500', bg: 'status-purple', link: '/admin/orders' },
   );
 
   // Only superadmin sees revenue
   if (isSuperAdmin) {
     stats.push(
-      { label: t('adm_revenue'), value: `₺${dashboardData.totalRevenue.toFixed(0)}`, icon: DollarSign, color: 'text-green-500', bg: 'bg-green-50' },
+      { label: t('adm_revenue'), value: `₺${dashboardData.totalRevenue.toFixed(0)}`, icon: DollarSign, color: 'text-green-500', bg: 'status-success' },
     );
   }
 
   // Everyone sees out of stock
   stats.push(
-    { label: 'Stok Tükenen', value: outOfStockProducts, icon: AlertCircle, color: 'text-red-500', bg: 'bg-red-50' },
+    { label: 'Stok Tükenen', value: outOfStockProducts, icon: AlertCircle, color: 'text-red-500', bg: 'status-error' },
   );
 
   return (
@@ -154,7 +154,7 @@ export default function AdminDashboard() {
         <p className="text-warm-gray text-sm mt-1">
           Hoş geldiniz, <span className="font-medium text-espresso">{currentUser?.username || currentUser?.name}</span>
           {!isSuperAdmin && (
-            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wider uppercase bg-blue-100 text-blue-800">
+            <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium tracking-wider uppercase status-info">
               Personel
             </span>
           )}
@@ -229,9 +229,9 @@ export default function AdminDashboard() {
               </div>
               <div className="text-right flex items-center gap-3">
                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${
-                  order.status === 'delivered' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
-                  order.status === 'pending' ? 'bg-amber-50 text-amber-700 border-amber-200' :
-                  order.status === 'preparing' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                  order.status === 'delivered' ? 'status-emerald border' :
+                  order.status === 'pending' ? 'status-warning border' :
+                  order.status === 'preparing' ? 'status-info border' :
                   'bg-cream-light text-warm-gray border-cream-dark/20'
                 }`}>
                   {t(`ord_${order.status}`)}

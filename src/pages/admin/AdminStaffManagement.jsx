@@ -10,7 +10,7 @@ function Modal({ open, onClose, title, icon: Icon, children, wide }) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-espresso/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
       <div className={`relative bg-ivory rounded-2xl shadow-xl border border-cream-dark/25 w-full ${wide ? 'max-w-3xl' : 'max-w-lg'} max-h-[85vh] flex flex-col`}>
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-cream-dark/25 shrink-0">
@@ -35,8 +35,8 @@ function Modal({ open, onClose, title, icon: Icon, children, wide }) {
 function FeedbackBanner({ message, type, onDismiss }) {
   if (!message) return null;
   const colors = type === 'error'
-    ? 'bg-red-50 text-red-700 border-red-200'
-    : 'bg-green-50 text-green-700 border-green-200';
+    ? 'status-error border'
+    : 'status-success border';
   return (
     <div className={`mb-6 px-4 py-3 rounded-xl border flex items-center justify-between ${colors}`}>
       <span className="text-sm font-medium">{message}</span>
@@ -53,8 +53,8 @@ function RoleBadge({ role }) {
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
       isSuperAdmin
-        ? 'bg-amber-50 text-amber-800 border-amber-200'
-        : 'bg-blue-50 text-blue-700 border-blue-200'
+        ? 'status-warning border'
+        : 'status-info border'
     }`}>
       <Shield className="w-3 h-3" />
       {isSuperAdmin ? 'Super Admin' : 'Staff'}
@@ -67,8 +67,8 @@ function StatusBadge({ isActive }) {
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${
       isActive
-        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-        : 'bg-red-50 text-red-600 border-red-200'
+        ? 'status-emerald border'
+        : 'status-error border'
     }`}>
       {isActive ? <Unlock className="w-3 h-3" /> : <Lock className="w-3 h-3" />}
       {isActive ? 'Active' : 'Inactive'}
@@ -140,7 +140,7 @@ export default function AdminStaffManagement() {
   if (!isSuperAdmin) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-red-50 flex items-center justify-center">
+        <div className="w-16 h-16 rounded-2xl bg-cream flex items-center justify-center">
           <AlertTriangle className="w-8 h-8 text-red-500" />
         </div>
         <h2 className="font-display text-2xl font-bold text-espresso">Access Denied</h2>
@@ -246,7 +246,7 @@ export default function AdminStaffManagement() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl status-warning flex items-center justify-center">
             <Users className="w-5 h-5 text-amber-700" />
           </div>
           <div>
@@ -325,7 +325,7 @@ export default function AdminStaffManagement() {
                       {staff.role !== 'superadmin' && (
                         <button
                           onClick={() => handleDeleteUser(staff)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-red-50 text-red-600 hover:bg-red-100"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors bg-cream text-red-600 hover:bg-cream-light"
                           title="Delete User"
                         >
                           <Power className="w-3.5 h-3.5" />
@@ -565,8 +565,8 @@ export default function AdminStaffManagement() {
                     <td className="py-3 pr-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                         entry.success
-                          ? 'bg-emerald-50 text-emerald-700'
-                          : 'bg-red-50 text-red-600'
+                          ? 'status-emerald'
+                          : 'status-error'
                       }`}>
                         {entry.success ? 'Success' : 'Failed'}
                       </span>
@@ -610,7 +610,7 @@ export default function AdminStaffManagement() {
                   <tr key={entry.id} className="hover:bg-champagne/30 transition-colors">
                     <td className="py-3 pr-4 text-espresso whitespace-nowrap">{formatDateTime(entry.timestamp)}</td>
                     <td className="py-3 pr-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200 font-mono">
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium status-info border font-mono">
                         {entry.action}
                       </span>
                     </td>
