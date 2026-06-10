@@ -101,7 +101,7 @@ export default function AdminCMS() {
       </div>
 
       {feedback.message && (
-        <div className={`mb-6 p-4 rounded-xl ${feedback.type === 'error' ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
+        <div className={`mb-6 p-4 rounded-xl ${feedback.type === 'error' ? 'status-error' : 'status-emerald'}`}>
           {feedback.message}
         </div>
       )}

@@ -5,24 +5,24 @@ import { ScrollText, Filter, Search, Clock, User, ChevronDown, ChevronLeft, Chev
 /* ── Action badge color map ── */
 function getActionBadge(action) {
   if (action === 'user.login')
-    return { label: 'Login', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' };
+    return { label: 'Login', classes: 'status-emerald border' };
   if (action === 'user.logout')
-    return { label: 'Logout', bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200' };
+    return { label: 'Logout', classes: 'status-neutral border' };
   if (action === 'staff.created')
-    return { label: 'Staff Created', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' };
+    return { label: 'Staff Created', classes: 'status-info border' };
   if (action === 'staff.password_changed')
-    return { label: 'Password Changed', bg: 'bg-orange-50', text: 'text-orange-700', border: 'border-orange-200' };
+    return { label: 'Password Changed', classes: 'status-orange border' };
   if (action === 'staff.activated')
-    return { label: 'Staff Activated', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' };
+    return { label: 'Staff Activated', classes: 'status-emerald border' };
   if (action === 'staff.deactivated')
-    return { label: 'Staff Deactivated', bg: 'bg-red-50', text: 'text-red-700', border: 'border-red-200' };
+    return { label: 'Staff Deactivated', classes: 'status-error border' };
   if (action?.startsWith('product.'))
-    return { label: action.replace('product.', 'Product '), bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' };
+    return { label: action.replace('product.', 'Product '), classes: 'status-purple border' };
   if (action?.startsWith('order.'))
-    return { label: action.replace('order.', 'Order '), bg: 'bg-teal-50', text: 'text-teal-700', border: 'border-teal-200' };
+    return { label: action.replace('order.', 'Order '), classes: 'status-emerald border' };
   if (action?.startsWith('user.'))
-    return { label: action.replace('user.', 'User '), bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' };
-  return { label: action || 'Unknown', bg: 'bg-gray-100', text: 'text-gray-600', border: 'border-gray-200' };
+    return { label: action.replace('user.', 'User '), classes: 'status-warning border' };
+  return { label: action || 'Unknown', classes: 'status-neutral border' };
 }
 
 /* ── Parse and render details ── */
@@ -139,7 +139,7 @@ export default function AdminAuditLogs() {
   if (!isSuperAdmin) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mb-6">
+        <div className="w-20 h-20 rounded-full bg-cream flex items-center justify-center mb-6">
           <Shield className="w-10 h-10 text-red-400" />
         </div>
         <h2 className="font-display text-2xl font-bold text-espresso mb-2">Access Denied</h2>
@@ -159,7 +159,7 @@ export default function AdminAuditLogs() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl status-warning flex items-center justify-center">
               <ScrollText className="w-5 h-5 text-amber-600" />
             </div>
             <h1 className="font-display text-3xl font-bold text-espresso">Audit Logs</h1>
@@ -311,7 +311,7 @@ export default function AdminAuditLogs() {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border ${badge.bg} ${badge.text} ${badge.border}`}
+                          className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border ${badge.classes}`}
                         >
                           {badge.label}
                         </span>
@@ -339,7 +339,7 @@ export default function AdminAuditLogs() {
                       <span className="text-sm font-medium text-espresso">{log.username}</span>
                     </span>
                     <span
-                      className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border ${badge.bg} ${badge.text} ${badge.border}`}
+                      className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border ${badge.classes}`}
                     >
                       {badge.label}
                     </span>
