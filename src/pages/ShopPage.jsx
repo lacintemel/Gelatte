@@ -169,14 +169,29 @@ function ProductCardGrid({ product, index, onQuickView }) {
 
         <div className="flex items-center justify-between pt-3 border-t border-cream-dark/20">
           <div className="flex flex-col">
-            {product.discount > 0 && (
-              <span className="text-[10px] text-warm-gray line-through leading-none mb-0.5">
-                ₺{product.price.toFixed(2)}
+            {product.variants?.length > 0 ? (
+              <span className="font-display text-lg font-semibold text-espresso leading-none">
+                {(() => {
+                  const prices = product.variants.map(v => v.price);
+                  const min = Math.min(...prices);
+                  const max = Math.max(...prices);
+                  return min === max
+                    ? `₺${min.toFixed(2)}`
+                    : `₺${min.toFixed(2)} – ₺${max.toFixed(2)}`;
+                })()}
               </span>
+            ) : (
+              <>
+                {product.discount > 0 && (
+                  <span className="text-[10px] text-warm-gray line-through leading-none mb-0.5">
+                    ₺{product.price.toFixed(2)}
+                  </span>
+                )}
+                <span className="font-display text-lg font-semibold text-espresso leading-none">
+                  ₺{(product.price - (product.discount || 0)).toFixed(2)}
+                </span>
+              </>
             )}
-            <span className="font-display text-lg font-semibold text-espresso leading-none">
-              ₺{(product.price - (product.discount || 0)).toFixed(2)}
-            </span>
           </div>
           {product.availableForOnlineOrder !== false ? (
             <button
@@ -276,14 +291,29 @@ function ProductCardList({ product, onQuickView }) {
 
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
-            {product.discount > 0 && (
-              <span className="text-xs text-warm-gray line-through leading-none mb-0.5">
-                ₺{product.price.toFixed(2)}
+            {product.variants?.length > 0 ? (
+              <span className="font-display text-xl font-semibold text-espresso leading-none">
+                {(() => {
+                  const prices = product.variants.map(v => v.price);
+                  const min = Math.min(...prices);
+                  const max = Math.max(...prices);
+                  return min === max
+                    ? `₺${min.toFixed(2)}`
+                    : `₺${min.toFixed(2)} – ₺${max.toFixed(2)}`;
+                })()}
               </span>
+            ) : (
+              <>
+                {product.discount > 0 && (
+                  <span className="text-xs text-warm-gray line-through leading-none mb-0.5">
+                    ₺{product.price.toFixed(2)}
+                  </span>
+                )}
+                <span className="font-display text-xl font-semibold text-espresso leading-none">
+                  ₺{(product.price - (product.discount || 0)).toFixed(2)}
+                </span>
+              </>
             )}
-            <span className="font-display text-xl font-semibold text-espresso leading-none">
-              ₺{(product.price - (product.discount || 0)).toFixed(2)}
-            </span>
           </div>
           <div className="flex items-center gap-2">
             <button
