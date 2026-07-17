@@ -84,6 +84,10 @@ router.get('/', optionalAuth, async (req, res) => {
         include: {
           category: true,
           images: { orderBy: { sortOrder: 'asc' } },
+          variants: {
+            where: { isActive: true },
+            orderBy: { sortOrder: 'asc' },
+          },
         },
         orderBy: { sortOrder: 'asc' },
         skip,
