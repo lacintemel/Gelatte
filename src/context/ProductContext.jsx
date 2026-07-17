@@ -41,6 +41,12 @@ function normalizeProduct(product) {
     images: imageUrls,
     category: categorySlug,
     categoryLabel: categoryLabel,
+    variants: Array.isArray(product.variants)
+      ? product.variants.map(v => ({
+          ...v,
+          price: toNumber(v.price),
+        }))
+      : [],
   };
 }
 
