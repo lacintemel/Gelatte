@@ -33,6 +33,7 @@ function ProductCard({ product, index, t }) {
           src={product.image}
           alt={t(product.name)}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          style={{ objectPosition: product.imagePosition }}
           loading="lazy"
         />
 

@@ -24,6 +24,7 @@ function CategoryCard({ category, index, t }) {
           src={category.image}
           alt={t(`cat_${category.title.toLowerCase()}`)}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          style={{ objectPosition: category.imagePosition }}
           loading="lazy"
         />
       </div>

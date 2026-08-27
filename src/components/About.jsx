@@ -65,18 +65,18 @@ export default function About() {
           `}>
             <div className="space-y-4 md:space-y-6 mt-12">
               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
-                <img src="/images/gallery-display.png" alt="Gelatte crafting process" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                <img src="/images/real/about-preparation.jpg" alt="Fresh pastries being prepared at GELATTE" className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" loading="lazy" />
               </div>
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
-                <img src="/images/bakery.png" alt="Gelatte fresh ingredients" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                <img src="/images/real/about-berry-tarts.jpg" alt="Fresh berry tarts in the GELATTE display" className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" loading="lazy" />
               </div>
             </div>
             <div className="space-y-4 md:space-y-6">
               <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl">
-                <img src="/images/store-interior.png" alt="Gelatte store interior" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                <img src="/images/real/about-interior.jpg" alt="GELATTE store interior and service counter" className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" loading="lazy" />
               </div>
               <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl relative">
-                <img src="/images/dessert.png" alt="Gelatte signature desserts" className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" />
+                <img src="/images/real/about-mille-feuille.jpg" alt="GELATTE layered cream pastries" className="w-full h-full object-cover object-center hover:scale-105 transition-transform duration-700" loading="lazy" />
                 <div className="absolute inset-0 bg-espresso/20" />
                 <div className="absolute bottom-6 left-6 right-6 p-6 glass rounded-xl text-ivory">
                   <span className="font-display text-2xl font-semibold mb-1 block">{t('about_founded')}</span>

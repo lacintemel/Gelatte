@@ -28,32 +28,38 @@ export const CATEGORIES = [
   {
     title: "Gelato",
     description: "Artisan Italian gelato crafted with the finest natural ingredients",
-    image: "/images/gelato.png",
+    image: "/images/real/category-gelato.jpg",
+    imagePosition: "center",
   },
   {
     title: "Coffee",
     description: "Specialty single-origin coffees, expertly roasted and brewed",
-    image: "/images/coffee.png",
+    image: "/images/real/category-coffee.jpg",
+    imagePosition: "center",
   },
   {
     title: "Bakery",
     description: "Fresh-baked pastries and breads from our artisan kitchen",
-    image: "/images/bakery.png",
+    image: "/images/real/category-bakery.jpg",
+    imagePosition: "center",
   },
   {
     title: "Waffle",
     description: "Belgian waffles with premium toppings and signature sauces",
-    image: "/images/waffle.png",
+    image: "/images/real/category-waffle.jpg",
+    imagePosition: "center",
   },
   {
     title: "Baklava",
     description: "Traditional pistachio baklava with a modern luxurious twist",
-    image: "/images/baklava.png",
+    image: "/images/real/category-baklava.jpg",
+    imagePosition: "center",
   },
   {
     title: "Desserts",
     description: "Exquisite handcrafted desserts for the discerning palate",
-    image: "/images/dessert.png",
+    image: "/images/real/category-desserts.jpg",
+    imagePosition: "center",
   },
 ];
 
@@ -64,42 +70,48 @@ export const PRODUCTS = [
     description: "prod_g1_desc",
     price: "₺8.50",
     badge: "Signature",
-    image: "/images/gelato.png",
+    image: "/images/real/product-gelato.jpg",
+    imagePosition: "center",
   },
   {
     name: "prod_bk1_name",
     description: "prod_bk1_desc",
     price: "₺12.00",
     badge: "Best Seller",
-    image: "/images/baklava.png",
+    image: "/images/real/product-baklava.jpg",
+    imagePosition: "center",
   },
   {
     name: "prod_w1_name",
     description: "prod_w1_desc",
     price: "₺14.50",
     badge: "Signature",
-    image: "/images/waffle.png",
+    image: "/images/real/product-waffle.jpg",
+    imagePosition: "center",
   },
   {
     name: "prod_ck1_name",
     description: "prod_ck1_desc",
     price: "₺9.50",
     badge: "Fresh Daily",
-    image: "/images/cake.png",
+    image: "/images/real/product-cake.jpg",
+    imagePosition: "center",
   },
   {
     name: "prod_b1_name",
     description: "prod_b1_desc",
     price: "₺5.50",
     badge: "Fresh Daily",
-    image: "/images/bakery.png",
+    image: "/images/real/product-bakery.jpg",
+    imagePosition: "center",
   },
   {
     name: "prod_c1_name",
     description: "prod_c1_desc",
     price: "₺6.50",
     badge: "Best Seller",
-    image: "/images/coffee.png",
+    image: "/images/real/product-coffee.jpg",
+    imagePosition: "center",
   },
 ];
 
@@ -127,12 +139,11 @@ export const TESTIMONIALS = [
 
 // ── Gallery Images ──
 export const GALLERY = [
-  { src: "/images/hero-bg.png", alt: "GELATTE boutique interior" },
-  { src: "/images/store-interior.png", alt: "Premium pastry display" },
-  { src: "/images/gallery-display.png", alt: "Artisan gelato counter" },
-  { src: "/images/gelato.png", alt: "Signature pistachio gelato" },
-  { src: "/images/baklava.png", alt: "Pistachio baklava platter" },
-  { src: "/images/cake.png", alt: "Artisan layer cake" },
+  { src: "/images/real/gallery-exterior.jpg", alt: "GELATTE storefront", position: "center" },
+  { src: "/images/real/gallery-display.jpg", alt: "Fresh berry tart display", position: "center" },
+  { src: "/images/real/gallery-gelato.jpg", alt: "Strawberry artisan gelato", position: "center" },
+  { src: "/images/real/gallery-cup.jpg", alt: "GELATTE gelato cup", position: "center" },
+  { src: "/images/real/gallery-pastries.jpg", alt: "Handcrafted layered pastries", position: "center" },
 ];
 
 // ── Contact Info ──

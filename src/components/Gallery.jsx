@@ -3,7 +3,7 @@ import { useScrollReveal } from '../hooks/useScrollReveal';
 import SectionHeading from './SectionHeading';
 import { useLanguage } from '../context/LanguageContext';
 
-function GalleryItem({ item, index, className = '', t }) {
+function GalleryItem({ item, index, className = '' }) {
   const [ref, isVisible] = useScrollReveal(0.1);
 
   return (
@@ -21,6 +21,7 @@ function GalleryItem({ item, index, className = '', t }) {
           src={item.src}
           alt={item.alt}
           className="w-full h-full object-cover"
+          style={{ objectPosition: item.position }}
           loading="lazy"
         />
         {/* Hover overlay */}
@@ -59,7 +60,6 @@ export default function Gallery() {
             item={GALLERY[0]}
             index={0}
             className="col-span-2 row-span-2"
-            t={t}
           />
 
           {/* Regular items */}
@@ -67,25 +67,21 @@ export default function Gallery() {
             item={GALLERY[1]}
             index={1}
             className="col-span-1 row-span-1"
-            t={t}
           />
           <GalleryItem
             item={GALLERY[2]}
             index={2}
             className="col-span-1 row-span-1"
-            t={t}
           />
           <GalleryItem
             item={GALLERY[3]}
             index={3}
             className="col-span-1 row-span-1"
-            t={t}
           />
           <GalleryItem
             item={GALLERY[4]}
             index={4}
             className="col-span-1 row-span-1"
-            t={t}
           />
         </div>
       </div>

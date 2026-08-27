@@ -11,9 +11,10 @@ export default function Hero() {
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
-          src="/images/hero-bg.png"
-          alt="GELATTE luxury boutique interior"
-          className="w-full h-full object-cover"
+          src="/images/real/hero-storefront.jpg"
+          alt="GELATTE storefront in Antalya"
+          className="w-full h-full object-cover object-[58%_center] md:object-center"
+          fetchPriority="high"
         />
         {/* Gradient overlays */}
         <div className="absolute inset-0 bg-gradient-to-r from-espresso/80 via-espresso/50 to-espresso/30" />
