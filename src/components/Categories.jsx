@@ -7,6 +7,7 @@ import { ArrowRight } from 'lucide-react';
 
 function CategoryCard({ category, index, t }) {
   const [ref, isVisible] = useScrollReveal(0.1);
+  const categoryKey = category.translationKey || category.title.toLowerCase();
 
   return (
     <Link
@@ -22,7 +23,7 @@ function CategoryCard({ category, index, t }) {
       <div className="aspect-[4/5] overflow-hidden">
         <img
           src={category.image}
-          alt={t(`cat_${category.title.toLowerCase()}`)}
+          alt={t(`cat_${categoryKey}`)}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           style={{ objectPosition: category.imagePosition }}
           loading="lazy"
@@ -37,10 +38,10 @@ function CategoryCard({ category, index, t }) {
         <div className="transform transition-transform duration-500 group-hover:-translate-y-2">
           <span className="inline-block w-8 h-[1px] bg-gold mb-4 transition-all duration-500 group-hover:w-12" />
           <h3 className="font-display text-2xl md:text-3xl text-ivory font-semibold mb-2">
-            {t(`cat_${category.title.toLowerCase()}`)}
+            {t(`cat_${categoryKey}`)}
           </h3>
           <p className="text-cream/70 text-sm leading-relaxed opacity-0 translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
-            {t(`cat_${category.title.toLowerCase()}_desc`)}
+            {t(`cat_${categoryKey}_desc`)}
           </p>
         </div>
       </div>

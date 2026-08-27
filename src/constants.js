@@ -34,7 +34,7 @@ export const CATEGORIES = [
   {
     title: "Coffee",
     description: "Specialty single-origin coffees, expertly roasted and brewed",
-    image: "/images/real/category-coffee.jpg",
+    image: "/images/real/category-coffee-ai.jpg",
     imagePosition: "center",
   },
   {
@@ -46,13 +46,14 @@ export const CATEGORIES = [
   {
     title: "Waffle",
     description: "Belgian waffles with premium toppings and signature sauces",
-    image: "/images/real/category-waffle.jpg",
+    image: "/images/real/category-waffle-ai.jpg",
     imagePosition: "center",
   },
   {
-    title: "Baklava",
-    description: "Traditional pistachio baklava with a modern luxurious twist",
-    image: "/images/real/category-baklava.jpg",
+    title: "American Cake",
+    translationKey: "american_cake",
+    description: "Rich American-style cakes, baked fresh and served by the slice",
+    image: "/images/real/category-american-cake.jpg",
     imagePosition: "center",
   },
   {
@@ -110,7 +111,7 @@ export const PRODUCTS = [
     description: "prod_c1_desc",
     price: "₺6.50",
     badge: "Best Seller",
-    image: "/images/real/product-coffee.jpg",
+    image: "/images/real/category-coffee-ai.jpg",
     imagePosition: "center",
   },
 ];
